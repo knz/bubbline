@@ -1,7 +1,9 @@
 package editline
 
 import (
+	"os"
 	"strings"
+	"syscall"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -246,12 +248,32 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.Type {
 
 		case tea.KeyCtrlBackslash:
-			// FIXME: support sending SIGQUIT to process.
+			pr, err := os.FindProcess(os.Getpid())
+			if err != nil {
+				// No-op.
+				return m, nil
+			}
+			_ = m.p.ReleaseTerminal()
+			pr.Signal(syscall.SIGQUIT)
+			_ = m.p.RestoreTerminal()
+			return m, nil
+
+		case tea.KeyCtrlZ:
+			pr, err := os.FindProcess(os.Getpid())
+			if err != nil {
+				// No-op.
+				return m, nil
+			}
+			_ = m.p.ReleaseTerminal()
+			pr.Signal(syscall.SIGTSTP)
+			_ = m.p.RestoreTerminal()
+			return m, nil
 
 		case tea.KeyCtrlL:
 			_ = m.p.ReleaseTerminal()
 			termenv.ClearScreen()
 			_ = m.p.RestoreTerminal()
+			return m, nil
 
 		case tea.KeyCtrlD:
 			if m.text.AtBeginningOfLine() {
