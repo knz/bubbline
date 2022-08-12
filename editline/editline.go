@@ -78,16 +78,11 @@ type Model struct {
 		prevCursor int
 	}
 
-	// p is the running controller for the current input.
-	// This is needed to support screen refresh during Ctrl+L/Ctrl+Z.
-	p *tea.Program
-
 	text      textarea.Model
 	maxHeight int
 }
 
-// New creates a new Model. The caller is responsible for calling
-// SetProgram() after New.
+// New creates a new Model.
 func New() *Model {
 	m := Model{
 		text:                 textarea.New(),
@@ -135,13 +130,6 @@ func (m *Model) AddHistoryEntry(s string) {
 		m.history = m.history[:m.MaxHistorySize]
 	}
 	m.resetNavCursor()
-}
-
-// SetProgram must be called after New to attach the model to a
-// Program. This is used so that the model can learn how to clear the
-// screen.
-func (m *Model) SetProgram(p *tea.Program) {
-	m.p = p
 }
 
 // Value retrieves the value of the text input.
@@ -270,14 +258,22 @@ func (m *Model) historyDown() {
 	m.updateValue(entry, len(entry))
 }
 
-func (m *Model) doProgram(fn func()) {
-	if m.p == nil {
-		return
-	}
-	_ = m.p.ReleaseTerminal()
-	fn()
-	_ = m.p.RestoreTerminal()
+type doProgram func()
+
+// Run is part of the tea.ExecCommand interface.
+func (d doProgram) Run() error {
+	d()
+	return nil
 }
+
+// SetStdin is part of the tea.ExecCommand interface.
+func (d doProgram) SetStdin(io.Reader) {}
+
+// SetStdout is part of the tea.ExecCommand interface.
+func (d doProgram) SetStdout(io.Writer) {}
+
+// SetStderr is part of the tea.ExecCommand interface.
+func (d doProgram) SetStderr(io.Writer) {}
 
 // Update is the Bubble Tea event handler.
 // This is part of the tea.Model interface.
@@ -306,30 +302,27 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case tea.KeyCtrlBackslash:
-			m.doProgram(func() {
+			return m, tea.Exec(doProgram(func() {
 				pr, err := os.FindProcess(os.Getpid())
 				if err != nil {
 					// No-op.
 					return
 				}
 				pr.Signal(syscall.SIGQUIT)
-			})
-			return m, nil
+			}), nil)
 
 		case tea.KeyCtrlZ:
-			m.doProgram(func() {
+			return m, tea.Exec(doProgram(func() {
 				pr, err := os.FindProcess(os.Getpid())
 				if err != nil {
 					// No-op.
 					return
 				}
 				pr.Signal(syscall.SIGTSTP)
-			})
-			return m, nil
+			}), nil)
 
 		case tea.KeyCtrlL:
-			m.doProgram(termenv.ClearScreen)
-			return m, nil
+			return m, tea.Exec(doProgram(termenv.ClearScreen), nil)
 
 		case tea.KeyCtrlD:
 			if m.text.AtBeginningOfLine() {
