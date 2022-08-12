@@ -279,6 +279,11 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
+		case tea.KeyLeft, tea.KeyRight:
+			if m.hctrl.searching {
+				m.acceptSearch()
+			}
+
 		case tea.KeyUp:
 			if m.hctrl.searching {
 				m.acceptSearch()
