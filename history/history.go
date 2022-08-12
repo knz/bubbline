@@ -9,13 +9,11 @@ import (
 	"os"
 )
 
-type History []string
-
 const cookie = "_HiStOrY_V2_"
 
 // LoadHistory loadsa a history from a file loaded from the specified
 // path. The file must be in the same format as used by libedit.
-func LoadHistory(fileName string) (History, error) {
+func LoadHistory(fileName string) ([]string, error) {
 	f, err := os.Open(fileName)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -27,7 +25,7 @@ func LoadHistory(fileName string) (History, error) {
 	return loadHistoryFromFile(f)
 }
 
-func loadHistoryFromFile(f io.Reader) (History, error) {
+func loadHistoryFromFile(f io.Reader) ([]string, error) {
 	var buf [len(cookie) + 1]byte
 	n, err := f.Read(buf[:])
 	if err == io.EOF {
@@ -51,7 +49,7 @@ func loadHistoryFromFile(f io.Reader) (History, error) {
 		contents = contents[:len(contents)-1]
 	}
 	lines := bytes.Split(contents, []byte("\n"))
-	var hist History
+	hist := make([]string, 0, len(lines))
 	for _, line := range lines {
 		// Unescape octal codes.
 		resultEnd := 0
@@ -83,7 +81,7 @@ func loadHistoryFromFile(f io.Reader) (History, error) {
 
 // SaveHistory saves a history to the specified file.
 // The file will be written in the same format as used by libedit.
-func SaveHistory(h History, fileName string) (retErr error) {
+func SaveHistory(h []string, fileName string) (retErr error) {
 	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		return err
@@ -98,7 +96,7 @@ func SaveHistory(h History, fileName string) (retErr error) {
 	return saveHistoryToFile(h, f)
 }
 
-func saveHistoryToFile(h History, f io.Writer) error {
+func saveHistoryToFile(h []string, f io.Writer) error {
 	w := bufio.NewWriter(f)
 	_, err := w.Write([]byte(cookie + "\n"))
 	if err != nil {

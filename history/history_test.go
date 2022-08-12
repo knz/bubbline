@@ -36,9 +36,8 @@ func TestLoadHistory(t *testing.T) {
 		if err != nil {
 			t.Errorf("%q: expected no error, got: %v", tc.input, err)
 		}
-		hs := []string(h)
-		if !reflect.DeepEqual(tc.exp, hs) {
-			t.Errorf("%q: expected:\n%+v\ngot:\n%+v", tc.input, tc.exp, hs)
+		if !reflect.DeepEqual(tc.exp, h) {
+			t.Errorf("%q: expected:\n%+v\ngot:\n%+v", tc.input, tc.exp, h)
 		}
 	}
 }
@@ -57,9 +56,8 @@ func TestSaveHistory(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		h := History(tc.input)
 		var buf bytes.Buffer
-		err := saveHistoryToFile(h, &buf)
+		err := saveHistoryToFile(tc.input, &buf)
 		if tc.expErr != "" {
 			if err == nil {
 				t.Errorf("%q: expected error, got no error", tc.input)
