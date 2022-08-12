@@ -38,7 +38,7 @@ func (m *Model) AtLastLineOfInputAndView() bool {
 // is position on the bottom line.
 func (m Model) ResetViewCursorDown() {
 	row := m.cursorLineNumber()
-	m.viewport.SetYOffset(row - m.viewport.Height)
+	m.viewport.SetYOffset(row - m.viewport.Height + 1)
 }
 
 // LogicalHeight returns the number of lines needed in a viewport to
