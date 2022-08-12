@@ -1,4 +1,4 @@
-# bubble-edit
+# bubbline
 
 An input line editor for line-oriented terminal applications.
 
