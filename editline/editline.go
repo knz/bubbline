@@ -31,7 +31,14 @@ type Model struct {
 	//
 	// The default behavior if CheckInputComplete is nil is to terminate
 	// the input when enter is pressed.
-	CheckInputComplete func(string, int) bool
+	CheckInputComplete func(entireInput string, cursorRow int) bool
+
+	// AutoComplete if set is called upon the user pressing the
+	// autocomplete key. The callback is provided the text of the input
+	// and the position of the cursor in the input. The returned
+	// extraInput value is added at the cursor position. The returned
+	// msg is printed above the input box.
+	AutoComplete func(entireInput string, cursor int) (msg, extraInput string)
 
 	// MaxHistorySize is the maximum number of entries in the history.
 	// Set to zero for no limit.
@@ -71,6 +78,8 @@ type Model struct {
 		prevCursor int
 	}
 
+	// p is the running controller for the current input.
+	// This is needed to support screen refresh during Ctrl+L/Ctrl+Z.
 	p *tea.Program
 
 	text      textarea.Model
@@ -261,6 +270,15 @@ func (m *Model) historyDown() {
 	m.updateValue(entry, len(entry))
 }
 
+func (m *Model) doProgram(fn func()) {
+	if m.p == nil {
+		return
+	}
+	_ = m.p.ReleaseTerminal()
+	fn()
+	_ = m.p.RestoreTerminal()
+}
+
 // Update is the Bubble Tea event handler.
 // This is part of the tea.Model interface.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -275,32 +293,42 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.Type {
 
-		case tea.KeyCtrlBackslash:
-			pr, err := os.FindProcess(os.Getpid())
-			if err != nil {
-				// No-op.
-				return m, nil
+		case tea.KeyTab:
+			if m.AutoComplete != nil {
+				msgs, extra := m.AutoComplete(m.text.Value(), m.text.CursorPos())
+				m.text.InsertString(extra)
+				m.updateTextSz()
+				m.text.ResetViewCursorDown()
+				if msgs != "" {
+					cmd = tea.Println(msgs)
+				}
+				return m, cmd
 			}
-			_ = m.p.ReleaseTerminal()
-			pr.Signal(syscall.SIGQUIT)
-			_ = m.p.RestoreTerminal()
+
+		case tea.KeyCtrlBackslash:
+			m.doProgram(func() {
+				pr, err := os.FindProcess(os.Getpid())
+				if err != nil {
+					// No-op.
+					return
+				}
+				pr.Signal(syscall.SIGQUIT)
+			})
 			return m, nil
 
 		case tea.KeyCtrlZ:
-			pr, err := os.FindProcess(os.Getpid())
-			if err != nil {
-				// No-op.
-				return m, nil
-			}
-			_ = m.p.ReleaseTerminal()
-			pr.Signal(syscall.SIGTSTP)
-			_ = m.p.RestoreTerminal()
+			m.doProgram(func() {
+				pr, err := os.FindProcess(os.Getpid())
+				if err != nil {
+					// No-op.
+					return
+				}
+				pr.Signal(syscall.SIGTSTP)
+			})
 			return m, nil
 
 		case tea.KeyCtrlL:
-			_ = m.p.ReleaseTerminal()
-			termenv.ClearScreen()
-			_ = m.p.RestoreTerminal()
+			m.doProgram(termenv.ClearScreen)
 			return m, nil
 
 		case tea.KeyCtrlD:
