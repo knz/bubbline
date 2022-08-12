@@ -26,6 +26,27 @@ type Model struct {
 	// Set to zero for no limit.
 	MaxHistorySize int
 
+	// DedupHistory if true avoids adding a history entry
+	// if it is equal to the last one added.
+	DedupHistory bool
+
+	// Prompt is the prompt displayed before entry lines.
+	// Only takes effect at Reset().
+	Prompt string
+
+	// TODO: separate 1st line prompt vs all-but-first-line prompt.
+
+	// SearchPrompt is the prompt displayed before the history search pattern.
+	SearchPrompt string
+	// SearchPromptNotFound is the prompt displayed before the history search pattern,
+	// when no match is found.
+	SearchPromptNotFound string
+
+	// ShowLineNumbers if true shows line numbers at the beginning
+	// of each input line.
+	// Only takes effect at Reset().
+	ShowLineNumbers bool
+
 	history []string
 	hctrl   struct {
 		// searching is true when we're currently searching.
@@ -43,15 +64,19 @@ type Model struct {
 
 	text      textarea.Model
 	maxHeight int
-	err       error
 }
 
 // New creates a new Model. The caller is responsible for calling
 // SetProgram() after New.
 func New() *Model {
 	m := Model{
-		text: textarea.New(),
-		err:  nil,
+		text:                 textarea.New(),
+		MaxHistorySize:       0, // no limit
+		DedupHistory:         true,
+		Prompt:               "> ",
+		SearchPrompt:         "bck:",
+		SearchPromptNotFound: "bck?",
+		ShowLineNumbers:      false,
 	}
 	m.CheckInputComplete = func(v string, row int) bool {
 		vs := strings.Split(v, "\n")
@@ -62,17 +87,15 @@ func New() *Model {
 		return false
 	}
 	// Width will be set by Update below on init.
-	m.text.Prompt = "> "
-	m.text.Placeholder = ""
-	m.text.ShowLineNumbers = false
-	m.text.SetHeight(1)
-	m.text.Focus()
 	m.text.KeyMap.Paste.Unbind() // paste from clipboard not supported.
 	m.hctrl.pattern = textinput.New()
+	m.text.Placeholder = ""
+	m.Reset()
 	return &m
 }
 
-func (m *Model) LoadHistory(h []string) {
+// SetHistory sets the history navigation list all at once.
+func (m *Model) SetHistory(h []string) {
 	if m.MaxHistorySize != 0 && len(h) > m.MaxHistorySize {
 		h = h[:m.MaxHistorySize]
 	}
@@ -83,13 +106,15 @@ func (m *Model) LoadHistory(h []string) {
 	m.resetNavCursor()
 }
 
+// GetHistory retrieves all the entries in the history navigation list.
 func (m *Model) GetHistory() []string {
 	return m.history
 }
 
+// AddHistoryEntry adds an entry to the history navigation list.
 func (m *Model) AddHistoryEntry(s string) {
 	// Only add a new entry if it doesn't duplicate the last one.
-	if len(m.history) == 0 || s != m.history[len(m.history)-1] {
+	if len(m.history) == 0 || !(m.DedupHistory && s == m.history[len(m.history)-1]) {
 		m.history = append(m.history, s)
 	}
 	// Truncate if needed.
@@ -107,21 +132,19 @@ func (m *Model) SetProgram(p *tea.Program) {
 	m.p = p
 }
 
-func (m *Model) Err() error {
-	return m.err
-}
-
+// Value retrieves the value of the text input.
 func (m *Model) Value() string {
 	return m.text.Value()
 }
 
+// Init is part of the tea.Model interface.
 func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
 func (m *Model) historyStartSearch() {
 	m.hctrl.searching = true
-	m.hctrl.pattern.Prompt = "bck:"
+	m.hctrl.pattern.Prompt = m.SearchPrompt
 	m.hctrl.pattern.Reset()
 	m.hctrl.pattern.Focus()
 	m.hctrl.prevPattern = ""
@@ -180,7 +203,7 @@ func (m *Model) incrementalSearch(nextMatch bool) {
 			// TODO: use glob search instead of simple strings.
 			if strings.HasPrefix(entry[j:], pat) {
 				// It's a match!
-				m.hctrl.pattern.Prompt = "bck:"
+				m.hctrl.pattern.Prompt = m.SearchPrompt
 				m.hctrl.cursor = i
 				m.updateValue(entry, j)
 				return
@@ -189,7 +212,7 @@ func (m *Model) incrementalSearch(nextMatch bool) {
 	}
 	if i < 0 {
 		// No match found.
-		m.hctrl.pattern.Prompt = "bck?"
+		m.hctrl.pattern.Prompt = m.SearchPromptNotFound
 	}
 }
 
@@ -235,6 +258,8 @@ func (m *Model) historyDown() {
 	m.updateValue(entry, len(entry))
 }
 
+// Update is the Bubble Tea event handler.
+// This is part of the tea.Model interface.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
@@ -369,14 +394,21 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m *Model) Start() {
+// Reset sets the input to its default state with no input.
+// The history is preserved.
+func (m *Model) Reset() {
 	m.hctrl.valueSaved = false
 	m.hctrl.prevValue = ""
 	m.hctrl.prevCursor = 0
+	m.text.ShowLineNumbers = m.ShowLineNumbers
+	m.text.Prompt = m.Prompt
+	m.text.SetHeight(1)
 	m.text.Reset()
 	m.text.Focus()
 }
 
+// View renders the text area in its current state.
+// This is part of the tea.Model interface.
 func (m Model) View() string {
 	view := m.text.View()
 	if m.hctrl.searching {
