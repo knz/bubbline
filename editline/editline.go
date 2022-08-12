@@ -1,6 +1,8 @@
 package editline
 
 import (
+	"errors"
+	"io"
 	"os"
 	"strings"
 	"syscall"
@@ -11,15 +13,24 @@ import (
 	"github.com/muesli/termenv"
 )
 
+var ErrInterrupted = errors.New("interrupted")
+
 // Model represents a widget that supports multi-line entry with
 // auto-growing of the text height.
 type Model struct {
+	// Err is the final state at the end of input.
+	// Likely io.EOF or ErrInterrupted.
+	Err error
+
 	// CheckInputComplete is called when the Enter key is pressed.  It
 	// determines whether a newline character should be added to the
 	// input (callback returns false) or whether the input should
-	// terminate altogether (callback returns true).  The callback is
+	// terminate altogether (callback returns true). The callback is
 	// provided the text of the input and the line number at which the
 	// cursor is currently positioned as argument.
+	//
+	// The default behavior if CheckInputComplete is nil is to terminate
+	// the input when enter is pressed.
 	CheckInputComplete func(string, int) bool
 
 	// MaxHistorySize is the maximum number of entries in the history.
@@ -71,6 +82,7 @@ type Model struct {
 func New() *Model {
 	m := Model{
 		text:                 textarea.New(),
+		Err:                  nil,
 		MaxHistorySize:       0, // no limit
 		DedupHistory:         true,
 		Prompt:               "> ",
@@ -78,15 +90,6 @@ func New() *Model {
 		SearchPromptNotFound: "bck?",
 		ShowLineNumbers:      false,
 	}
-	m.CheckInputComplete = func(v string, row int) bool {
-		vs := strings.Split(v, "\n")
-		if row == len(vs)-1 && // Enter on last row.
-			strings.HasSuffix(v, ";") { // Semicolon on last row.
-			return true
-		}
-		return false
-	}
-	// Width will be set by Update below on init.
 	m.text.KeyMap.Paste.Unbind() // paste from clipboard not supported.
 	m.hctrl.pattern = textinput.New()
 	m.text.Placeholder = ""
@@ -305,7 +308,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.hctrl.searching {
 					m.cancelHistorySearch()
 				}
-				// FIXME: support returning io.EOF.
+				m.Err = io.EOF
 				m.resetNavCursor()
 				m.text.Blur()
 				return m, tea.Quit
@@ -353,9 +356,9 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case tea.KeyCtrlC:
 			if m.text.EmptyValue() {
-				// FIXME: support returning an error.
 				m.resetNavCursor()
 				m.text.Blur()
+				m.Err = ErrInterrupted
 				return m, tea.Quit
 			}
 			if m.hctrl.searching {
@@ -371,13 +374,12 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// Stop the completion first.
 				m.acceptSearch()
 			}
-			if m.CheckInputComplete != nil {
-				if m.CheckInputComplete(m.text.Value(), m.text.Line()) {
-					// Reset the search/history navigation cursor to the end.
-					m.resetNavCursor()
-					m.text.Blur()
-					return m, tea.Quit
-				}
+			if m.CheckInputComplete == nil ||
+				m.CheckInputComplete(m.text.Value(), m.text.Line()) {
+				// Reset the search/history navigation cursor to the end.
+				m.resetNavCursor()
+				m.text.Blur()
+				return m, tea.Quit
 			}
 		}
 	}
@@ -397,11 +399,13 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // Reset sets the input to its default state with no input.
 // The history is preserved.
 func (m *Model) Reset() {
+	m.Err = nil
 	m.hctrl.valueSaved = false
 	m.hctrl.prevValue = ""
 	m.hctrl.prevCursor = 0
 	m.text.ShowLineNumbers = m.ShowLineNumbers
 	m.text.Prompt = m.Prompt
+	// Width will be set by Update below on init.
 	m.text.SetHeight(1)
 	m.text.Reset()
 	m.text.Focus()
