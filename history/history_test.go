@@ -24,7 +24,7 @@ func TestLoadHistory(t *testing.T) {
 
 	for _, tc := range testCases {
 		buf := bytes.NewBufferString(tc.input)
-		h, err := LoadHistoryFromFile(buf)
+		h, err := loadHistoryFromFile(buf)
 		if tc.expErr != "" {
 			if err == nil {
 				t.Errorf("%q: expected error, got no error", tc.input)
@@ -59,7 +59,7 @@ func TestSaveHistory(t *testing.T) {
 	for _, tc := range testCases {
 		h := History(tc.input)
 		var buf bytes.Buffer
-		err := SaveHistoryToFile(h, &buf)
+		err := saveHistoryToFile(h, &buf)
 		if tc.expErr != "" {
 			if err == nil {
 				t.Errorf("%q: expected error, got no error", tc.input)
