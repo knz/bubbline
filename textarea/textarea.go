@@ -384,6 +384,11 @@ func (m *Model) CursorUp() {
 	}
 }
 
+// CursorPos retrieves the position of the cursor inside the input.
+func (m *Model) CursorPos() int {
+	return m.col
+}
+
 // SetCursor moves the cursor to the given position. If the position is
 // out of bounds the cursor will be moved to the start or end accordingly.
 func (m *Model) SetCursor(col int) {
@@ -397,6 +402,19 @@ func (m *Model) SetCursor(col int) {
 // a line.
 func (m *Model) AtBeginningOfLine() bool {
 	return m.col == 0
+}
+
+// AtFirstLineOfInputAndView returns true if the cursor is on the first line
+// of the input and viewport.
+func (m *Model) AtFirstLineOfInputAndView() bool {
+	li := m.LineInfo()
+	return m.row == 0 && li.RowOffset == 0
+}
+
+// AtEndOfInput returns true if the cursor is on the last line of the input and viewport.
+func (m *Model) AtLastLineOfInputAndView() bool {
+	li := m.LineInfo()
+	return m.row >= len(m.value)-1 && li.RowOffset == li.Height-1
 }
 
 // CursorStart moves the cursor to the start of the input field.
@@ -684,6 +702,13 @@ func (m *Model) repositionView() {
 	} else if row > max {
 		m.viewport.LineDown(row - max)
 	}
+}
+
+// ResetViewCursorDown scrolls the viewport so that the cursor
+// is position on the bottom line.
+func (m Model) ResetViewCursorDown() {
+	row := m.cursorLineNumber()
+	m.viewport.SetYOffset(row - m.viewport.Height)
 }
 
 // Width returns the width of the textarea.
