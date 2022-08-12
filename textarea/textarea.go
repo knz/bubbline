@@ -1,4 +1,4 @@
-// The code below is derived from
+// The code below is imported from
 // https://github.com/charmbracelet/bubbles/tree/master/textarea
 // Copyright (c) 2020 Charmbracelet, Inc
 // Licensed under MIT license
@@ -52,8 +52,6 @@ type KeyMap struct {
 	Paste                   key.Binding
 	WordBackward            key.Binding
 	WordForward             key.Binding
-	Home                    key.Binding
-	End                     key.Binding
 }
 
 // DefaultKeyMap is the default set of key bindings for navigating and acting
@@ -288,27 +286,18 @@ func (m Model) Value() string {
 	return strings.TrimSuffix(v, "\n")
 }
 
-// EmptyValue returns true iff the value is empty.
-func (m *Model) EmptyValue() bool {
-	return len(m.value) == 0 || (len(m.value) == 1 && len(m.value[0]) == 0)
-}
-
-// NumLinesInValue returns the number of logical lines in the value.
-func (m *Model) NumLinesInValue() int {
-	return len(m.value)
-}
-
 // Length returns the number of characters currently in the text input.
 func (m *Model) Length() int {
 	var l int
-	for i, row := range m.value {
-		if i > 0 {
-			// Count the newline character from the previous line.
-			l += 1
-		}
+	for _, row := range m.value {
 		l += rw.StringWidth(string(row))
 	}
-	return l
+	return l + len(m.value) - 1
+}
+
+// LineCount returns the number of lines that are currently in the text input.
+func (m *Model) LineCount() int {
+	return len(m.value)
 }
 
 // Line returns the line position.
@@ -384,11 +373,6 @@ func (m *Model) CursorUp() {
 	}
 }
 
-// CursorPos retrieves the position of the cursor inside the input.
-func (m *Model) CursorPos() int {
-	return m.col
-}
-
 // SetCursor moves the cursor to the given position. If the position is
 // out of bounds the cursor will be moved to the start or end accordingly.
 func (m *Model) SetCursor(col int) {
@@ -396,25 +380,6 @@ func (m *Model) SetCursor(col int) {
 	// Any time that we move the cursor horizontally we need to reset the last
 	// offset so that the horizontal position when navigating is adjusted.
 	m.lastCharOffset = 0
-}
-
-// AtBeginningOfLine returns true if the cursor is at the beginning of
-// a line.
-func (m *Model) AtBeginningOfLine() bool {
-	return m.col == 0
-}
-
-// AtFirstLineOfInputAndView returns true if the cursor is on the first line
-// of the input and viewport.
-func (m *Model) AtFirstLineOfInputAndView() bool {
-	li := m.LineInfo()
-	return m.row == 0 && li.RowOffset == 0
-}
-
-// AtEndOfInput returns true if the cursor is on the last line of the input and viewport.
-func (m *Model) AtLastLineOfInputAndView() bool {
-	li := m.LineInfo()
-	return m.row >= len(m.value)-1 && li.RowOffset == li.Height-1
 }
 
 // CursorStart moves the cursor to the start of the input field.
@@ -702,13 +667,6 @@ func (m *Model) repositionView() {
 	} else if row > max {
 		m.viewport.LineDown(row - max)
 	}
-}
-
-// ResetViewCursorDown scrolls the viewport so that the cursor
-// is position on the bottom line.
-func (m Model) ResetViewCursorDown() {
-	row := m.cursorLineNumber()
-	m.viewport.SetYOffset(row - m.viewport.Height)
 }
 
 // Width returns the width of the textarea.

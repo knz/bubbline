@@ -1,0 +1,56 @@
+--- textarea_orig.go	2022-08-12 22:00:05.431605000 +0200
++++ textarea.go	2022-08-12 22:05:18.056928000 +0200
+@@ -1,3 +1,9 @@
++// The code below is imported from
++// https://github.com/charmbracelet/bubbles/tree/master/textarea
++// Copyright (c) 2020 Charmbracelet, Inc
++// Licensed under MIT license
++// License at https://github.com/charmbracelet/bubbles/blob/master/LICENSE
++
+ package textarea
+ 
+ import (
+@@ -606,14 +612,20 @@
+ // LineInfo returns the number of characters from the start of the
+ // (soft-wrapped) line and the (soft-wrapped) line width.
+ func (m Model) LineInfo() LineInfo {
+-	grid := wrap(m.value[m.row], m.width)
++	return m.LineInfoAt(m.row, m.col)
++}
+ 
++// LineInfoAt computes the LineInfo at the specified row/column.
++// The caller is responsible for keeping row/col within bounds.
++func (m Model) LineInfoAt(row, col int) LineInfo {
++	grid := wrap(m.value[row], m.width)
++
+ 	// Find out which line we are currently on. This can be determined by the
+ 	// m.col and counting the number of runes that we need to skip.
+ 	var counter int
+ 	for i, line := range grid {
+ 		// We've found the line that we are on
+-		if counter+len(line) == m.col && i+1 < len(grid) {
++		if counter+len(line) == col && i+1 < len(grid) {
+ 			// We wrap around to the next line if we are at the end of the
+ 			// previous line so that we can be at the very beginning of the row
+ 			return LineInfo{
+@@ -621,16 +633,16 @@
+ 				ColumnOffset: 0,
+ 				Height:       len(grid),
+ 				RowOffset:    i + 1,
+-				StartColumn:  m.col,
++				StartColumn:  col,
+ 				Width:        len(grid[i+1]),
+ 				CharWidth:    rw.StringWidth(string(line)),
+ 			}
+ 		}
+ 
+-		if counter+len(line) >= m.col {
++		if counter+len(line) >= col {
+ 			return LineInfo{
+-				CharOffset:   rw.StringWidth(string(line[:max(0, m.col-counter)])),
+-				ColumnOffset: m.col - counter,
++				CharOffset:   rw.StringWidth(string(line[:max(0, col-counter)])),
++				ColumnOffset: col - counter,
+ 				Height:       len(grid),
+ 				RowOffset:    i,
+ 				StartColumn:  counter,

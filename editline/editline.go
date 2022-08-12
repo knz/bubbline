@@ -201,7 +201,7 @@ func (m *Model) updateValue(value string, cursor int) {
 }
 
 func (m *Model) updateTextSz() {
-	m.text.SetHeight(clamp(m.computeLogicalHeight(), 1, m.maxHeight-1))
+	m.text.SetHeight(clamp(m.text.LogicalHeight(), 1, m.maxHeight-1))
 }
 
 func (m *Model) saveValue() {
@@ -367,16 +367,6 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, cmd
-}
-
-func (m Model) computeLogicalHeight() int {
-	logicalHeight := 0
-	nl := m.text.NumLinesInValue()
-	for row := 0; row < nl; row++ {
-		li := m.text.LineInfoAt(row, 0)
-		logicalHeight += li.Height
-	}
-	return logicalHeight
 }
 
 func (m *Model) Start() {
