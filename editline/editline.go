@@ -7,7 +7,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/knz/bubbline/textarea"
+	"github.com/knz/bubbline/editline/internal/textarea"
 	"github.com/muesli/termenv"
 )
 
