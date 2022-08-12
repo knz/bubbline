@@ -1,4 +1,4 @@
-module github.com/knz/bubbles
+module github.com/knz/bubble-edit
 
 go 1.18
 
