@@ -24,6 +24,8 @@ Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
 	}
 	m := editline.New()
 
+	m.Prompt = "hello> "
+	m.NextPrompt = "-> "
 	m.AutoComplete = func(v string, cursor int) (msg, extraInput string) {
 		p := cursor - 5
 		if p < 0 {

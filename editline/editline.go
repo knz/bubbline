@@ -52,6 +52,11 @@ type Model struct {
 	// Only takes effect at Reset().
 	Prompt string
 
+	// NextPrompt, if defined is the prompt displayed before entry lines
+	// after the first one.
+	// Only takes effect at Reset().
+	NextPrompt string
+
 	// TODO: separate 1st line prompt vs all-but-first-line prompt.
 
 	// SearchPrompt is the prompt displayed before the history search pattern.
@@ -90,6 +95,7 @@ func New() *Model {
 		MaxHistorySize:       0, // no limit
 		DedupHistory:         true,
 		Prompt:               "> ",
+		NextPrompt:           "",
 		SearchPrompt:         "bck:",
 		SearchPromptNotFound: "bck?",
 		ShowLineNumbers:      false,
@@ -463,6 +469,7 @@ func (m *Model) Reset() {
 	m.hctrl.prevCursor = 0
 	m.text.ShowLineNumbers = m.ShowLineNumbers
 	m.text.Prompt = m.Prompt
+	m.text.NextPrompt = m.NextPrompt
 	// Width will be set by Update below on init.
 	m.text.SetHeight(1)
 	m.text.Reset()
