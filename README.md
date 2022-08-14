@@ -9,7 +9,9 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 
 ## Features of the line editor
 
-- Adds libedit/readline goodies to [bubbles](https://github.com/charmbracelet/bubbles)' original `textarea` widget:
+- Adds [editline/libedit](https://man.netbsd.org/editline.3)/[readline](https://en.wikipedia.org/wiki/GNU_Readline)
+  goodies to [bubbles](https://github.com/charmbracelet/bubbles)'
+  original `textarea` widget:
   - Resizes horizontally to terminal width.
   - Resizes vertically automatically as the input grows.
   - Supports history navigation and search.
@@ -24,6 +26,10 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
   - Hide/show the prompt to simplify copy-paste from terminal.
   - Secondary prompt for multi-line input.
   - Debug mode for troubleshooting.
+
+## Demo / explanation
+
+[![Loom demo](https://cdn.loom.com/sessions/thumbnails/29b2effdcdda40b9a12509c2ced1de8c-with-play.gif)](https://www.loom.com/share/29b2effdcdda40b9a12509c2ced1de8c)
 
 ## Customizable key bindings
 
