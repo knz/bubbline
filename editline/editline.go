@@ -79,6 +79,10 @@ type Model struct {
 	// msg is printed above the input box.
 	AutoComplete func(entireInput [][]rune, line, col int) (msg, extraInput string)
 
+	// CharLimit is the maximum size of the input in characters.
+	// Set to zero or less for no limit.
+	CharLimit int
+
 	// MaxHistorySize is the maximum number of entries in the history.
 	// Set to zero for no limit.
 	MaxHistorySize int
@@ -536,6 +540,7 @@ func (m *Model) Reset() {
 	m.hctrl.c.valueSaved = false
 	m.hctrl.c.prevValue = ""
 	m.hctrl.c.prevCursor = 0
+	m.text.CharLimit = m.CharLimit
 	m.text.ShowLineNumbers = m.ShowLineNumbers
 	m.text.Prompt = m.Prompt
 	m.text.NextPrompt = m.NextPrompt
