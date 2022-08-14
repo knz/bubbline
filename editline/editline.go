@@ -95,6 +95,15 @@ type Model struct {
 	// if it is equal to the last one added.
 	DedupHistory bool
 
+	// DeleteCharIfNotEOF, if true, causes the EndOfInput key binding
+	// to be translated to delete-character-forward when it is not
+	// entered at the beginning of a line.
+	// Meant for use when the EndOfInput key binding is Ctrl+D, which
+	// is the standard character deletion in textarea/libedit.
+	// This can be set to false if the EndOfInput binding is fully
+	// separate from DeleteCharacterForward.
+	DeleteCharIfNotEOF bool
+
 	// Prompt is the prompt displayed before entry lines.
 	// Only takes effect at Reset().
 	Prompt string
@@ -150,6 +159,7 @@ func New() *Model {
 		KeyMap:               DefaultKeyMap,
 		MaxHistorySize:       0, // no limit
 		DedupHistory:         true,
+		DeleteCharIfNotEOF:   true,
 		Prompt:               "> ",
 		NextPrompt:           "",
 		SearchPrompt:         "bck:",
@@ -446,8 +456,11 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				m.Err = io.EOF
 				stop = true
+				imsg = nil // consume message
+			} else if m.DeleteCharIfNotEOF {
+				m.text.DeleteCharacterForward()
+				imsg = nil // consume message
 			}
-			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.AbortSearch):
 			if m.currentlySearching() {

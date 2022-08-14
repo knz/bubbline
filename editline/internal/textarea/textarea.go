@@ -794,6 +794,16 @@ func (m *Model) InsertNewline() {
 	m.splitLine(m.row, m.col)
 }
 
+// DeleteCharacterForward deletes the character at the cursor.
+func (m *Model) DeleteCharacterForward() {
+	if len(m.value[m.row]) > 0 && m.col < len(m.value[m.row]) {
+		m.value[m.row] = append(m.value[m.row][:m.col], m.value[m.row][m.col+1:]...)
+	}
+	if m.col >= len(m.value[m.row]) {
+		m.mergeLineBelow(m.row)
+	}
+}
+
 // Update is the Bubble Tea update loop.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focus {
@@ -840,13 +850,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				}
 			}
 		case key.Matches(msg, m.KeyMap.DeleteCharacterForward):
-			if len(m.value[m.row]) > 0 && m.col < len(m.value[m.row]) {
-				m.value[m.row] = append(m.value[m.row][:m.col], m.value[m.row][m.col+1:]...)
-			}
-			if m.col >= len(m.value[m.row]) {
-				m.mergeLineBelow(m.row)
-				break
-			}
+			m.DeleteCharacterForward()
 		case key.Matches(msg, m.KeyMap.DeleteWordBackward):
 			if m.col <= 0 {
 				m.mergeLineAbove(m.row)

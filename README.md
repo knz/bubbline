@@ -33,40 +33,40 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 
 ## Customizable key bindings
 
-| Default keys           | Description                                                                     | Binding name               |
-|------------------------|---------------------------------------------------------------------------------|----------------------------|
-| Ctrl+D                 | Terminate the input if the cursor is at the beginning of a line.                | EndOfInput                 |
-| Ctrl+C                 | Clear the input if non-empty, or interrupt input if already empty.              | Interrupt                  |
-| Tab                    | Run the `AutoComplete` callback if defined.                                     | AutoComplete               |
-| Alt+.                  | Hide/show the prompt (eases copy-paste from terminal).                          | HideShowPrompt             |
-| Ctrl+L                 | Clear the screen and re-display the current input.                              | Refresh                    |
-| Ctrl+G                 | Abort the search if currently searching; no-op otherwise.                       | AbortSearch                |
-| Ctrl+R                 | Start searching; or previous search match if already searching.                 | SearchBackward             |
-| Alt+P                  | Recall previous history entry.                                                  | HistoryPrevious            |
-| Alt+N                  | Recall next history entry.                                                      | HistoryNext                |
-| Ctrl+M, Enter          | Enter a new line; or terminate input if `CheckInputComplete` returns true.      | InsertNewline              |
-| Alt+Enter              | Always enter a newline.                                                         | AlwaysNewline              |
-| Ctrl+F, Right          | Move one character to the right.                                                | CharacterBackward          |
-| Ctrl+B, Left           | Move one character to the left.                                                 | CharacterForward           |
-| Alt+F, Alt+Right       | Move cursor to the previous word.                                               | WordForward                |
-| Alt+B, Alt+Left        | Move cursor to the next word.                                                   | WordBackward               |
-| Ctrl+A, Home           | Move cursor to beginning of line.                                               | LineNext                   |
-| Ctrl+E, End            | Move cursor to end of line.                                                     | LineEnd                    |
-| Ctrl+P, Up             | Move cursor one line up, or to previous history entry if already on first line. | LinePrevious               |
-| Ctrl+N, Down           | Move cursor one line down, or to next history entry if already on last line.    | LineStart                  |
-| Ctrl+T                 | Transpose the last two characters.                                              | TransposeCharacterBackward |
-| Alt+U                  | Make the next word uppercase.                                                   | UppercaseWordForward       |
-| Alt+L                  | Make the next word lowercase.                                                   | LowercaseWordForward       |
-| Alt+C                  | Capitalize the next word.                                                       | CapitalizeWordForward      |
-| Ctrl+K                 | Delete the line after the cursor.                                               | DeleteAfterCursor          |
-| Ctrl+U                 | Delete the line before the cursor.                                              | DeleteBeforeCursor         |
-| Ctrl+H, Backspace      | Delete the character before the cursor.                                         | DeleteCharacterBackward    |
-| Delete                 | Delete the character after the cursor.                                          | DeleteCharacterForward     |
-| Ctrl+W, Alt+Backspace  | Delete the word before the cursor.                                              | DeleteWordBackward         |
-| Alt+D, Alt+Delete      | Delete the word after the cursor.                                               | DeleteWordForward          |
-| Ctrl+\                 | Send SIGQUIT to process.                                                        | SignalQuit                 |
-| Ctrl+Z                 | Send SIGTSTOP to process (suspend).                                             | SignalTTYStop              |
-| (not bound by default) | Print debug information about the editor.                                       | Debug                      |
+| Default keys           | Description                                                                                  | Binding name               |
+|------------------------|----------------------------------------------------------------------------------------------|----------------------------|
+| Ctrl+D                 | Terminate the input if the cursor is at the beginning of a line; delete character otherwise. | EndOfInput                 |
+| Ctrl+C                 | Clear the input if non-empty, or interrupt input if already empty.                           | Interrupt                  |
+| Tab                    | Run the `AutoComplete` callback if defined.                                                  | AutoComplete               |
+| Alt+.                  | Hide/show the prompt (eases copy-paste from terminal).                                       | HideShowPrompt             |
+| Ctrl+L                 | Clear the screen and re-display the current input.                                           | Refresh                    |
+| Ctrl+G                 | Abort the search if currently searching; no-op otherwise.                                    | AbortSearch                |
+| Ctrl+R                 | Start searching; or previous search match if already searching.                              | SearchBackward             |
+| Alt+P                  | Recall previous history entry.                                                               | HistoryPrevious            |
+| Alt+N                  | Recall next history entry.                                                                   | HistoryNext                |
+| Ctrl+M, Enter          | Enter a new line; or terminate input if `CheckInputComplete` returns true.                   | InsertNewline              |
+| Alt+Enter              | Always enter a newline.                                                                      | AlwaysNewline              |
+| Ctrl+F, Right          | Move one character to the right.                                                             | CharacterBackward          |
+| Ctrl+B, Left           | Move one character to the left.                                                              | CharacterForward           |
+| Alt+F, Alt+Right       | Move cursor to the previous word.                                                            | WordForward                |
+| Alt+B, Alt+Left        | Move cursor to the next word.                                                                | WordBackward               |
+| Ctrl+A, Home           | Move cursor to beginning of line.                                                            | LineNext                   |
+| Ctrl+E, End            | Move cursor to end of line.                                                                  | LineEnd                    |
+| Ctrl+P, Up             | Move cursor one line up, or to previous history entry if already on first line.              | LinePrevious               |
+| Ctrl+N, Down           | Move cursor one line down, or to next history entry if already on last line.                 | LineStart                  |
+| Ctrl+T                 | Transpose the last two characters.                                                           | TransposeCharacterBackward |
+| Alt+U                  | Make the next word uppercase.                                                                | UppercaseWordForward       |
+| Alt+L                  | Make the next word lowercase.                                                                | LowercaseWordForward       |
+| Alt+C                  | Capitalize the next word.                                                                    | CapitalizeWordForward      |
+| Ctrl+K                 | Delete the line after the cursor.                                                            | DeleteAfterCursor          |
+| Ctrl+U                 | Delete the line before the cursor.                                                           | DeleteBeforeCursor         |
+| Ctrl+H, Backspace      | Delete the character before the cursor.                                                      | DeleteCharacterBackward    |
+| Delete                 | Delete the character after the cursor.                                                       | DeleteCharacterForward     |
+| Ctrl+W, Alt+Backspace  | Delete the word before the cursor.                                                           | DeleteWordBackward         |
+| Alt+D, Alt+Delete      | Delete the word after the cursor.                                                            | DeleteWordForward          |
+| Ctrl+\                 | Send SIGQUIT to process.                                                                     | SignalQuit                 |
+| Ctrl+Z                 | Send SIGTSTOP to process (suspend).                                                          | SignalTTYStop              |
+| (not bound by default) | Print debug information about the editor.                                                    | Debug                      |
 
 ## Example use
 
