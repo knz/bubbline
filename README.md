@@ -7,6 +7,24 @@ An input line editor for line-oriented terminal applications.
 
 Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 
+## Features of the line editor
+
+- Adds libedit/readline goodies to [bubbles](https://github.com/charmbracelet/bubbles)' original `textarea` widget:
+  - Resizes horizontally to terminal width.
+  - Resizes vertically automatically as the input grows.
+  - Supports history navigation and search.
+  - Uppercase/lowercase/capitalize next word, transpose characters.
+  - Word navigation across input lines.
+  - Enter key conditionally ends the input.
+  - Tab completion callback.
+  - Intelligent input interruption with Ctrl+C.
+  - Ctrl+Z (suspend process), Ctrl+\ (send SIGQUIT to process e.g. to get stack dump).
+
+- Additional features not in the original libedit or textarea:
+  - Hide/show the prompt to simplify copy-paste from terminal.
+  - Secondary prompt for multi-line input.
+  - Debug mode for troubleshooting.
+
 ## Customizable key bindings
 
 | Name                       | Default keys           | Description                                                                     |
