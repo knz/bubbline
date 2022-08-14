@@ -14,6 +14,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | EndOfInput                 | Ctrl+D                 | Terminate the input if the cursor is at the beginning of a line.                |
 | Interrupt                  | Ctrl+C                 | Clear the input if non-empty, or interrupt input if already empty.              |
 | AutoComplete               | Tab                    | Run the `AutoComplete` callback if defined.                                     |
+| HideShowPrompt             | Alt+.                  | Hide/show the prompt (eases copy-paste from terminal).                          |
 | Refresh                    | Ctrl+L                 | Clear the screen and re-display the current input.                              |
 | AbortSearch                | Ctrl+G                 | Abort the search if currently searching; no-op otherwise.                       |
 | SearchBackward             | Ctrl+R                 | Start searching; or previous search match if already searching.                 |

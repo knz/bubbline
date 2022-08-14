@@ -34,6 +34,7 @@ type KeyMap struct {
 	HistoryPrevious key.Binding
 	HistoryNext     key.Binding
 	Debug           key.Binding
+	HideShowPrompt  key.Binding
 }
 
 // DefaultKeyMap is the default set of key bindings.
@@ -49,6 +50,7 @@ var DefaultKeyMap = KeyMap{
 	SearchBackward:  key.NewBinding(key.WithKeys("ctrl+r")),
 	HistoryPrevious: key.NewBinding(key.WithKeys("alt+p")),
 	HistoryNext:     key.NewBinding(key.WithKeys("alt+n")),
+	HideShowPrompt:  key.NewBinding(key.WithKeys("alt+.")),
 }
 
 // Model represents a widget that supports multi-line entry with
@@ -127,8 +129,10 @@ type Model struct {
 			prevCursor int
 		}
 	}
+	hidePrompt bool
 
 	text      textarea.Model
+	maxWidth  int
 	maxHeight int
 
 	// Debugging data.
@@ -353,7 +357,8 @@ func (m *Model) Debug() string {
 	var buf strings.Builder
 	fmt.Fprintf(&buf, "lastEvent: %v\n", m.lastEvent)
 	fmt.Fprintf(&buf, "history: %q\n", m.history)
-	fmt.Fprintf(&buf, "maxHeight: %d\n", m.maxHeight)
+	fmt.Fprintf(&buf, "maxHeight: %d, maxWidth: %d\n", m.maxHeight, m.maxWidth)
+	fmt.Fprintf(&buf, "hidePrompt: %v\n", m.hidePrompt)
 	fmt.Fprintf(&buf, "hctrl.c: %+v\n", m.hctrl.c)
 	fmt.Fprintf(&buf, "htctrl.pattern: %q\n", m.hctrl.pattern.Value())
 	return buf.String()
@@ -370,6 +375,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := imsg.(type) {
 	case tea.WindowSizeMsg:
 		m.text.SetWidth(msg.Width - 1)
+		m.maxWidth = msg.Width
 		m.maxHeight = msg.Height
 		cmd = tea.Batch(cmd, m.updateTextSz())
 
@@ -377,6 +383,21 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 		switch {
 		case key.Matches(msg, m.KeyMap.Debug):
 			m.debugMode = !m.debugMode
+
+		case key.Matches(msg, m.KeyMap.HideShowPrompt):
+			m.hidePrompt = !m.hidePrompt
+			if m.hidePrompt {
+				m.text.Prompt = ""
+				m.text.NextPrompt = ""
+			} else {
+				m.text.Prompt = m.Prompt
+				m.text.NextPrompt = m.NextPrompt
+			}
+			// Recompute the width.
+			m.text.SetWidth(m.maxWidth)
+			m.text.SetCursor(0)
+			cmd = tea.Batch(cmd, m.updateTextSz())
+			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.AutoComplete):
 			if m.AutoComplete == nil {
@@ -537,6 +558,8 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 // The history is preserved.
 func (m *Model) Reset() {
 	m.Err = nil
+	m.hidePrompt = false
+	m.debugMode = false
 	m.hctrl.c.valueSaved = false
 	m.hctrl.c.prevValue = ""
 	m.hctrl.c.prevCursor = 0
