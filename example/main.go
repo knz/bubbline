@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -12,6 +14,8 @@ import (
 	"github.com/knz/bubbline/editline"
 	"github.com/knz/bubbline/history"
 )
+
+var lore = regexp.MustCompile(`lo(\d+)$`)
 
 func main() {
 	fmt.Println(`hello!
@@ -36,13 +40,17 @@ Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
 		word := string(v[line][p:col])
 		msg = fmt.Sprintf("autocomplete: ...%s", word)
 		complete := ""
-		if word == "lorem" {
-			complete = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		const loremIpsum = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
+		if word == "lorem" {
+			complete = loremIpsum
 		} else if word == "hello" {
 			complete = " world"
 		} else if strings.ToLower(word) == "all h" {
 			complete = "uman beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood."
+		} else if m := lore.FindStringSubmatch(word); m != nil {
+			n, _ := strconv.Atoi(m[1])
+			complete = loremIpsum[:n]
 		} else {
 			msg += "\ntip: try completing after 'lorem'"
 		}
