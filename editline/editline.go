@@ -13,6 +13,8 @@ import (
 	"github.com/muesli/termenv"
 )
 
+// ErrInterrupted is returned when the input is terminated
+// with Ctrl+C.
 var ErrInterrupted = errors.New("interrupted")
 
 // Model represents a widget that supports multi-line entry with
