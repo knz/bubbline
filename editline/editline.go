@@ -372,6 +372,13 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				m.acceptSearch()
 			}
 
+		case tea.KeyCtrlP:
+			if m.hctrl.searching {
+				m.acceptSearch()
+			}
+			m.historyUp()
+			imsg = nil // consume message
+
 		case tea.KeyUp:
 			if m.hctrl.searching {
 				m.acceptSearch()
@@ -380,6 +387,13 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				m.historyUp()
 				imsg = nil // consume message
 			}
+
+		case tea.KeyCtrlN:
+			if m.hctrl.searching {
+				m.acceptSearch()
+			}
+			m.historyDown()
+			imsg = nil // consume message
 
 		case tea.KeyDown:
 			if m.hctrl.searching {
