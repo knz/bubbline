@@ -785,6 +785,15 @@ func (m *Model) SetHeight(h int) {
 	m.viewport.Height = clamp(h, minHeight, maxHeight)
 }
 
+// InsertNewline inserts a newline character at the cursor.
+func (m *Model) InsertNewline() {
+	if len(m.value) >= maxHeight {
+		return
+	}
+	m.col = clamp(m.col, 0, len(m.value[m.row]))
+	m.splitLine(m.row, m.col)
+}
+
 // Update is the Bubble Tea update loop.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focus {
@@ -852,11 +861,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 			m.deleteWordRight()
 		case key.Matches(msg, m.KeyMap.InsertNewline):
-			if len(m.value) >= maxHeight {
-				return m, nil
-			}
-			m.col = clamp(m.col, 0, len(m.value[m.row]))
-			m.splitLine(m.row, m.col)
+			m.InsertNewline()
 		case key.Matches(msg, m.KeyMap.LineEnd):
 			m.CursorEnd()
 		case key.Matches(msg, m.KeyMap.LineStart):

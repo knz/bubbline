@@ -35,11 +35,13 @@ type KeyMap struct {
 	HistoryNext     key.Binding
 	Debug           key.Binding
 	HideShowPrompt  key.Binding
+	AlwaysNewline   key.Binding
 }
 
 // DefaultKeyMap is the default set of key bindings.
 var DefaultKeyMap = KeyMap{
 	KeyMap:          textarea.DefaultKeyMap,
+	AlwaysNewline:   key.NewBinding(key.WithKeys("alt+enter", "alt+\r")),
 	AutoComplete:    key.NewBinding(key.WithKeys("tab")),
 	Interrupt:       key.NewBinding(key.WithKeys("ctrl+c")),
 	SignalQuit:      key.NewBinding(key.WithKeys(`ctrl+\`)),
@@ -355,7 +357,7 @@ func (d doProgram) SetStderr(io.Writer) {}
 // Debug returns debug details about the state of the model.
 func (m *Model) Debug() string {
 	var buf strings.Builder
-	fmt.Fprintf(&buf, "lastEvent: %v\n", m.lastEvent)
+	fmt.Fprintf(&buf, "lastEvent: %+v\n", m.lastEvent)
 	fmt.Fprintf(&buf, "history: %q\n", m.history)
 	fmt.Fprintf(&buf, "maxHeight: %d, maxWidth: %d\n", m.maxHeight, m.maxWidth)
 	fmt.Fprintf(&buf, "hidePrompt: %v\n", m.hidePrompt)
@@ -371,7 +373,6 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	stop := false
 
 	m.lastEvent = imsg
-
 	switch msg := imsg.(type) {
 	case tea.WindowSizeMsg:
 		m.text.SetWidth(msg.Width - 1)
@@ -490,6 +491,14 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.text.SetValue("")
 			}
+
+		case key.Matches(msg, m.KeyMap.AlwaysNewline):
+			if m.currentlySearching() {
+				// Stop the completion first.
+				m.acceptSearch()
+			}
+			m.text.InsertNewline()
+			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.InsertNewline):
 			if m.currentlySearching() {

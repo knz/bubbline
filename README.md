@@ -45,6 +45,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | HistoryPrevious            | Alt+P                  | Recall previous history entry.                                                  |
 | HistoryNext                | Alt+N                  | Recall next history entry.                                                      |
 | InsertNewline              | Enter, Ctrl+M          | Enter a new line; or terminate input if `CheckInputComplete` returns true.      |
+| AlwaysNewline              | Alt+Enter              | Always enter a newline.                                                         |
 | CharacterBackward          | Right, Ctrl+F          | Move one character to the right.                                                |
 | CharacterForward           | Left, Ctrl+B           | Move one character to the left.                                                 |
 | WordForward                | Alt+Right, Alt+F       | Move cursor to the previous word.                                               |
