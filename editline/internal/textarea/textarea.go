@@ -214,7 +214,7 @@ func New() Model {
 		Cursor:               cur,
 		KeyMap:               DefaultKeyMap,
 
-		value:            make([][]rune, minHeight, maxWidth),
+		value:            make([][]rune, minHeight, maxHeight),
 		focus:            false,
 		col:              0,
 		row:              0,
@@ -294,13 +294,13 @@ func (m Model) Value() string {
 		return ""
 	}
 
-	var v string
+	var v strings.Builder
 	for _, l := range m.value {
-		v += string(l)
-		v += "\n"
+		v.WriteString(string(l))
+		v.WriteByte('\n')
 	}
 
-	return strings.TrimSuffix(v, "\n")
+	return strings.TrimSuffix(v.String(), "\n")
 }
 
 // Length returns the number of characters currently in the text input.
@@ -432,7 +432,7 @@ func (m *Model) Blur() {
 
 // Reset sets the input to its default state with no input.
 func (m *Model) Reset() {
-	m.value = make([][]rune, minHeight, maxWidth)
+	m.value = make([][]rune, minHeight, maxHeight)
 	m.col = 0
 	m.row = 0
 	m.viewport.GotoTop()
