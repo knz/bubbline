@@ -7,6 +7,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knz/bubbline/editline/internal/textarea"
@@ -17,12 +18,46 @@ import (
 // with Ctrl+C.
 var ErrInterrupted = errors.New("interrupted")
 
+// KeyMap is the key bindings for actions within the editor.
+type KeyMap struct {
+	textarea.KeyMap
+
+	EndOfInput      key.Binding
+	Interrupt       key.Binding
+	AutoComplete    key.Binding
+	SignalQuit      key.Binding
+	SignalTTYStop   key.Binding
+	Refresh         key.Binding
+	AbortSearch     key.Binding
+	SearchBackward  key.Binding
+	HistoryPrevious key.Binding
+	HistoryNext     key.Binding
+}
+
+// DefaultKeyMap is the default set of key bindings.
+var DefaultKeyMap = KeyMap{
+	KeyMap:          textarea.DefaultKeyMap,
+	AutoComplete:    key.NewBinding(key.WithKeys("tab")),
+	Interrupt:       key.NewBinding(key.WithKeys("ctrl+c")),
+	SignalQuit:      key.NewBinding(key.WithKeys(`ctrl+\`)),
+	SignalTTYStop:   key.NewBinding(key.WithKeys("ctrl+z")),
+	Refresh:         key.NewBinding(key.WithKeys("ctrl+l")),
+	EndOfInput:      key.NewBinding(key.WithKeys("ctrl+d")),
+	AbortSearch:     key.NewBinding(key.WithKeys("ctrl+g")),
+	SearchBackward:  key.NewBinding(key.WithKeys("ctrl+r")),
+	HistoryPrevious: key.NewBinding(key.WithKeys("alt+p")),
+	HistoryNext:     key.NewBinding(key.WithKeys("alt+n")),
+}
+
 // Model represents a widget that supports multi-line entry with
 // auto-growing of the text height.
 type Model struct {
 	// Err is the final state at the end of input.
 	// Likely io.EOF or ErrInterrupted.
 	Err error
+
+	// KeyMap is the key bindings to use.
+	KeyMap KeyMap
 
 	// CheckInputComplete is called when the Enter key is pressed.  It
 	// determines whether a newline character should be added to the
@@ -96,6 +131,7 @@ func New() *Model {
 	m := Model{
 		text:                 textarea.New(),
 		Err:                  nil,
+		KeyMap:               DefaultKeyMap,
 		MaxHistorySize:       0, // no limit
 		DedupHistory:         true,
 		Prompt:               "> ",
@@ -315,23 +351,25 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 		cmd = m.updateTextSz()
 
 	case tea.KeyMsg:
-		switch msg.Type {
+		switch {
 
-		case tea.KeyTab:
+		case key.Matches(msg, m.KeyMap.AutoComplete):
+			if m.AutoComplete == nil {
+				// Pass-through to the editor.
+				break
+			}
 			if m.currentlySearching() {
 				m.acceptSearch()
 			}
-			if m.AutoComplete != nil {
-				msgs, extra := m.AutoComplete(m.text.Value(), m.text.CursorPos())
-				m.text.InsertString(extra)
-				cmd = m.updateTextSz()
-				if msgs != "" {
-					cmd = tea.Batch(cmd, tea.Println(msgs))
-				}
-				imsg = nil // consume message.
+			msgs, extra := m.AutoComplete(m.text.Value(), m.text.CursorPos())
+			if msgs != "" {
+				cmd = tea.Batch(cmd, tea.Println(msgs))
 			}
+			m.text.InsertString(extra)
+			cmd = tea.Batch(cmd, m.updateTextSz())
+			imsg = nil // consume message.
 
-		case tea.KeyCtrlBackslash:
+		case key.Matches(msg, m.KeyMap.SignalQuit):
 			return m, tea.Exec(doProgram(func() {
 				pr, err := os.FindProcess(os.Getpid())
 				if err != nil {
@@ -341,7 +379,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				pr.Signal(syscall.SIGQUIT)
 			}), nil)
 
-		case tea.KeyCtrlZ:
+		case key.Matches(msg, m.KeyMap.SignalTTYStop):
 			return m, tea.Exec(doProgram(func() {
 				pr, err := os.FindProcess(os.Getpid())
 				if err != nil {
@@ -351,26 +389,26 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				pr.Signal(syscall.SIGTSTP)
 			}), nil)
 
-		case tea.KeyCtrlL:
+		case key.Matches(msg, m.KeyMap.Refresh):
 			return m, tea.Exec(doProgram(termenv.ClearScreen), nil)
 
-		case tea.KeyCtrlD:
+		case key.Matches(msg, m.KeyMap.EndOfInput):
 			if m.text.AtBeginningOfLine() {
 				if m.currentlySearching() {
-					cmd = m.cancelHistorySearch()
+					cmd = tea.Batch(cmd, m.cancelHistorySearch())
 				}
 				m.Err = io.EOF
 				stop = true
-				imsg = nil // consume message
 			}
+			imsg = nil // consume message
 
-		case tea.KeyCtrlG:
+		case key.Matches(msg, m.KeyMap.AbortSearch):
 			if m.currentlySearching() {
-				cmd = m.cancelHistorySearch()
+				cmd = tea.Batch(cmd, m.cancelHistorySearch())
 				imsg = nil // consume message
 			}
 
-		case tea.KeyCtrlR:
+		case key.Matches(msg, m.KeyMap.SearchBackward):
 			if m.currentlySearching() {
 				m.incrementalSearch(true /* nextMatch */)
 			} else {
@@ -379,44 +417,21 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			imsg = nil // consume message
 
-		case tea.KeyLeft, tea.KeyRight:
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
-
-		case tea.KeyCtrlP:
+		case key.Matches(msg, m.KeyMap.HistoryPrevious):
 			if m.currentlySearching() {
 				m.acceptSearch()
 			}
 			m.historyUp()
 			imsg = nil // consume message
 
-		case tea.KeyUp:
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
-			if m.text.AtFirstLineOfInputAndView() {
-				m.historyUp()
-				imsg = nil // consume message
-			}
-
-		case tea.KeyCtrlN:
+		case key.Matches(msg, m.KeyMap.HistoryNext):
 			if m.currentlySearching() {
 				m.acceptSearch()
 			}
 			m.historyDown()
 			imsg = nil // consume message
 
-		case tea.KeyDown:
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
-			if m.text.AtLastLineOfInputAndView() {
-				m.historyDown()
-				imsg = nil // consume message
-			}
-
-		case tea.KeyCtrlC:
+		case key.Matches(msg, m.KeyMap.Interrupt):
 			imsg = nil // consume message
 			if m.text.EmptyValue() {
 				m.Err = ErrInterrupted
@@ -425,12 +440,12 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			if m.currentlySearching() {
 				// Stop the completion. Do nothing further.
-				cmd = m.cancelHistorySearch()
+				cmd = tea.Batch(cmd, m.cancelHistorySearch())
 			} else {
 				m.text.SetValue("")
 			}
 
-		case tea.KeyEnter:
+		case key.Matches(msg, m.KeyMap.InsertNewline):
 			if m.currentlySearching() {
 				// Stop the completion first.
 				m.acceptSearch()
@@ -438,9 +453,36 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.CheckInputComplete == nil ||
 				m.CheckInputComplete(m.text.Value(), m.text.Line()) {
 				stop = true
-				// Fallthrough: we want the enter key to be processed
-				// so that there's a final empty line in the display.
+				// Fallthrough: we want the enter key to be processed by the
+				// textarea so that there's a final empty line in the display.
 			}
+
+		case key.Matches(msg, m.KeyMap.LinePrevious):
+			if m.currentlySearching() {
+				m.acceptSearch()
+			}
+			if m.text.AtFirstLineOfInputAndView() {
+				m.historyUp()
+				imsg = nil // consume message
+			}
+
+		case key.Matches(msg, m.KeyMap.LineNext):
+			if m.currentlySearching() {
+				m.acceptSearch()
+			}
+			if m.text.AtLastLineOfInputAndView() {
+				m.historyDown()
+				imsg = nil // consume message
+			}
+
+		case key.Matches(msg, m.KeyMap.CharacterForward) ||
+			key.Matches(msg, m.KeyMap.CharacterBackward) ||
+			key.Matches(msg, m.KeyMap.WordForward) ||
+			key.Matches(msg, m.KeyMap.WordBackward):
+			if m.currentlySearching() {
+				m.acceptSearch()
+			}
+
 		}
 	}
 
