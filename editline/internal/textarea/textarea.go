@@ -279,7 +279,7 @@ func (m *Model) InsertString(s string) {
 
 // InsertRune inserts a rune at the cursor position.
 func (m *Model) InsertRune(r rune) {
-	if r == '\n' {
+	if r == '\n' || r == '\r' {
 		m.splitLine(m.row, m.col)
 		return
 	}
@@ -893,13 +893,12 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case key.Matches(msg, m.KeyMap.WordBackward):
 			m.wordLeft()
 		default:
-			if m.CharLimit > 0 && rw.StringWidth(m.Value()) >= m.CharLimit {
+			if m.CharLimit > 0 && rw.StringWidth(m.Value())+len(msg.Runes) >= m.CharLimit {
 				break
 			}
-
-			m.col = min(m.col, len(m.value[m.row]))
-			m.value[m.row] = append(m.value[m.row][:m.col], append(msg.Runes, m.value[m.row][m.col:]...)...)
-			m.SetCursor(m.col + len(msg.Runes))
+			for _, r := range msg.Runes {
+				m.InsertRune(r)
+			}
 		}
 
 	case pasteMsg:
