@@ -1,5 +1,10 @@
 package textarea
 
+import (
+	"fmt"
+	"strings"
+)
+
 // EmptyValue returns true iff the value is empty.
 func (m *Model) EmptyValue() bool {
 	return len(m.value) == 0 || (len(m.value) == 1 && len(m.value[0]) == 0)
@@ -56,4 +61,17 @@ func (m Model) LogicalHeight() int {
 		logicalHeight += li.Height
 	}
 	return logicalHeight
+}
+
+// Debug returns debug details about the state of the model.
+func (m Model) Debug() string {
+	var buf strings.Builder
+	fmt.Fprintf(&buf, "focus: %v\n", m.focus)
+	fmt.Fprintf(&buf, "width: %d, height: %d\n", m.width, m.height)
+	fmt.Fprintf(&buf, "col: %d, row: %d\n", m.col, m.row)
+	fmt.Fprintf(&buf, "lastCharOffset: %d\n", m.lastCharOffset)
+	for l, line := range m.value {
+		fmt.Fprintf(&buf, "line %d: %v (%q)\n", l, line, string(line))
+	}
+	return buf.String()
 }

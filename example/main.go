@@ -7,6 +7,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knz/bubbline/editline"
 	"github.com/knz/bubbline/history"
@@ -24,6 +25,7 @@ Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
 	}
 	m := editline.New()
 
+	m.KeyMap.Debug = key.NewBinding(key.WithKeys("ctrl+@"))
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
 	m.AutoComplete = func(v [][]rune, line, col int) (msg, extraInput string) {

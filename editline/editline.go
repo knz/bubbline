@@ -2,6 +2,7 @@ package editline
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -32,6 +33,7 @@ type KeyMap struct {
 	SearchBackward  key.Binding
 	HistoryPrevious key.Binding
 	HistoryNext     key.Binding
+	Debug           key.Binding
 }
 
 // DefaultKeyMap is the default set of key bindings.
@@ -124,6 +126,10 @@ type Model struct {
 
 	text      textarea.Model
 	maxHeight int
+
+	// Debugging data.
+	debugMode bool
+	lastEvent tea.Msg
 }
 
 // New creates a new Model.
@@ -338,20 +344,35 @@ func (d doProgram) SetStdout(io.Writer) {}
 // SetStderr is part of the tea.ExecCommand interface.
 func (d doProgram) SetStderr(io.Writer) {}
 
+// Debug returns debug details about the state of the model.
+func (m *Model) Debug() string {
+	var buf strings.Builder
+	fmt.Fprintf(&buf, "lastEvent: %v\n", m.lastEvent)
+	fmt.Fprintf(&buf, "history: %q\n", m.history)
+	fmt.Fprintf(&buf, "maxHeight: %d\n", m.maxHeight)
+	fmt.Fprintf(&buf, "hctrl.c: %+v\n", m.hctrl.c)
+	fmt.Fprintf(&buf, "htctrl.pattern: %q\n", m.hctrl.pattern.Value())
+	return buf.String()
+}
+
 // Update is the Bubble Tea event handler.
 // This is part of the tea.Model interface.
 func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	stop := false
 
+	m.lastEvent = imsg
+
 	switch msg := imsg.(type) {
 	case tea.WindowSizeMsg:
 		m.text.SetWidth(msg.Width - 1)
 		m.maxHeight = msg.Height
-		cmd = m.updateTextSz()
+		cmd = tea.Batch(cmd, m.updateTextSz())
 
 	case tea.KeyMsg:
 		switch {
+		case key.Matches(msg, m.KeyMap.Debug):
+			m.debugMode = !m.debugMode
 
 		case key.Matches(msg, m.KeyMap.AutoComplete):
 			if m.AutoComplete == nil {
@@ -527,11 +548,17 @@ func (m *Model) Reset() {
 // View renders the text area in its current state.
 // This is part of the tea.Model interface.
 func (m Model) View() string {
-	view := m.text.View()
-	if m.currentlySearching() {
-		view += "\n" + m.hctrl.pattern.View()
+	var buf strings.Builder
+	if m.debugMode {
+		fmt.Fprintf(&buf, "editline:\n%s\ntextarea:\n%s\n", m.Debug(), m.text.Debug())
 	}
-	return view
+
+	buf.WriteString(m.text.View())
+	if m.currentlySearching() {
+		buf.WriteByte('\n')
+		buf.WriteString(m.hctrl.pattern.View())
+	}
+	return buf.String()
 }
 
 func clamp(v, low, high int) int {
