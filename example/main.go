@@ -26,19 +26,20 @@ Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
 
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
-	m.AutoComplete = func(v string, cursor int) (msg, extraInput string) {
-		p := cursor - 5
+	m.AutoComplete = func(v [][]rune, line, col int) (msg, extraInput string) {
+		p := col - 5
 		if p < 0 {
 			p = 0
 		}
-		msg = fmt.Sprintf("autocomplete: ...%s", v[p:cursor])
+		word := string(v[line][p:col])
+		msg = fmt.Sprintf("autocomplete: ...%s", word)
 		complete := ""
-		if v[p:cursor] == "lorem" {
+		if word == "lorem" {
 			complete = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
-		} else if v[p:cursor] == "hello" {
+		} else if word == "hello" {
 			complete = " world"
-		} else if strings.ToLower(v[p:cursor]) == "all h" {
+		} else if strings.ToLower(word) == "all h" {
 			complete = "uman beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood."
 		} else {
 			msg += "\ntip: try completing after 'lorem'"
@@ -46,10 +47,9 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 		return msg, complete
 	}
 
-	m.CheckInputComplete = func(v string, row int) bool {
-		vs := strings.Split(v, "\n")
-		if row == len(vs)-1 && // Enter on last row.
-			strings.HasSuffix(vs[len(vs)-1], ";") { // Semicolon on last row.
+	m.CheckInputComplete = func(v [][]rune, line, col int) bool {
+		if line == len(v)-1 && // Enter on last row.
+			strings.HasSuffix(string(v[len(v)-1]), ";") { // Semicolon at end of last row.
 			return true
 		}
 		return false

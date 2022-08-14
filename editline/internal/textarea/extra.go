@@ -15,6 +15,11 @@ func (m *Model) CursorPos() int {
 	return m.col
 }
 
+// ValueRunes retrieves the current value decomposed as runes.
+func (m *Model) ValueRunes() [][]rune {
+	return m.value
+}
+
 // AtBeginningOfLine returns true if the cursor is at the beginning of
 // a line.
 func (m *Model) AtBeginningOfLine() bool {

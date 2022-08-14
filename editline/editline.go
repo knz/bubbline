@@ -68,14 +68,14 @@ type Model struct {
 	//
 	// The default behavior if CheckInputComplete is nil is to terminate
 	// the input when enter is pressed.
-	CheckInputComplete func(entireInput string, cursorRow int) bool
+	CheckInputComplete func(entireInput [][]rune, line, col int) bool
 
 	// AutoComplete if set is called upon the user pressing the
 	// autocomplete key. The callback is provided the text of the input
 	// and the position of the cursor in the input. The returned
 	// extraInput value is added at the cursor position. The returned
 	// msg is printed above the input box.
-	AutoComplete func(entireInput string, cursor int) (msg, extraInput string)
+	AutoComplete func(entireInput [][]rune, line, col int) (msg, extraInput string)
 
 	// MaxHistorySize is the maximum number of entries in the history.
 	// Set to zero for no limit.
@@ -361,7 +361,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.currentlySearching() {
 				m.acceptSearch()
 			}
-			msgs, extra := m.AutoComplete(m.text.Value(), m.text.CursorPos())
+			msgs, extra := m.AutoComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos())
 			if msgs != "" {
 				cmd = tea.Batch(cmd, tea.Println(msgs))
 			}
@@ -451,7 +451,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				m.acceptSearch()
 			}
 			if m.CheckInputComplete == nil ||
-				m.CheckInputComplete(m.text.Value(), m.text.Line()) {
+				m.CheckInputComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos()) {
 				stop = true
 				// Fallthrough: we want the enter key to be processed by the
 				// textarea so that there's a final empty line in the display.
