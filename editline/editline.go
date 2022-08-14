@@ -74,15 +74,17 @@ type Model struct {
 
 	history []string
 	hctrl   struct {
-		// searching is true when we're currently searching.
-		searching   bool
-		pattern     textinput.Model
-		prevPattern string
-		cursor      int
-		// value prior to the search starting.
-		valueSaved bool
-		prevValue  string
-		prevCursor int
+		pattern textinput.Model
+		c       struct {
+			// searching is true when we're currently searching.
+			searching   bool
+			prevPattern string
+			cursor      int
+			// value prior to the search starting.
+			valueSaved bool
+			prevValue  string
+			prevCursor int
+		}
 	}
 
 	text      textarea.Model
@@ -155,22 +157,26 @@ func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
+func (m *Model) currentlySearching() bool {
+	return m.hctrl.c.searching
+}
+
 func (m *Model) historyStartSearch() {
-	m.hctrl.searching = true
+	m.hctrl.c.searching = true
+	m.hctrl.c.prevPattern = ""
 	m.hctrl.pattern.Prompt = m.SearchPrompt
 	m.hctrl.pattern.Reset()
 	m.hctrl.pattern.Focus()
-	m.hctrl.prevPattern = ""
 	m.saveValue()
 	m.resetNavCursor()
 }
 
 func (m *Model) resetNavCursor() {
-	m.hctrl.cursor = len(m.history)
+	m.hctrl.c.cursor = len(m.history)
 }
 
 func (m *Model) cancelHistorySearch() (cmd tea.Cmd) {
-	m.hctrl.searching = false
+	m.hctrl.c.searching = false
 	m.hctrl.pattern.Blur()
 	cmd = m.restoreValue()
 	m.text.Focus()
@@ -178,28 +184,26 @@ func (m *Model) cancelHistorySearch() (cmd tea.Cmd) {
 }
 
 func (m *Model) restoreValue() (cmd tea.Cmd) {
-	cmd = m.updateValue(m.hctrl.prevValue, m.hctrl.prevCursor)
-	m.hctrl.valueSaved = false
-	m.hctrl.prevValue = ""
-	m.hctrl.prevCursor = 0
+	cmd = m.updateValue(m.hctrl.c.prevValue, m.hctrl.c.prevCursor)
+	m.hctrl.c.valueSaved = false
+	m.hctrl.c.prevValue = ""
+	m.hctrl.c.prevCursor = 0
 	m.resetNavCursor()
 	return cmd
 }
 
 func (m *Model) acceptSearch() {
-	m.hctrl.searching = false
+	m.hctrl.c.searching = false
+	m.hctrl.c.valueSaved = false
+	m.hctrl.c.prevValue = ""
+	m.hctrl.c.prevCursor = 0
 	m.hctrl.pattern.Blur()
-	m.hctrl.valueSaved = false
-	m.hctrl.prevValue = ""
-	m.hctrl.prevCursor = 0
-	// entry := m.history[m.hctrl.cursor]
-	// m.updateValue(entry, len(entry))
 	m.text.Focus()
 }
 
 func (m *Model) incrementalSearch(nextMatch bool) (cmd tea.Cmd) {
 	pat := m.hctrl.pattern.Value()
-	if pat == m.hctrl.prevPattern {
+	if pat == m.hctrl.c.prevPattern {
 		if !nextMatch {
 			// Nothing changed, and no request for incremental search: do nothing.
 			return
@@ -208,10 +212,10 @@ func (m *Model) incrementalSearch(nextMatch bool) (cmd tea.Cmd) {
 	} else {
 		// Pattern changed, start again.
 		m.resetNavCursor()
-		m.hctrl.prevPattern = pat
+		m.hctrl.c.prevPattern = pat
 	}
 
-	i := m.hctrl.cursor - 1
+	i := m.hctrl.c.cursor - 1
 	for ; i >= 0; i-- {
 		entry := m.history[i]
 		for j := len(entry) - len(pat); j >= 0; j-- {
@@ -219,7 +223,7 @@ func (m *Model) incrementalSearch(nextMatch bool) (cmd tea.Cmd) {
 			if strings.HasPrefix(entry[j:], pat) {
 				// It's a match!
 				m.hctrl.pattern.Prompt = m.SearchPrompt
-				m.hctrl.cursor = i
+				m.hctrl.c.cursor = i
 				return m.updateValue(entry, j)
 			}
 		}
@@ -252,32 +256,32 @@ func (m *Model) updateTextSz() (cmd tea.Cmd) {
 }
 
 func (m *Model) saveValue() {
-	m.hctrl.valueSaved = true
-	m.hctrl.prevValue = m.text.Value()
-	m.hctrl.prevCursor = m.text.CursorPos()
+	m.hctrl.c.valueSaved = true
+	m.hctrl.c.prevValue = m.text.Value()
+	m.hctrl.c.prevCursor = m.text.CursorPos()
 }
 
 func (m *Model) historyUp() (cmd tea.Cmd) {
-	if !m.hctrl.valueSaved {
+	if !m.hctrl.c.valueSaved {
 		m.saveValue()
 	}
-	if m.hctrl.cursor == 0 {
+	if m.hctrl.c.cursor == 0 {
 		return cmd
 	}
-	m.hctrl.cursor--
-	entry := m.history[m.hctrl.cursor]
+	m.hctrl.c.cursor--
+	entry := m.history[m.hctrl.c.cursor]
 	return tea.Batch(cmd, m.updateValue(entry, len(entry)))
 }
 
 func (m *Model) historyDown() (cmd tea.Cmd) {
-	if !m.hctrl.valueSaved {
+	if !m.hctrl.c.valueSaved {
 		m.saveValue()
 	}
-	m.hctrl.cursor++
-	if m.hctrl.cursor >= len(m.history) {
+	m.hctrl.c.cursor++
+	if m.hctrl.c.cursor >= len(m.history) {
 		return m.restoreValue()
 	}
-	entry := m.history[m.hctrl.cursor]
+	entry := m.history[m.hctrl.c.cursor]
 	return tea.Batch(cmd, m.updateValue(entry, len(entry)))
 }
 
@@ -314,7 +318,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.Type {
 
 		case tea.KeyTab:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				m.acceptSearch()
 			}
 			if m.AutoComplete != nil {
@@ -352,7 +356,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case tea.KeyCtrlD:
 			if m.text.AtBeginningOfLine() {
-				if m.hctrl.searching {
+				if m.currentlySearching() {
 					cmd = m.cancelHistorySearch()
 				}
 				m.Err = io.EOF
@@ -361,13 +365,13 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case tea.KeyCtrlG:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				cmd = m.cancelHistorySearch()
 				imsg = nil // consume message
 			}
 
 		case tea.KeyCtrlR:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				m.incrementalSearch(true /* nextMatch */)
 			} else {
 				// Start completion.
@@ -376,19 +380,19 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			imsg = nil // consume message
 
 		case tea.KeyLeft, tea.KeyRight:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				m.acceptSearch()
 			}
 
 		case tea.KeyCtrlP:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				m.acceptSearch()
 			}
 			m.historyUp()
 			imsg = nil // consume message
 
 		case tea.KeyUp:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				m.acceptSearch()
 			}
 			if m.text.AtFirstLineOfInputAndView() {
@@ -397,14 +401,14 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case tea.KeyCtrlN:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				m.acceptSearch()
 			}
 			m.historyDown()
 			imsg = nil // consume message
 
 		case tea.KeyDown:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				m.acceptSearch()
 			}
 			if m.text.AtLastLineOfInputAndView() {
@@ -419,7 +423,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				stop = true
 				break
 			}
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				// Stop the completion. Do nothing further.
 				cmd = m.cancelHistorySearch()
 			} else {
@@ -427,7 +431,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case tea.KeyEnter:
-			if m.hctrl.searching {
+			if m.currentlySearching() {
 				// Stop the completion first.
 				m.acceptSearch()
 			}
@@ -440,7 +444,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	if m.hctrl.searching {
+	if m.currentlySearching() {
 		// Add text to the pattern. Also incremental search.
 		var newCmd tea.Cmd
 		m.hctrl.pattern, newCmd = m.hctrl.pattern.Update(imsg)
@@ -466,9 +470,9 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 // The history is preserved.
 func (m *Model) Reset() {
 	m.Err = nil
-	m.hctrl.valueSaved = false
-	m.hctrl.prevValue = ""
-	m.hctrl.prevCursor = 0
+	m.hctrl.c.valueSaved = false
+	m.hctrl.c.prevValue = ""
+	m.hctrl.c.prevCursor = 0
 	m.text.ShowLineNumbers = m.ShowLineNumbers
 	m.text.Prompt = m.Prompt
 	m.text.NextPrompt = m.NextPrompt
@@ -482,7 +486,7 @@ func (m *Model) Reset() {
 // This is part of the tea.Model interface.
 func (m Model) View() string {
 	view := m.text.View()
-	if m.hctrl.searching {
+	if m.currentlySearching() {
 		view += "\n" + m.hctrl.pattern.View()
 	}
 	return view
