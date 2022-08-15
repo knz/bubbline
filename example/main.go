@@ -29,7 +29,7 @@ Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
 	}
 	m := editline.New()
 
-	m.KeyMap.Debug = key.NewBinding(key.WithKeys("ctrl+@"))
+	m.KeyMap.Debug = key.NewBinding(key.WithKeys("ctrl+_"))
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
 	m.AutoComplete = func(v [][]rune, line, col int) (msg, extraInput string) {
@@ -38,7 +38,6 @@ Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
 			p = 0
 		}
 		word := string(v[line][p:col])
-		msg = fmt.Sprintf("autocomplete: ...%s", word)
 		complete := ""
 		const loremIpsum = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
@@ -52,7 +51,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 			n, _ := strconv.Atoi(m[1])
 			complete = loremIpsum[:n]
 		} else {
-			msg += "\ntip: try completing after 'lorem'"
+			msg = fmt.Sprintf("autocomplete: ...%s\ntip: try completing after 'lorem'", word)
 		}
 		return msg, complete
 	}
