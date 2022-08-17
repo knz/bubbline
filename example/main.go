@@ -30,6 +30,7 @@ Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
 	m := editline.New()
 
 	m.KeyMap.Debug = key.NewBinding(key.WithKeys("ctrl+_"))
+	m.Placeholder = "(your text here)"
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
 	m.AutoComplete = func(v [][]rune, line, col int) (msg, extraInput string) {

@@ -11,6 +11,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/knz/bubbline/editline/internal/textarea"
 	"github.com/muesli/termenv"
 )
@@ -18,6 +19,29 @@ import (
 // ErrInterrupted is returned when the input is terminated
 // with Ctrl+C.
 var ErrInterrupted = errors.New("interrupted")
+
+// Style that will be applied to the editor.
+type Style struct {
+	Editor textarea.Style
+
+	SearchInput struct {
+		PromptStyle      lipgloss.Style
+		TextStyle        lipgloss.Style
+		BackgroundStyle  lipgloss.Style
+		PlaceholderStyle lipgloss.Style
+		CursorStyle      lipgloss.Style
+	}
+}
+
+// DefaultStyles returns the default styles for focused and blurred states for
+// the textarea.
+func DefaultStyles() (Style, Style) {
+	ts1, ts2 := textarea.DefaultStyles()
+	fs := Style{Editor: ts1}
+	bs := Style{Editor: ts2}
+	fs.SearchInput.PlaceholderStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
+	return fs, bs
+}
 
 // KeyMap is the key bindings for actions within the editor.
 type KeyMap struct {
@@ -64,6 +88,16 @@ type Model struct {
 
 	// KeyMap is the key bindings to use.
 	KeyMap KeyMap
+
+	// Styling. FocusedStyle and BlurredStyle are used to style the textarea in
+	// focused and blurred states.
+	// Only takes effect at Reset() or Focus().
+	FocusedStyle Style
+	BlurredStyle Style
+
+	// Placeholder is displayed when the editor is still empty.
+	// Only takes effect at Reset() or Focus().
+	Placeholder string
 
 	// CheckInputComplete is called when the Enter key is pressed.  It
 	// determines whether a newline character should be added to the
@@ -123,7 +157,7 @@ type Model struct {
 
 	// ShowLineNumbers if true shows line numbers at the beginning
 	// of each input line.
-	// Only takes effect at Reset().
+	// Only takes effect at Reset() or Focus().
 	ShowLineNumbers bool
 
 	history []string
@@ -153,6 +187,7 @@ type Model struct {
 
 // New creates a new Model.
 func New() *Model {
+	focusedStyle, blurredStyle := DefaultStyles()
 	m := Model{
 		text:                 textarea.New(),
 		Err:                  nil,
@@ -160,6 +195,9 @@ func New() *Model {
 		MaxHistorySize:       0, // no limit
 		DedupHistory:         true,
 		DeleteCharIfNotEOF:   true,
+		FocusedStyle:         focusedStyle,
+		BlurredStyle:         blurredStyle,
+		Placeholder:          "",
 		Prompt:               "> ",
 		NextPrompt:           "",
 		SearchPrompt:         "bck:",
@@ -168,7 +206,7 @@ func New() *Model {
 	}
 	m.text.KeyMap.Paste.Unbind() // paste from clipboard not supported.
 	m.hctrl.pattern = textinput.New()
-	m.text.Placeholder = ""
+	m.hctrl.pattern.Placeholder = "enter search term, or ^G to cancel search"
 	m.Reset()
 	return &m
 }
@@ -212,6 +250,42 @@ func (m *Model) Value() string {
 		val = val[:len(val)-1]
 	}
 	return val
+}
+
+// Focus sets the focus state on the model. When the model is in focus
+// it can receive keyboard input and the cursor is displayed.
+func (m *Model) Focus() tea.Cmd {
+	m.text.KeyMap = m.KeyMap.KeyMap
+	m.text.Placeholder = m.Placeholder
+	m.text.ShowLineNumbers = m.ShowLineNumbers
+	m.text.Prompt = m.Prompt
+	m.text.NextPrompt = m.NextPrompt
+	m.text.FocusedStyle = m.FocusedStyle.Editor
+	m.text.BlurredStyle = m.BlurredStyle.Editor
+	m.hctrl.pattern.PromptStyle = m.FocusedStyle.SearchInput.PromptStyle
+	m.hctrl.pattern.TextStyle = m.FocusedStyle.SearchInput.TextStyle
+	m.hctrl.pattern.BackgroundStyle = m.FocusedStyle.SearchInput.BackgroundStyle
+	m.hctrl.pattern.PlaceholderStyle = m.FocusedStyle.SearchInput.PlaceholderStyle
+	m.hctrl.pattern.CursorStyle = m.FocusedStyle.SearchInput.CursorStyle
+
+	var cmd tea.Cmd
+	if m.hctrl.c.searching {
+		cmd = m.hctrl.pattern.Focus()
+	}
+	return tea.Batch(cmd, m.text.Focus())
+}
+
+// Blur removes the focus state on the model. When the model is
+// blurred it can not receive keyboard input and the cursor will be
+// hidden.
+func (m *Model) Blur() {
+	m.hctrl.pattern.Blur()
+	m.text.Blur()
+	m.hctrl.pattern.PromptStyle = m.BlurredStyle.SearchInput.PromptStyle
+	m.hctrl.pattern.TextStyle = m.BlurredStyle.SearchInput.TextStyle
+	m.hctrl.pattern.BackgroundStyle = m.BlurredStyle.SearchInput.BackgroundStyle
+	m.hctrl.pattern.PlaceholderStyle = m.BlurredStyle.SearchInput.PlaceholderStyle
+	m.hctrl.pattern.CursorStyle = m.BlurredStyle.SearchInput.CursorStyle
 }
 
 // Init is part of the tea.Model interface.
@@ -386,6 +460,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := imsg.(type) {
 	case tea.WindowSizeMsg:
 		m.text.SetWidth(msg.Width - 1)
+		m.hctrl.pattern.Width = msg.Width - 1
 		m.maxWidth = msg.Width
 		m.maxHeight = msg.Height
 		cmd = tea.Batch(cmd, m.updateTextSz())
@@ -586,13 +661,10 @@ func (m *Model) Reset() {
 	m.hctrl.c.prevValue = ""
 	m.hctrl.c.prevCursor = 0
 	m.text.CharLimit = m.CharLimit
-	m.text.ShowLineNumbers = m.ShowLineNumbers
-	m.text.Prompt = m.Prompt
-	m.text.NextPrompt = m.NextPrompt
 	// Width will be set by Update below on init.
 	m.text.SetHeight(1)
 	m.text.Reset()
-	m.text.Focus()
+	m.Focus()
 }
 
 // View renders the text area in its current state.
