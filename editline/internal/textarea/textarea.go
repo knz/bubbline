@@ -804,6 +804,29 @@ func (m *Model) DeleteCharacterForward() {
 	}
 }
 
+// DeleteCharactersBackward deletes n characters before the cursor.
+func (m *Model) DeleteCharactersBackward(n int) {
+	for n > 0 {
+		m.col = clamp(m.col, 0, len(m.value[m.row]))
+		if m.col <= 0 {
+			m.mergeLineAbove(m.row)
+			n--
+			continue
+		}
+		if len(m.value[m.row]) > 0 {
+			d := n
+			if d > len(m.value[m.row]) {
+				d = len(m.value[m.row])
+			}
+			m.value[m.row] = append(m.value[m.row][:max(0, m.col-d)], m.value[m.row][m.col:]...)
+			if m.col > 0 {
+				m.SetCursor(m.col - d)
+			}
+			n -= d
+		}
+	}
+}
+
 // Update is the Bubble Tea update loop.
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	if !m.focus {
@@ -838,17 +861,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 			m.deleteBeforeCursor()
 		case key.Matches(msg, m.KeyMap.DeleteCharacterBackward):
-			m.col = clamp(m.col, 0, len(m.value[m.row]))
-			if m.col <= 0 {
-				m.mergeLineAbove(m.row)
-				break
-			}
-			if len(m.value[m.row]) > 0 {
-				m.value[m.row] = append(m.value[m.row][:max(0, m.col-1)], m.value[m.row][m.col:]...)
-				if m.col > 0 {
-					m.SetCursor(m.col - 1)
-				}
-			}
+			m.DeleteCharactersBackward(1)
 		case key.Matches(msg, m.KeyMap.DeleteCharacterForward):
 			m.DeleteCharacterForward()
 		case key.Matches(msg, m.KeyMap.DeleteWordBackward):

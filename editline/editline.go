@@ -13,6 +13,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/knz/bubbline/editline/internal/textarea"
+	rw "github.com/mattn/go-runewidth"
 	"github.com/muesli/termenv"
 )
 
@@ -112,10 +113,15 @@ type Model struct {
 
 	// AutoComplete if set is called upon the user pressing the
 	// autocomplete key. The callback is provided the text of the input
-	// and the position of the cursor in the input. The returned
-	// extraInput value is added at the cursor position. The returned
-	// msg is printed above the input box.
-	AutoComplete func(entireInput [][]rune, line, col int) (msg, extraInput string)
+	// and the position of the cursor in the input.
+	// The returned msg is printed above the input box.
+	//
+	// If the consumedChars is non-zero, that number of characters
+	// is erased before the cursor.
+	// Then the first string in the returned extraInput value is added at the cursor position.
+	// If there is more than 1 entry in the returned extraInput, they are
+	// displayed above the input box too.
+	AutoComplete func(entireInput [][]rune, line, col int) (msg string, consumedChars int, extraInput []string)
 
 	// CharLimit is the maximum size of the input in characters.
 	// Set to zero or less for no limit.
@@ -421,6 +427,56 @@ func (m *Model) historyDown() (cmd tea.Cmd) {
 	return tea.Batch(cmd, m.updateValue(entry, len(entry)))
 }
 
+func (m *Model) autoComplete() (cmd tea.Cmd) {
+	msgs, consume, extra := m.AutoComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos())
+	if msgs != "" {
+		cmd = tea.Batch(cmd, tea.Println(msgs))
+	}
+	if len(extra) == 0 {
+		// No completions. do nothing.
+		return cmd
+	}
+
+	// If there's more than 1 completion, show the list at the top.
+	if len(extra) > 1 {
+		var buf strings.Builder
+		sp := ""
+		lw := 0
+		for _, e := range extra[1:] {
+			if e != "" {
+				ww := rw.StringWidth(e)
+				if lw+ww >= m.maxWidth {
+					sp = ""
+					lw = 0
+					buf.WriteByte('\n')
+				}
+				buf.WriteString(sp)
+				buf.WriteString(e)
+				sp = " "
+				lw += ww + 1
+			}
+		}
+		if buf.Len() > 0 {
+			cmd = tea.Batch(cmd, tea.Println(buf.String()))
+		}
+	}
+
+	// In any case, auto-complete the first item.
+	if consume > 0 {
+		m.text.DeleteCharactersBackward(consume)
+	}
+	m.text.InsertString(extra[0])
+
+	if len(extra) == 1 {
+		// If there was just 1 match, insert a space too.
+		m.text.InsertRune(' ')
+	}
+
+	// Finally, refresh the size.
+	cmd = tea.Batch(cmd, m.updateTextSz())
+	return cmd
+}
+
 type doProgram func()
 
 // Run is part of the tea.ExecCommand interface.
@@ -493,13 +549,8 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.currentlySearching() {
 				m.acceptSearch()
 			}
-			msgs, extra := m.AutoComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos())
-			if msgs != "" {
-				cmd = tea.Batch(cmd, tea.Println(msgs))
-			}
-			m.text.InsertString(extra)
-			cmd = tea.Batch(cmd, m.updateTextSz())
-			imsg = nil // consume message.
+			cmd = m.autoComplete()
+			imsg = 0 // consume message
 
 		case key.Matches(msg, m.KeyMap.SignalQuit):
 			return m, tea.Exec(doProgram(func() {
