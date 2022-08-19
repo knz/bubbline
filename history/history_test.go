@@ -15,11 +15,10 @@ func TestLoadHistory(t *testing.T) {
 		{"", nil, ""},
 		{"foo", nil, ""},
 		{"_HiStOrY_V2_\nfoo\nbar", []string{"foo", "bar"}, ""},
+		{"_HiStOrY_V2_\nfo\\?o\n\134b\\01ar\\", []string{"fo\\?o", "\\b\\01ar\\"}, ""},
 		{"_HiStOrY_V2_\nfoo\\040", []string{"foo "}, ""},
 		{"_HiStOrY_V2_\nfoo\\040bar", []string{"foo bar"}, ""},
 		{"_HiStOrY_V2_\nfoo\\040bar\nbaz", []string{"foo bar", "baz"}, ""},
-		{"_HiStOrY_V2_\nfoo\\04", nil, `invalid sequence: \04`},
-		{"_HiStOrY_V2_\nfoo\\888", nil, `invalid sequence: \888`},
 	}
 
 	for _, tc := range testCases {
@@ -49,7 +48,7 @@ func TestSaveHistory(t *testing.T) {
 		expErr string
 	}{
 		{nil, "_HiStOrY_V2_\n", ""},
-		{[]string{"foo", "bar"}, "_HiStOrY_V2_\nfoo\nbar\n", ""},
+		{[]string{"fo\\03o", "bar"}, "_HiStOrY_V2_\nfo\\13403o\nbar\n", ""},
 		{[]string{"foo "}, "_HiStOrY_V2_\nfoo\\040\n", ""},
 		{[]string{"foo bar"}, "_HiStOrY_V2_\nfoo\\040bar\n", ""},
 		{[]string{"foo bar", "baz"}, "_HiStOrY_V2_\nfoo\\040bar\nbaz\n", ""},

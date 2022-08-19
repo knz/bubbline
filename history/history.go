@@ -3,7 +3,6 @@ package history
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -54,21 +53,24 @@ func loadHistoryFromFile(f io.Reader) ([]string, error) {
 		// Unescape octal codes.
 		resultEnd := 0
 		for c := 0; c < len(line); c++ {
-			if line[c] == '\\' {
-				if c+3 >= len(line) {
-					return hist, fmt.Errorf("invalid sequence: %s", line[c:])
-				}
+			foundEscape := false
+			if line[c] == '\\' && c+3 < len(line) {
+				foundEscape = true
 				var b byte
 				for i := 1; i <= 3; i++ {
 					digit := line[c+i]
 					if digit < '0' || digit > '7' {
-						return hist, fmt.Errorf("invalid sequence: %s", line[c:c+4])
+						foundEscape = false
+						break
 					}
 					b = (b << 3) | (digit - '0')
 				}
-				line[resultEnd] = b
-				c += 3
-			} else {
+				if foundEscape {
+					line[resultEnd] = b
+					c += 3
+				}
+			}
+			if !foundEscape {
 				line[resultEnd] = line[c]
 			}
 			resultEnd++
@@ -105,7 +107,7 @@ func saveHistoryToFile(h []string, f io.Writer) error {
 	for _, entry := range h {
 		var buf bytes.Buffer
 		for c := 0; c < len(entry); c++ {
-			if b := entry[c]; b == ' ' || b == '\t' || b == '\n' {
+			if b := entry[c]; b == ' ' || b == '\t' || b == '\n' || b == '\\' {
 				buf.WriteByte('\\')
 				buf.WriteByte((b>>6)&7 + '0')
 				buf.WriteByte((b>>3)&7 + '0')
