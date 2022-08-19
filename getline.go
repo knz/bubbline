@@ -23,6 +23,13 @@ func New() *Editor {
 	}
 }
 
+// Close should be called when the editor is not used any more.
+func (m *Editor) Close() {}
+
+// ErrInterrupted is returned when the input was interrupted with
+// e.g. Ctrl+C.
+var ErrInterrupted = editline.ErrInterrupted
+
 // Getline runs the editor and returns the line that was read.
 func (m *Editor) GetLine() (string, error) {
 	p := tea.NewProgram(m)
@@ -50,6 +57,7 @@ func (m *Editor) LoadHistory(file string) error {
 		return err
 	}
 	m.SetHistory(h)
+	return nil
 }
 
 // SaveHistory saves the current history to the file
