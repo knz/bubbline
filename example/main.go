@@ -8,8 +8,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"unicode"
-	"unicode/utf8"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -78,17 +76,7 @@ Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
 	m.AutoComplete = func(v [][]rune, line, col int) (msg string, consume int, extraInput []string) {
-		p := col
-		if p > 0 && p >= len(v[line]) {
-			p = len(v[line]) - 1
-		}
-		if p > 0 && !unicode.IsSpace(v[line][p]) {
-			// Find beginning of word.
-			for p > 0 && !unicode.IsSpace(v[line][p-1]) {
-				p--
-			}
-		}
-		word := string(v[line][p:col])
+		word, p := editline.FindWordStart(v, line, col)
 		var complete []string
 		const loremIpsum = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
@@ -121,21 +109,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 				complete = complete[:1]
 			} else {
 				// Find longest common prefix.
-				first, last := complete[1], complete[len(complete)-1]
-				en := len(first)
-				if len(last) < en {
-					en = len(last)
-				}
-				i := 0
-				for {
-					r, w := utf8.DecodeRuneInString(first[i:])
-					l, _ := utf8.DecodeRuneInString(last[i:])
-					if i >= en || r != l {
-						break
-					}
-					i += w
-				}
-				complete[0] = first[:i]
+				complete[0] = editline.FindLongestCommonPrefix(complete[1], complete[len(complete)-1])
 				consume = col - p
 			}
 		}

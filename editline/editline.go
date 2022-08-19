@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"syscall"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -78,6 +80,50 @@ var DefaultKeyMap = KeyMap{
 	HistoryPrevious: key.NewBinding(key.WithKeys("alt+p")),
 	HistoryNext:     key.NewBinding(key.WithKeys("alt+n")),
 	HideShowPrompt:  key.NewBinding(key.WithKeys("alt+.")),
+}
+
+// FindWordStart is meant for use as a helper when implementing
+// AutoComplete callbacks for the Model.AutoComplete field.
+// Given AutoComplete's callback arguments, it searches
+// and returns the start of the word that the cursor is currently
+// on (as defined by the earliest character from the cursor
+// that's not a whitespace) on the same line.
+//
+// NB: it does not cross line boundaries. The length in runes
+// of the prefix from the cursor to the beginning of the word
+// is guaranteed to be col-wordStart.
+func FindWordStart(v [][]rune, line, col int) (word string, wordStart int) {
+	wordStart = col
+	if wordStart > 0 && wordStart >= len(v[line]) {
+		wordStart = len(v[line]) - 1
+	}
+	if wordStart > 0 && !unicode.IsSpace(v[line][wordStart]) {
+		// Find beginning of word.
+		for wordStart > 0 && !unicode.IsSpace(v[line][wordStart-1]) {
+			wordStart--
+		}
+	}
+	word = string(v[line][wordStart:col])
+	return word, wordStart
+}
+
+// FindLongestCommonPrefix returns the longest common
+// prefix between the two arguments.
+func FindLongestCommonPrefix(first, last string) string {
+	en := len(first)
+	if len(last) < en {
+		en = len(last)
+	}
+	i := 0
+	for {
+		r, w := utf8.DecodeRuneInString(first[i:])
+		l, _ := utf8.DecodeRuneInString(last[i:])
+		if i >= en || r != l {
+			break
+		}
+		i += w
+	}
+	return first[:i]
 }
 
 // Model represents a widget that supports multi-line entry with
