@@ -648,6 +648,10 @@ func (m *Model) doWordRight(fn func(firstChar bool, pos int)) {
 		if m.col < len(m.value[m.row]) && !unicode.IsSpace(m.value[m.row][m.col]) {
 			break
 		}
+		if m.row == len(m.value)-1 && m.col == len(m.value[m.row]) {
+			// End of text.
+			break
+		}
 		m.characterRight()
 	}
 
