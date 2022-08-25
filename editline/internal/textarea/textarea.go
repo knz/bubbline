@@ -673,10 +673,10 @@ func (m *Model) wordLeft() {
 // cursor blink should be reset. If the input is masked, move input to the end
 // so as not to reveal word breaks in the masked input.
 func (m *Model) wordRight() {
-	m.doWordRight(func(bool, int) { /* nothing */ })
+	m.doWordRight(func(int, int) { /* nothing */ })
 }
 
-func (m *Model) doWordRight(fn func(firstChar bool, pos int)) {
+func (m *Model) doWordRight(fn func(charIdx int, pos int)) {
 	// Skip spaces forward.
 	for {
 		if m.col < len(m.value[m.row]) && !unicode.IsSpace(m.value[m.row][m.col]) {
@@ -689,35 +689,35 @@ func (m *Model) doWordRight(fn func(firstChar bool, pos int)) {
 		m.characterRight()
 	}
 
-	firstChar := true
+	charIdx := 0
 	for m.col < len(m.value[m.row]) {
 		if unicode.IsSpace(m.value[m.row][m.col]) {
 			break
 		}
-		fn(firstChar, m.col)
-		firstChar = false
+		fn(charIdx, m.col)
 		m.SetCursor(m.col + 1)
+		charIdx++
 	}
 }
 
 // uppercaseRight changes the word to the right to uppercase.
 func (m *Model) uppercaseRight() {
-	m.doWordRight(func(_ bool, i int) {
+	m.doWordRight(func(_ int, i int) {
 		m.value[m.row][i] = unicode.ToUpper(m.value[m.row][i])
 	})
 }
 
 // lowercaseRight changes the word to the right to lowercase.
 func (m *Model) lowercaseRight() {
-	m.doWordRight(func(_ bool, i int) {
+	m.doWordRight(func(_ int, i int) {
 		m.value[m.row][i] = unicode.ToLower(m.value[m.row][i])
 	})
 }
 
 // capitalizeRight changes the word to the right to title case.
 func (m *Model) capitalizeRight() {
-	m.doWordRight(func(firstChar bool, i int) {
-		if firstChar {
+	m.doWordRight(func(charIdx int, i int) {
+		if charIdx == 0 {
 			m.value[m.row][i] = unicode.ToTitle(m.value[m.row][i])
 		}
 	})
