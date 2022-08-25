@@ -55,6 +55,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Ctrl+P, Up             | Move cursor one line up, or to previous history entry if already on first line.              | LinePrevious               |
 | Ctrl+N, Down           | Move cursor one line down, or to next history entry if already on last line.                 | LineStart                  |
 | Ctrl+T                 | Transpose the last two characters.                                                           | TransposeCharacterBackward |
+| Ctrl+O, Insert         | Toggle overwrite mode.                                                                       | ToggleOverwriteMode        |
 | Alt+U                  | Make the next word uppercase.                                                                | UppercaseWordForward       |
 | Alt+L                  | Make the next word lowercase.                                                                | LowercaseWordForward       |
 | Alt+C                  | Capitalize the next word.                                                                    | CapitalizeWordForward      |

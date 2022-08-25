@@ -52,6 +52,7 @@ type KeyMap struct {
 	Paste                   key.Binding
 	WordBackward            key.Binding
 	WordForward             key.Binding
+	ToggleOverwriteMode     key.Binding
 
 	TransposeCharacterBackward key.Binding
 	UppercaseWordForward       key.Binding
@@ -78,6 +79,7 @@ var DefaultKeyMap = KeyMap{
 	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a")),
 	LineEnd:                 key.NewBinding(key.WithKeys("end", "ctrl+e")),
 	Paste:                   key.NewBinding(key.WithKeys("ctrl+v")),
+	ToggleOverwriteMode:     key.NewBinding(key.WithKeys("insert", "ctrl+o")),
 
 	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t")),
 	CapitalizeWordForward:      key.NewBinding(key.WithKeys("alt+c")),
@@ -176,6 +178,9 @@ type Model struct {
 	// focus indicates whether user input focus should be on this input
 	// component. When false, ignore keyboard input and hide the cursor.
 	focus bool
+
+	// overwrite indicates whether overwrite mode is currently enabled.
+	overwrite bool
 
 	// Cursor column.
 	col int
@@ -286,6 +291,18 @@ func (m *Model) InsertRune(r rune) {
 
 	m.value[m.row] = append(m.value[m.row][:m.col], append([]rune{r}, m.value[m.row][m.col:]...)...)
 	m.col++
+}
+
+// overwriteRune overwrites the rune at the cursor position.
+func (m *Model) overwriteRune(r rune) {
+	// If we're at the end of the line, or if the input rune is a
+	// newline, simply insert it.  Otherwise, overwrite.
+	if r == '\n' || r == '\r' || (m.col >= len(m.value[m.row])) {
+		m.InsertRune(r)
+		return
+	}
+	m.value[m.row][m.col] = r
+	m.SetCursor(m.col + 1)
 }
 
 // Value returns the value of the text input.
@@ -909,6 +926,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.CursorUp()
 		case key.Matches(msg, m.KeyMap.WordBackward):
 			m.wordLeft()
+		case key.Matches(msg, m.KeyMap.ToggleOverwriteMode):
+			m.overwrite = !m.overwrite
 		default:
 			if m.CharLimit > 0 && rw.StringWidth(m.Value())+len(msg.Runes) >= m.CharLimit {
 				break
