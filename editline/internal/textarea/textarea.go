@@ -127,7 +127,6 @@ type Style struct {
 	LineNumber       lipgloss.Style
 	Placeholder      lipgloss.Style
 	Prompt           lipgloss.Style
-	NextPrompt       lipgloss.Style
 	Text             lipgloss.Style
 }
 
@@ -136,15 +135,28 @@ type Model struct {
 	Err error
 
 	// General settings.
-	Prompt               string
-	Placeholder          string
-	ShowLineNumbers      bool
-	EndOfBufferCharacter rune
-	KeyMap               KeyMap
 
-	// NextPrompt, if set, is used for all lines
-	// except the first.
-	NextPrompt string
+	// Prompt is printed at the beginning of each line.
+	//
+	// When changing the value of Prompt after the model has been
+	// initialized, ensure that SetWidth() gets called afterwards.
+	//
+	// See also SetPromptFunc().
+	Prompt string
+
+	// Placeholder is the text displayed when the user
+	// hasn't entered anything yet.
+	Placeholder string
+
+	// ShowLineNumbers, if enabled, causes line numbers to be printed
+	// after the prompt.
+	ShowLineNumbers bool
+
+	// EndOfBufferCharacter is displayed at the end of the input.
+	EndOfBufferCharacter rune
+
+	// KeyMap encodes the keybindings recognized by the widget.
+	KeyMap KeyMap
 
 	// Styling. FocusedStyle and BlurredStyle are used to style the textarea in
 	// focused and blurred states.
@@ -162,6 +174,13 @@ type Model struct {
 	// CharLimit is the maximum number of characters this input element will
 	// accept. If 0 or less, there's no limit.
 	CharLimit int
+
+	// If promptFunc is set, it replaces Prompt as a generator for
+	// prompt strings at the beginning of each line.
+	promptFunc func(line int) string
+
+	// promptWidth is the width of the prompt.
+	promptWidth int
 
 	// width is the maximum number of characters that can be displayed at once.
 	// If 0 or less this setting is ignored.
@@ -245,7 +264,6 @@ func DefaultStyles() (Style, Style) {
 		LineNumber:       lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "249", Dark: "7"}),
 		Placeholder:      lipgloss.NewStyle().Foreground(lipgloss.Color("240")),
 		Prompt:           lipgloss.NewStyle().Foreground(lipgloss.Color("7")),
-		NextPrompt:       lipgloss.NewStyle().Foreground(lipgloss.Color("7")),
 		Text:             lipgloss.NewStyle(),
 	}
 	blurred := Style{
@@ -256,7 +274,6 @@ func DefaultStyles() (Style, Style) {
 		LineNumber:       lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "249", Dark: "7"}),
 		Placeholder:      lipgloss.NewStyle().Foreground(lipgloss.Color("240")),
 		Prompt:           lipgloss.NewStyle().Foreground(lipgloss.Color("7")),
-		NextPrompt:       lipgloss.NewStyle().Foreground(lipgloss.Color("7")),
 		Text:             lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "245", Dark: "7"}),
 	}
 
@@ -791,8 +808,24 @@ func (m *Model) SetWidth(w int) {
 	// Account for base style borders and padding.
 	inputWidth -= m.style.Base.GetHorizontalFrameSize()
 
-	inputWidth -= max(rw.StringWidth(m.Prompt), rw.StringWidth(m.NextPrompt))
+	if m.promptFunc == nil {
+		m.promptWidth = rw.StringWidth(m.Prompt)
+	}
+
+	inputWidth -= m.promptWidth
 	m.width = clamp(inputWidth, minWidth, maxWidth)
+}
+
+// SetPromptFunc supersedes the Prompt field and sets a dynamic prompt
+// instead.
+// If the function returns a prompt that is shorter than the
+// specified promptWidth, it will be padded to the left.
+// If it returns a prompt that is longer, display artifacts
+// may occur; the caller is responsible for computing an adequate
+// promptWidth.
+func (m *Model) SetPromptFunc(promptWidth int, fn func(lineIdx int) string) {
+	m.promptFunc = fn
+	m.promptWidth = promptWidth
 }
 
 // Height returns the current height of the textarea.
@@ -929,11 +962,17 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case key.Matches(msg, m.KeyMap.ToggleOverwriteMode):
 			m.overwrite = !m.overwrite
 		default:
-			if m.CharLimit > 0 && rw.StringWidth(m.Value())+len(msg.Runes) >= m.CharLimit {
-				break
-			}
-			for _, r := range msg.Runes {
-				m.InsertRune(r)
+			if !m.overwrite {
+				if m.CharLimit > 0 && rw.StringWidth(m.Value())+len(msg.Runes) >= m.CharLimit {
+					break
+				}
+				for _, r := range msg.Runes {
+					m.InsertRune(r)
+				}
+			} else {
+				for _, r := range msg.Runes {
+					m.overwriteRune(r)
+				}
 			}
 		}
 
@@ -974,11 +1013,7 @@ func (m Model) View() string {
 
 	var newLines int
 
-	prompt, nextPrompt := m.getPromptStrings()
-	prompt = m.style.Prompt.Render(prompt)
-	nextPrompt = m.style.NextPrompt.Render(nextPrompt)
-
-	firstDisplayLine := true
+	displayLine := 0
 	for l, line := range m.value {
 		wrappedLines := wrap(line, m.width)
 
@@ -989,12 +1024,10 @@ func (m Model) View() string {
 		}
 
 		for wl, wrappedLine := range wrappedLines {
-			selectedPrompt := nextPrompt
-			if firstDisplayLine {
-				selectedPrompt = prompt
-				firstDisplayLine = false
-			}
-			s.WriteString(style.Render(selectedPrompt))
+			prompt := m.getPromptString(displayLine)
+			prompt = m.style.Prompt.Render(prompt)
+			s.WriteString(style.Render(prompt))
+			displayLine++
 
 			if m.ShowLineNumbers {
 				if wl == 0 {
@@ -1043,7 +1076,10 @@ func (m Model) View() string {
 	// Always show at least `m.Height` lines at all times.
 	// To do this we can simply pad out a few extra new lines in the view.
 	for i := 0; i < m.height; i++ {
-		s.WriteString(nextPrompt)
+		prompt := m.getPromptString(displayLine)
+		prompt = m.style.Prompt.Render(prompt)
+		s.WriteString(prompt)
+		displayLine++
 
 		if m.ShowLineNumbers {
 			lineNumber := m.style.EndOfBuffer.Render((fmt.Sprintf(m.lineNumberFormat, string(m.EndOfBufferCharacter))))
@@ -1056,20 +1092,17 @@ func (m Model) View() string {
 	return m.style.Base.Render(m.viewport.View())
 }
 
-func (m Model) getPromptStrings() (prompt, nextPrompt string) {
+func (m Model) getPromptString(displayLine int) (prompt string) {
 	prompt = m.Prompt
-	nextPrompt = m.NextPrompt
-	if nextPrompt == "" {
-		return prompt, prompt
+	if m.promptFunc == nil {
+		return prompt
 	}
+	prompt = m.promptFunc(displayLine)
 	pl := rw.StringWidth(prompt)
-	npl := rw.StringWidth(nextPrompt)
-	if pl > npl {
-		nextPrompt = fmt.Sprintf("%*s", pl-npl, "") + nextPrompt
-	} else if npl > pl {
-		prompt = fmt.Sprintf("%*s", npl-pl, "") + prompt
+	if pl < m.promptWidth {
+		prompt = fmt.Sprintf("%*s%s", m.promptWidth-pl, "", prompt)
 	}
-	return prompt, nextPrompt
+	return prompt
 }
 
 // placeholderView returns the prompt and placeholder view, if any.
@@ -1080,8 +1113,7 @@ func (m Model) placeholderView() string {
 		style = m.style.Placeholder.Inline(true)
 	)
 
-	prompt, nextPrompt := m.getPromptStrings()
-
+	prompt := m.getPromptString(0)
 	prompt = m.style.Prompt.Render(prompt)
 	s.WriteString(m.style.CursorLine.Render(prompt))
 
@@ -1097,10 +1129,11 @@ func (m Model) placeholderView() string {
 	s.WriteString(m.style.CursorLine.Render(style.Render(p[1:] + strings.Repeat(" ", max(0, m.width-rw.StringWidth(p))))))
 
 	// The rest of the new lines
-	nextPrompt = m.style.NextPrompt.Render(nextPrompt)
 	for i := 1; i < m.height; i++ {
 		s.WriteRune('\n')
-		s.WriteString(nextPrompt)
+		prompt := m.getPromptString(i)
+		prompt = m.style.Prompt.Render(prompt)
+		s.WriteString(prompt)
 
 		if m.ShowLineNumbers {
 			eob := m.style.EndOfBuffer.Render((fmt.Sprintf(m.lineNumberFormat, string(m.EndOfBufferCharacter))))

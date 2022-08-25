@@ -67,6 +67,7 @@ func (m Model) LogicalHeight() int {
 func (m Model) Debug() string {
 	var buf strings.Builder
 	fmt.Fprintf(&buf, "focus: %v\n", m.focus)
+	fmt.Fprintf(&buf, "promptWidth: %d\n", m.promptWidth)
 	fmt.Fprintf(&buf, "width: %d, height: %d\n", m.width, m.height)
 	fmt.Fprintf(&buf, "col: %d, row: %d\n", m.col, m.row)
 	fmt.Fprintf(&buf, "lastCharOffset: %d\n", m.lastCharOffset)

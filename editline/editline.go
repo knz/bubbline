@@ -310,10 +310,9 @@ func (m *Model) Focus() tea.Cmd {
 	m.text.KeyMap = m.KeyMap.KeyMap
 	m.text.Placeholder = m.Placeholder
 	m.text.ShowLineNumbers = m.ShowLineNumbers
-	m.text.Prompt = m.Prompt
-	m.text.NextPrompt = m.NextPrompt
 	m.text.FocusedStyle = m.FocusedStyle.Editor
 	m.text.BlurredStyle = m.BlurredStyle.Editor
+	m.updatePrompt()
 	m.hctrl.pattern.PromptStyle = m.FocusedStyle.SearchInput.PromptStyle
 	m.hctrl.pattern.TextStyle = m.FocusedStyle.SearchInput.TextStyle
 	m.hctrl.pattern.BackgroundStyle = m.FocusedStyle.SearchInput.BackgroundStyle
@@ -441,6 +440,24 @@ func (m *Model) updateTextSz() (cmd tea.Cmd) {
 		m.text, cmd = m.text.Update(nil)
 	}
 	return cmd
+}
+
+func (m *Model) updatePrompt() {
+	prompt, nextPrompt := m.Prompt, m.NextPrompt
+	if m.hidePrompt {
+		prompt, nextPrompt = "", ""
+	}
+	promptWidth := max(rw.StringWidth(prompt), rw.StringWidth(nextPrompt))
+	m.text.Prompt = ""
+	m.text.SetPromptFunc(promptWidth, func(line int) string {
+		if line == 0 {
+			return prompt
+		}
+		return nextPrompt
+	})
+	// Recompute the width.
+	m.text.SetWidth(m.maxWidth - 1)
+	m.text.SetCursor(0)
 }
 
 func (m *Model) saveValue() {
@@ -574,16 +591,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.KeyMap.HideShowPrompt):
 			m.hidePrompt = !m.hidePrompt
-			if m.hidePrompt {
-				m.text.Prompt = ""
-				m.text.NextPrompt = ""
-			} else {
-				m.text.Prompt = m.Prompt
-				m.text.NextPrompt = m.NextPrompt
-			}
-			// Recompute the width.
-			m.text.SetWidth(m.maxWidth)
-			m.text.SetCursor(0)
+			m.updatePrompt()
 			cmd = tea.Batch(cmd, m.updateTextSz())
 			imsg = nil // consume message
 
