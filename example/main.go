@@ -106,8 +106,9 @@ Blocks of input are terminated with a semicolon.`)
 	m.Placeholder = "(your text here)"
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
-	m.AutoComplete = func(v [][]rune, line, col int) (msg string, consume int, completions complete.Values) {
-		word, p := editline.FindWordStart(v, line, col)
+	m.AutoComplete = func(v [][]rune, line, col int) (msg string, moveRight, deleteLeft int, completions complete.Values) {
+		word, wstart, wend := editline.FindWord(v, line, col)
+		moveRight = wend - col
 		const loremIpsum = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
 		if word == "lorem" {
@@ -120,6 +121,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 			n, _ := strconv.Atoi(m[1])
 			completions.Prefill = loremIpsum[:n]
 		} else {
+			msg = fmt.Sprintf("autocomplete: ...%q\ntip: try completing after 'lorem' or 'r'", word)
 			// Select r-words.
 			var complete []string
 			var rcomp []string
@@ -140,15 +142,14 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 			sort.Slice(complete, func(i, j int) bool { return strings.ToLower(complete[i]) < strings.ToLower(complete[j]) })
 			if len(complete) == 0 {
 				// No match.
-				msg = fmt.Sprintf("autocomplete: ...%s\ntip: try completing after 'lorem' or 'r'", word)
 			} else if len(complete) == 1 {
 				// Just 1 match.
 				completions.Prefill = complete[0]
-				consume = col - p
+				deleteLeft = wend - wstart
 			} else {
 				// Find longest common prefix.
 				completions.Prefill = editline.FindLongestCommonPrefix(complete[0], complete[len(complete)-1], false)
-				consume = col - p
+				deleteLeft = wend - wstart
 				// Populate values.
 				completions.Completions = map[string][]string{}
 				if len(acomp) > 0 {
@@ -161,7 +162,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 				}
 			}
 		}
-		return msg, consume, completions
+		return msg, moveRight, deleteLeft, completions
 	}
 
 	m.CheckInputComplete = func(v [][]rune, line, col int) bool {

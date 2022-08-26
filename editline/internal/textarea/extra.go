@@ -20,6 +20,13 @@ func (m *Model) CursorPos() int {
 	return m.col
 }
 
+// CursorRight moves the cursor to the right by the specified amount.
+func (m *Model) CursorRight(n int) {
+	for i := 0; i < n; i++ {
+		m.characterRight()
+	}
+}
+
 // ValueRunes retrieves the current value decomposed as runes.
 func (m *Model) ValueRunes() [][]rune {
 	return m.value

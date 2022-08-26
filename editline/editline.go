@@ -87,7 +87,7 @@ var DefaultKeyMap = KeyMap{
 	MoreHelp:        key.NewBinding(key.WithKeys("alt+?"), key.WithHelp("M-?", "toggle key help")),
 }
 
-// FindWordStart is meant for use as a helper when implementing
+// FindWord is meant for use as a helper when implementing
 // AutoComplete callbacks for the Model.AutoComplete field.
 // Given AutoComplete's callback arguments, it searches
 // and returns the start of the word that the cursor is currently
@@ -97,19 +97,29 @@ var DefaultKeyMap = KeyMap{
 // NB: it does not cross line boundaries. The length in runes
 // of the prefix from the cursor to the beginning of the word
 // is guaranteed to be col-wordStart.
-func FindWordStart(v [][]rune, line, col int) (word string, wordStart int) {
+func FindWord(v [][]rune, line, col int) (word string, wordStart, wordEnd int) {
+	curLine := v[line]
+	curLen := len(curLine)
+	if curLen == 0 {
+		return "", 0, 0
+	}
+	// If the cursor is beyond the end of the line, move
+	// it backwards once.
+	if col >= curLen {
+		col = curLen - 1
+	}
 	wordStart = col
-	if wordStart > 0 && wordStart >= len(v[line]) {
-		wordStart = len(v[line]) - 1
+	// Find beginning of word.
+	for wordStart > 0 && !unicode.IsSpace(curLine[wordStart-1]) {
+		wordStart--
 	}
-	if wordStart > 0 && !unicode.IsSpace(v[line][wordStart]) {
-		// Find beginning of word.
-		for wordStart > 0 && !unicode.IsSpace(v[line][wordStart-1]) {
-			wordStart--
-		}
+	wordEnd = col
+	// Find end of word.
+	for wordEnd <= curLen-1 && !unicode.IsSpace(curLine[wordEnd]) {
+		wordEnd++
 	}
-	word = string(v[line][wordStart:col])
-	return word, wordStart
+	word = string(curLine[wordStart:wordEnd])
+	return word, wordStart, wordEnd
 }
 
 // FindLongestCommonPrefix returns the longest common
@@ -136,12 +146,13 @@ func FindLongestCommonPrefix(first, last string, caseSensitive bool) string {
 // and the position of the cursor in the input.
 // The returned msg is printed above the input box.
 //
-// If the consumedChars is non-zero, that number of characters
-// is erased before the cursor.
+// If the moveRight is non-zero, the cursor is moved that number to the right.
+// If the deleteLeft are non-zero, that number of characters
+// is erased before the cursor, after it has been moved.
 // Then the first string in the returned extraInput value is added at the cursor position.
 // If there is more than 1 entry in the returned extraInput, they are
 // displayed above the input box too.
-type AutoCompleteFn func(entireInput [][]rune, line, col int) (msg string, consumedChars int, extraInput complete.Values)
+type AutoCompleteFn func(entireInput [][]rune, line, col int) (msg string, moveRight, deleteLeft int, extraInput complete.Values)
 
 // Model represents a widget that supports multi-line entry with
 // auto-growing of the text height.
@@ -524,7 +535,7 @@ func (m *Model) historyDown() (cmd tea.Cmd) {
 }
 
 func (m *Model) autoComplete() (cmd tea.Cmd) {
-	msgs, consume, extra := m.AutoComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos())
+	msgs, moveRight, deleteLeft, extra := m.AutoComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos())
 	if msgs != "" {
 		// TODO(knz): maybe display the help using a viewport widget?
 		cmd = tea.Batch(cmd, tea.Println(msgs))
@@ -534,13 +545,18 @@ func (m *Model) autoComplete() (cmd tea.Cmd) {
 		return cmd
 	}
 
+	// Move the cursor to the right if requested.
+	if moveRight > 0 {
+		m.text.CursorRight(moveRight)
+	}
+
 	// In any case, auto-complete the prefill text.
 	if len(extra.Prefill) > 0 {
-		if consume > 0 {
-			m.text.DeleteCharactersBackward(consume)
+		if deleteLeft > 0 {
+			m.text.DeleteCharactersBackward(deleteLeft)
 		}
 		m.text.InsertString(extra.Prefill)
-		consume = rw.StringWidth(extra.Prefill)
+		deleteLeft = rw.StringWidth(extra.Prefill)
 	}
 
 	if len(extra.Completions) == 0 {
@@ -549,7 +565,7 @@ func (m *Model) autoComplete() (cmd tea.Cmd) {
 		m.text.InsertRune(' ')
 	} else {
 		m.showCompletions = true
-		m.consumeAfterCompletion = consume
+		m.consumeAfterCompletion = deleteLeft
 		m.completions.SetValues(extra)
 		m.completions.Focus()
 	}
