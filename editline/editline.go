@@ -763,12 +763,17 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.currentlySearching() {
 				// Stop the completion first.
 				m.acceptSearch()
+				// If we were searching, do not process the enter key -- otherwise
+				// it will add a newline character in the middle of the completion.
+				imsg = nil // consume message
 			}
 			if m.CheckInputComplete == nil ||
 				m.CheckInputComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos()) {
 				stop = true
-				// Fallthrough: we want the enter key to be processed by the
-				// textarea so that there's a final empty line in the display.
+
+				// Avoid processing the enter key, for otherwise it may insert
+				// an excess newline in the middle of the input.
+				imsg = nil // consume message
 			}
 
 		case key.Matches(msg, m.KeyMap.LinePrevious):
