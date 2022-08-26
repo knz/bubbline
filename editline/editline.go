@@ -15,6 +15,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/knz/bubbline/complete"
 	"github.com/knz/bubbline/editline/internal/textarea"
 	rw "github.com/mattn/go-runewidth"
 	"github.com/muesli/termenv"
@@ -67,54 +68,6 @@ type KeyMap struct {
 	MoreHelp        key.Binding
 }
 
-// ShortHelp is part of the help.KeyMap interface.
-func (k KeyMap) ShortHelp() []key.Binding {
-	return []key.Binding{
-		k.MoreHelp, k.EndOfInput, k.Interrupt, k.SearchBackward, k.HideShowPrompt,
-	}
-}
-
-// FullHelp is part of the help.KeyMap interface.
-func (k KeyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{
-		{
-			k.MoreHelp,
-			k.CharacterForward,
-			k.WordForward,
-			key.NewBinding(key.WithKeys("_"), key.WithHelp("del", "del next char")), // k.DeleteCharacterForward,
-			k.DeleteWordForward,
-			k.LineEnd,
-			k.DeleteAfterCursor,
-			k.LineNext,
-			k.HistoryNext,
-			k.AutoComplete,
-		},
-		{
-			k.Interrupt,
-			k.CharacterBackward,
-			k.WordBackward,
-			k.DeleteCharacterBackward,
-			k.DeleteWordBackward,
-			k.LineStart,
-			k.DeleteBeforeCursor,
-			k.LinePrevious,
-			k.HistoryPrevious,
-		},
-		{
-			k.HideShowPrompt,
-			key.NewBinding(key.WithKeys("_"), key.WithHelp("C-d", "del next char/EOF")),
-			k.AlwaysNewline,
-			k.Refresh,
-			k.ToggleOverwriteMode,
-			k.TransposeCharacterBackward,
-			k.LowercaseWordForward,
-			k.UppercaseWordForward,
-			k.SearchBackward,
-		},
-	}
-	return nil
-}
-
 // DefaultKeyMap is the default set of key bindings.
 var DefaultKeyMap = KeyMap{
 	KeyMap: textarea.DefaultKeyMap,
@@ -161,7 +114,7 @@ func FindWordStart(v [][]rune, line, col int) (word string, wordStart int) {
 
 // FindLongestCommonPrefix returns the longest common
 // prefix between the two arguments.
-func FindLongestCommonPrefix(first, last string) string {
+func FindLongestCommonPrefix(first, last string, caseSensitive bool) string {
 	en := len(first)
 	if len(last) < en {
 		en = len(last)
@@ -170,13 +123,25 @@ func FindLongestCommonPrefix(first, last string) string {
 	for {
 		r, w := utf8.DecodeRuneInString(first[i:])
 		l, _ := utf8.DecodeRuneInString(last[i:])
-		if i >= en || r != l {
+		if i >= en || (caseSensitive && r != l) || (!caseSensitive && unicode.ToUpper(r) != unicode.ToUpper(l)) {
 			break
 		}
 		i += w
 	}
 	return first[:i]
 }
+
+// AutoCompleteFn is called upon the user pressing the
+// autocomplete key. The callback is provided the text of the input
+// and the position of the cursor in the input.
+// The returned msg is printed above the input box.
+//
+// If the consumedChars is non-zero, that number of characters
+// is erased before the cursor.
+// Then the first string in the returned extraInput value is added at the cursor position.
+// If there is more than 1 entry in the returned extraInput, they are
+// displayed above the input box too.
+type AutoCompleteFn func(entireInput [][]rune, line, col int) (msg string, consumedChars int, extraInput complete.Values)
 
 // Model represents a widget that supports multi-line entry with
 // auto-growing of the text height.
@@ -209,17 +174,8 @@ type Model struct {
 	// the input when enter is pressed.
 	CheckInputComplete func(entireInput [][]rune, line, col int) bool
 
-	// AutoComplete if set is called upon the user pressing the
-	// autocomplete key. The callback is provided the text of the input
-	// and the position of the cursor in the input.
-	// The returned msg is printed above the input box.
-	//
-	// If the consumedChars is non-zero, that number of characters
-	// is erased before the cursor.
-	// Then the first string in the returned extraInput value is added at the cursor position.
-	// If there is more than 1 entry in the returned extraInput, they are
-	// displayed above the input box too.
-	AutoComplete func(entireInput [][]rune, line, col int) (msg string, consumedChars int, extraInput []string)
+	// AutoComplete is the AutoCompleteFn to use.
+	AutoComplete AutoCompleteFn
 
 	// CharLimit is the maximum size of the input in characters.
 	// Set to zero or less for no limit.
@@ -263,6 +219,10 @@ type Model struct {
 	// of each input line.
 	// Only takes effect at Reset() or Focus().
 	ShowLineNumbers bool
+
+	showCompletions        bool
+	consumeAfterCompletion int
+	completions            complete.Model
 
 	history []string
 	hctrl   struct {
@@ -310,6 +270,7 @@ func New() *Model {
 		SearchPromptNotFound: "bck?",
 		ShowLineNumbers:      false,
 		help:                 help.New(),
+		completions:          complete.New(),
 	}
 	m.text.KeyMap.Paste.Unbind() // paste from clipboard not supported.
 	m.hctrl.pattern = textinput.New()
@@ -373,6 +334,7 @@ func (m *Model) Focus() tea.Cmd {
 	m.hctrl.pattern.BackgroundStyle = m.FocusedStyle.SearchInput.BackgroundStyle
 	m.hctrl.pattern.PlaceholderStyle = m.FocusedStyle.SearchInput.PlaceholderStyle
 	m.hctrl.pattern.CursorStyle = m.FocusedStyle.SearchInput.CursorStyle
+	m.completions.Focus()
 
 	var cmd tea.Cmd
 	if m.hctrl.c.searching {
@@ -387,6 +349,7 @@ func (m *Model) Focus() tea.Cmd {
 func (m *Model) Blur() {
 	m.hctrl.pattern.Blur()
 	m.text.Blur()
+	m.completions.Blur()
 	m.hctrl.pattern.PromptStyle = m.BlurredStyle.SearchInput.PromptStyle
 	m.hctrl.pattern.TextStyle = m.BlurredStyle.SearchInput.TextStyle
 	m.hctrl.pattern.BackgroundStyle = m.BlurredStyle.SearchInput.BackgroundStyle
@@ -485,7 +448,22 @@ func (m *Model) updateValue(value string, cursor int) (cmd tea.Cmd) {
 }
 
 func (m *Model) updateTextSz() (cmd tea.Cmd) {
-	newHeight := clamp(m.text.LogicalHeight(), 1, m.maxHeight-1)
+	textHeight := m.text.LogicalHeight()
+
+	remaining := m.maxHeight - 1
+	if m.showCompletions {
+		// Don't let the completions exceed half of the screen size.
+		ch := m.completions.GetMaxHeight()
+		if ch+textHeight > remaining {
+			const minCompletionHeight = 4 // 1 row title, 1 row entry, 2 rows pagination
+			newCompletionHeight := clamp(ch, minCompletionHeight, remaining-textHeight)
+			m.completions.SetHeight(newCompletionHeight)
+		}
+		remaining -= m.completions.GetHeight()
+	}
+
+	newHeight := clamp(m.text.LogicalHeight(), 1, remaining)
+
 	if m.text.Height() != newHeight {
 		m.text.SetHeight(newHeight)
 		if m.text.Line() == m.text.LineCount()-1 {
@@ -548,46 +526,32 @@ func (m *Model) historyDown() (cmd tea.Cmd) {
 func (m *Model) autoComplete() (cmd tea.Cmd) {
 	msgs, consume, extra := m.AutoComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos())
 	if msgs != "" {
+		// TODO(knz): maybe display the help using a viewport widget?
 		cmd = tea.Batch(cmd, tea.Println(msgs))
 	}
-	if len(extra) == 0 {
+	if len(extra.Prefill) == 0 && len(extra.Completions) == 0 {
 		// No completions. do nothing.
 		return cmd
 	}
 
-	// If there's more than 1 completion, show the list at the top.
-	if len(extra) > 1 {
-		var buf strings.Builder
-		sp := ""
-		lw := 0
-		for _, e := range extra[1:] {
-			if e != "" {
-				ww := rw.StringWidth(e)
-				if lw+ww >= m.maxWidth {
-					sp = ""
-					lw = 0
-					buf.WriteByte('\n')
-				}
-				buf.WriteString(sp)
-				buf.WriteString(e)
-				sp = " "
-				lw += ww + 1
-			}
+	// In any case, auto-complete the prefill text.
+	if len(extra.Prefill) > 0 {
+		if consume > 0 {
+			m.text.DeleteCharactersBackward(consume)
 		}
-		if buf.Len() > 0 {
-			cmd = tea.Batch(cmd, tea.Println(buf.String()))
-		}
+		m.text.InsertString(extra.Prefill)
+		consume = rw.StringWidth(extra.Prefill)
 	}
 
-	// In any case, auto-complete the first item.
-	if consume > 0 {
-		m.text.DeleteCharactersBackward(consume)
-	}
-	m.text.InsertString(extra[0])
-
-	if len(extra) == 1 {
-		// If there was just 1 match, insert a space too.
+	if len(extra.Completions) == 0 {
+		// If there was just a prefill, insert a space. We're done
+		// with auto-completion.
 		m.text.InsertRune(' ')
+	} else {
+		m.showCompletions = true
+		m.consumeAfterCompletion = consume
+		m.completions.SetValues(extra)
+		m.completions.Focus()
 	}
 
 	// Finally, refresh the size.
@@ -620,6 +584,7 @@ func (m *Model) Debug() string {
 	fmt.Fprintf(&buf, "maxHeight: %d, maxWidth: %d\n", m.maxHeight, m.maxWidth)
 	fmt.Fprintf(&buf, "hidePrompt: %v\n", m.hidePrompt)
 	fmt.Fprintf(&buf, "hctrl.c: %+v\n", m.hctrl.c)
+	fmt.Fprintf(&buf, "showComp: %v, consume: %d\n", m.showCompletions, m.consumeAfterCompletion)
 	fmt.Fprintf(&buf, "htctrl.pattern: %q\n", m.hctrl.pattern.Value())
 	return buf.String()
 }
@@ -628,49 +593,44 @@ func (m *Model) Debug() string {
 func (m *Model) SetWidth(w int) {
 	w = clamp(w, 1, m.maxWidth)
 	m.text.SetWidth(w - 1)
+	m.completions.SetWidth(w - 1)
 	m.hctrl.pattern.Width = w - 1
 	m.help.Width = w - 1
+}
+
+// handleCompletions navigates through the completion screen.
+func (m *Model) handleCompletions(imsg tea.Msg) (tea.Model, tea.Cmd) {
+	_, cmd := m.completions.Update(imsg)
+	if m.completions.Err == nil {
+		return m, cmd
+	}
+	v := m.completions.AcceptedValue
+	if v != "" {
+		m.text.DeleteCharactersBackward(m.consumeAfterCompletion)
+		m.text.InsertString(v)
+		m.text.InsertRune(' ')
+	}
+	m.showCompletions = false
+	m.completions.Blur()
+	return m, tea.Batch(cmd, m.updateTextSz())
 }
 
 // Update is the Bubble Tea event handler.
 // This is part of the tea.Model interface.
 func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	stop := false
-
 	m.lastEvent = imsg
+
 	switch msg := imsg.(type) {
 	case tea.WindowSizeMsg:
 		m.maxWidth = msg.Width
 		m.maxHeight = msg.Height
 		m.SetWidth(msg.Width - 1)
-		cmd = tea.Batch(cmd, m.updateTextSz())
+		return m, m.updateTextSz()
 
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.KeyMap.Debug):
 			m.debugMode = !m.debugMode
-
-		case key.Matches(msg, m.KeyMap.MoreHelp):
-			m.help.ShowAll = !m.help.ShowAll
-			imsg = nil // consume message
-
-		case key.Matches(msg, m.KeyMap.HideShowPrompt):
-			m.hidePrompt = !m.hidePrompt
-			m.updatePrompt()
-			cmd = tea.Batch(cmd, m.updateTextSz())
-			imsg = nil // consume message
-
-		case key.Matches(msg, m.KeyMap.AutoComplete):
-			if m.AutoComplete == nil {
-				// Pass-through to the editor.
-				break
-			}
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
-			cmd = m.autoComplete()
-			imsg = 0 // consume message
 
 		case key.Matches(msg, m.KeyMap.SignalQuit):
 			return m, tea.Exec(doProgram(func() {
@@ -694,6 +654,50 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case key.Matches(msg, m.KeyMap.Refresh):
 			return m, tea.Exec(doProgram(termenv.ClearScreen), nil)
+
+		case key.Matches(msg, m.KeyMap.MoreHelp):
+			m.help.ShowAll = !m.help.ShowAll
+			imsg = nil // consume message
+
+		default:
+			m.help.ShowAll = false
+
+			if m.showCompletions && !m.completions.MatchesKey(msg) {
+				// Currently displaying completions, but the widget
+				// is not accepting this keystroke. Cancel completions
+				// altogether and simply keep the input.
+				m.showCompletions = false
+				m.completions.Blur()
+			}
+		}
+	}
+
+	if m.showCompletions {
+		return m.handleCompletions(imsg)
+	}
+
+	var cmd tea.Cmd
+	stop := false
+
+	switch msg := imsg.(type) {
+	case tea.KeyMsg:
+		switch {
+		case key.Matches(msg, m.KeyMap.HideShowPrompt):
+			m.hidePrompt = !m.hidePrompt
+			m.updatePrompt()
+			cmd = tea.Batch(cmd, m.updateTextSz())
+			imsg = nil // consume message
+
+		case key.Matches(msg, m.KeyMap.AutoComplete):
+			if m.AutoComplete == nil {
+				// Pass-through to the editor.
+				break
+			}
+			if m.currentlySearching() {
+				m.acceptSearch()
+			}
+			cmd = m.autoComplete()
+			imsg = 0 // consume message
 
 		case key.Matches(msg, m.KeyMap.EndOfInput):
 			if m.text.AtBeginningOfLine() {
@@ -801,9 +805,6 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.currentlySearching() {
 				m.acceptSearch()
 			}
-
-		default:
-			m.help.ShowAll = false
 		}
 	}
 
@@ -836,12 +837,15 @@ func (m *Model) Reset() {
 	m.Err = nil
 	m.hidePrompt = false
 	m.debugMode = false
+	m.showCompletions = false
+	m.completions.Blur()
 	m.hctrl.c.valueSaved = false
 	m.hctrl.c.prevValue = ""
 	m.hctrl.c.prevCursor = 0
 	m.text.CharLimit = m.CharLimit
 	// Width will be set by Update below on init.
 	m.text.SetHeight(1)
+	m.completions.SetHeight(1)
 	m.text.Reset()
 	m.Focus()
 }
@@ -851,18 +855,82 @@ func (m *Model) Reset() {
 func (m Model) View() string {
 	var buf strings.Builder
 	if m.debugMode {
-		fmt.Fprintf(&buf, "editline:\n%s\ntextarea:\n%s\n", m.Debug(), m.text.Debug())
+		fmt.Fprintf(&buf, "editline:\n%s\ntextarea:\n%s\ncomp:\n%s",
+			m.Debug(), m.text.Debug(), m.completions.Debug())
 	}
 
+	if m.showCompletions {
+		buf.WriteString(m.completions.View())
+		buf.WriteByte('\n')
+	}
 	buf.WriteString(m.text.View())
 	if m.currentlySearching() {
 		buf.WriteByte('\n')
 		buf.WriteString(m.hctrl.pattern.View())
 	} else {
 		buf.WriteByte('\n')
-		buf.WriteString(m.help.View(m.KeyMap))
+		buf.WriteString(m.help.View(m))
 	}
 	return buf.String()
+}
+
+// ShortHelp is part of the help.KeyMap interface.
+func (m Model) ShortHelp() []key.Binding {
+	k := m.KeyMap
+	kb := []key.Binding{
+		k.MoreHelp,
+	}
+	if m.showCompletions {
+		return append(kb, m.completions.ShortHelp()...)
+	}
+	return append(kb,
+		k.EndOfInput, k.Interrupt, k.SearchBackward, k.HideShowPrompt,
+	)
+}
+
+// FullHelp is part of the help.KeyMap interface.
+func (m Model) FullHelp() [][]key.Binding {
+	if m.showCompletions {
+		return m.completions.FullHelp()
+	}
+	k := m.KeyMap
+	return [][]key.Binding{
+		{
+			k.MoreHelp,
+			k.CharacterForward,
+			k.WordForward,
+			key.NewBinding(key.WithKeys("_"), key.WithHelp("del", "del next char")), // k.DeleteCharacterForward,
+			k.DeleteWordForward,
+			k.LineEnd,
+			k.DeleteAfterCursor,
+			k.LineNext,
+			k.HistoryNext,
+			k.AutoComplete,
+		},
+		{
+			k.Interrupt,
+			k.CharacterBackward,
+			k.WordBackward,
+			k.DeleteCharacterBackward,
+			k.DeleteWordBackward,
+			k.LineStart,
+			k.DeleteBeforeCursor,
+			k.LinePrevious,
+			k.HistoryPrevious,
+		},
+		{
+			k.HideShowPrompt,
+			key.NewBinding(key.WithKeys("_"), key.WithHelp("C-d", "del next char/EOF")),
+			k.AlwaysNewline,
+			k.Refresh,
+			k.ToggleOverwriteMode,
+			k.TransposeCharacterBackward,
+			k.LowercaseWordForward,
+			k.UppercaseWordForward,
+			k.SearchBackward,
+		},
+	}
+	return nil
 }
 
 func clamp(v, low, high int) int {

@@ -6,16 +6,48 @@ import (
 	"io"
 	"log"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/knz/bubbline/complete"
 	"github.com/knz/bubbline/editline"
 	"github.com/knz/bubbline/history"
 )
 
 var lore = regexp.MustCompile(`lo(\d+)$`)
+
+var rnames = []string{
+	"Reemst",
+	"rapster",
+	"Robbertsen",
+	"ruggenwervels",
+	"reisverenigingen",
+	"radiojournalisten",
+	"registratiebureau",
+	"Rashid",
+	"rectoscoop",
+	"rondzweef",
+	"respondeerde",
+	"reuzig",
+	"relatiebureau",
+	"Reukers",
+	"rails",
+	"Reith",
+	"ripper",
+	"respecteerden",
+	"routeplan",
+	"renster",
+	"regeringswisselingen",
+	"rechterschouder",
+	"ruste",
+	"Rebers",
+	"rokerskamer",
+	"rotseilandjes",
+	"rondden",
+}
 
 var rwords = []string{
 	"RANGE",
@@ -70,49 +102,66 @@ Blocks of input are terminated with a semicolon.`)
 	}
 	m := editline.New()
 
-	m.KeyMap.Debug = key.NewBinding(key.WithKeys("ctrl+_"))
+	m.KeyMap.Debug = key.NewBinding(key.WithKeys("ctrl+_", "ctrl+@"))
 	m.Placeholder = "(your text here)"
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
-	m.AutoComplete = func(v [][]rune, line, col int) (msg string, consume int, extraInput []string) {
+	m.AutoComplete = func(v [][]rune, line, col int) (msg string, consume int, completions complete.Values) {
 		word, p := editline.FindWordStart(v, line, col)
-		var complete []string
 		const loremIpsum = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
 		if word == "lorem" {
-			complete = []string{loremIpsum}
+			completions.Prefill = loremIpsum
 		} else if word == "hello" {
-			complete = []string{" world"}
+			completions.Prefill = " world"
 		} else if strings.ToLower(word) == "all" {
-			complete = []string{" human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood."}
+			completions.Prefill = " human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood."
 		} else if m := lore.FindStringSubmatch(word); m != nil {
 			n, _ := strconv.Atoi(m[1])
-			complete = []string{loremIpsum[:n]}
+			completions.Prefill = loremIpsum[:n]
 		} else {
 			// Select r-words.
+			var complete []string
+			var rcomp []string
+			var acomp []string
 			wu := strings.ToUpper(word)
-			complete = []string{""}
-			for _, r := range rwords {
-				if strings.HasPrefix(r, wu) {
+			for _, r := range rnames {
+				if strings.HasPrefix(strings.ToUpper(r), wu) {
 					complete = append(complete, r)
+					acomp = append(acomp, r)
 				}
 			}
-			if len(complete) == 1 {
+			for _, r := range rwords {
+				if strings.HasPrefix(strings.ToUpper(r), wu) {
+					complete = append(complete, r)
+					rcomp = append(rcomp, r)
+				}
+			}
+			sort.Slice(complete, func(i, j int) bool { return strings.ToLower(complete[i]) < strings.ToLower(complete[j]) })
+			if len(complete) == 0 {
 				// No match.
-				complete = complete[:0]
 				msg = fmt.Sprintf("autocomplete: ...%s\ntip: try completing after 'lorem' or 'r'", word)
-			} else if len(complete) == 2 {
+			} else if len(complete) == 1 {
 				// Just 1 match.
-				complete[0] = complete[1]
+				completions.Prefill = complete[0]
 				consume = col - p
-				complete = complete[:1]
 			} else {
 				// Find longest common prefix.
-				complete[0] = editline.FindLongestCommonPrefix(complete[1], complete[len(complete)-1])
+				completions.Prefill = editline.FindLongestCommonPrefix(complete[0], complete[len(complete)-1], false)
 				consume = col - p
+				// Populate values.
+				completions.Completions = map[string][]string{}
+				if len(acomp) > 0 {
+					completions.Categories = append(completions.Categories, "words")
+					completions.Completions["words"] = acomp
+				}
+				if len(rcomp) > 0 {
+					completions.Categories = append(completions.Categories, "keywords")
+					completions.Completions["keywords"] = rcomp
+				}
 			}
 		}
-		return msg, consume, complete
+		return msg, consume, completions
 	}
 
 	m.CheckInputComplete = func(v [][]rune, line, col int) bool {
