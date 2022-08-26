@@ -569,6 +569,14 @@ func (m *Model) Debug() string {
 	return buf.String()
 }
 
+// SetWidth changes the width of the editor.
+func (m *Model) SetWidth(w int) {
+	w = clamp(w, 1, m.maxWidth)
+	m.text.SetWidth(w - 1)
+	m.hctrl.pattern.Width = w - 1
+	m.help.Width = w - 1
+}
+
 // Update is the Bubble Tea event handler.
 // This is part of the tea.Model interface.
 func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
@@ -578,10 +586,9 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	m.lastEvent = imsg
 	switch msg := imsg.(type) {
 	case tea.WindowSizeMsg:
-		m.text.SetWidth(msg.Width - 1)
-		m.hctrl.pattern.Width = msg.Width - 1
 		m.maxWidth = msg.Width
 		m.maxHeight = msg.Height
+		m.SetWidth(msg.Width - 1)
 		cmd = tea.Batch(cmd, m.updateTextSz())
 
 	case tea.KeyMsg:
