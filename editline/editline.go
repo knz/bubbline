@@ -10,6 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -63,23 +64,74 @@ type KeyMap struct {
 	Debug           key.Binding
 	HideShowPrompt  key.Binding
 	AlwaysNewline   key.Binding
+	MoreHelp        key.Binding
+}
+
+// ShortHelp is part of the help.KeyMap interface.
+func (k KeyMap) ShortHelp() []key.Binding {
+	return []key.Binding{
+		k.MoreHelp, k.EndOfInput, k.Interrupt, k.SearchBackward, k.HideShowPrompt,
+	}
+}
+
+// FullHelp is part of the help.KeyMap interface.
+func (k KeyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{
+		{
+			k.MoreHelp,
+			k.CharacterForward,
+			k.WordForward,
+			key.NewBinding(key.WithKeys("_"), key.WithHelp("del", "del next char")), // k.DeleteCharacterForward,
+			k.DeleteWordForward,
+			k.LineEnd,
+			k.DeleteAfterCursor,
+			k.LineNext,
+			k.HistoryNext,
+			k.AutoComplete,
+		},
+		{
+			k.Interrupt,
+			k.CharacterBackward,
+			k.WordBackward,
+			k.DeleteCharacterBackward,
+			k.DeleteWordBackward,
+			k.LineStart,
+			k.DeleteBeforeCursor,
+			k.LinePrevious,
+			k.HistoryPrevious,
+		},
+		{
+			k.HideShowPrompt,
+			key.NewBinding(key.WithKeys("_"), key.WithHelp("C-d", "del next char/EOF")),
+			k.AlwaysNewline,
+			k.Refresh,
+			k.ToggleOverwriteMode,
+			k.TransposeCharacterBackward,
+			k.LowercaseWordForward,
+			k.UppercaseWordForward,
+			k.SearchBackward,
+		},
+	}
+	return nil
 }
 
 // DefaultKeyMap is the default set of key bindings.
 var DefaultKeyMap = KeyMap{
-	KeyMap:          textarea.DefaultKeyMap,
-	AlwaysNewline:   key.NewBinding(key.WithKeys("alt+enter", "alt+\r")),
-	AutoComplete:    key.NewBinding(key.WithKeys("tab")),
-	Interrupt:       key.NewBinding(key.WithKeys("ctrl+c")),
+	KeyMap: textarea.DefaultKeyMap,
+
+	AlwaysNewline:   key.NewBinding(key.WithKeys("alt+enter", "alt+\r"), key.WithHelp("M-⤶", "force newline")),
+	AutoComplete:    key.NewBinding(key.WithKeys("tab"), key.WithHelp("tab", "try autocomplete")),
+	Interrupt:       key.NewBinding(key.WithKeys("ctrl+c"), key.WithHelp("C-c", "clear/cancel")),
 	SignalQuit:      key.NewBinding(key.WithKeys(`ctrl+\`)),
 	SignalTTYStop:   key.NewBinding(key.WithKeys("ctrl+z")),
-	Refresh:         key.NewBinding(key.WithKeys("ctrl+l")),
-	EndOfInput:      key.NewBinding(key.WithKeys("ctrl+d")),
+	Refresh:         key.NewBinding(key.WithKeys("ctrl+l"), key.WithHelp("C-l", "refresh display")),
+	EndOfInput:      key.NewBinding(key.WithKeys("ctrl+d"), key.WithHelp("C-d", "erase/stop")),
 	AbortSearch:     key.NewBinding(key.WithKeys("ctrl+g")),
-	SearchBackward:  key.NewBinding(key.WithKeys("ctrl+r")),
-	HistoryPrevious: key.NewBinding(key.WithKeys("alt+p")),
-	HistoryNext:     key.NewBinding(key.WithKeys("alt+n")),
-	HideShowPrompt:  key.NewBinding(key.WithKeys("alt+.")),
+	SearchBackward:  key.NewBinding(key.WithKeys("ctrl+r"), key.WithHelp("C-r", "search hist")),
+	HistoryPrevious: key.NewBinding(key.WithKeys("alt+p"), key.WithHelp("M-p", "prev history entry")),
+	HistoryNext:     key.NewBinding(key.WithKeys("alt+n"), key.WithHelp("M-n", "next history entry")),
+	HideShowPrompt:  key.NewBinding(key.WithKeys("alt+."), key.WithHelp("M-.", "hide/show prompt")),
+	MoreHelp:        key.NewBinding(key.WithKeys("alt+?"), key.WithHelp("M-?", "toggle key help")),
 }
 
 // FindWordStart is meant for use as a helper when implementing
@@ -228,6 +280,8 @@ type Model struct {
 	}
 	hidePrompt bool
 
+	help help.Model
+
 	text      textarea.Model
 	maxWidth  int
 	maxHeight int
@@ -255,10 +309,11 @@ func New() *Model {
 		SearchPrompt:         "bck:",
 		SearchPromptNotFound: "bck?",
 		ShowLineNumbers:      false,
+		help:                 help.New(),
 	}
 	m.text.KeyMap.Paste.Unbind() // paste from clipboard not supported.
 	m.hctrl.pattern = textinput.New()
-	m.hctrl.pattern.Placeholder = "enter search term, or ^G to cancel search"
+	m.hctrl.pattern.Placeholder = "enter search term, or C-g to cancel search"
 	m.Reset()
 	return &m
 }
@@ -596,6 +651,10 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.KeyMap.Debug):
 			m.debugMode = !m.debugMode
 
+		case key.Matches(msg, m.KeyMap.MoreHelp):
+			m.help.ShowAll = !m.help.ShowAll
+			imsg = nil // consume message
+
 		case key.Matches(msg, m.KeyMap.HideShowPrompt):
 			m.hidePrompt = !m.hidePrompt
 			m.updatePrompt()
@@ -738,6 +797,8 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				m.acceptSearch()
 			}
 
+		default:
+			m.help.ShowAll = false
 		}
 	}
 
@@ -754,6 +815,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	if stop {
+		m.help.ShowAll = false
 		// Reset the search/history navigation cursor to the end.
 		m.resetNavCursor()
 		m.text.Blur()
@@ -791,6 +853,9 @@ func (m Model) View() string {
 	if m.currentlySearching() {
 		buf.WriteByte('\n')
 		buf.WriteString(m.hctrl.pattern.View())
+	} else {
+		buf.WriteByte('\n')
+		buf.WriteString(m.help.View(m.KeyMap))
 	}
 	return buf.String()
 }

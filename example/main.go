@@ -62,8 +62,7 @@ var rwords = []string{
 func main() {
 	fmt.Println(`hello!
 Enter some text below.
-Blocks of input are terminated with a semicolon.
-Press Ctrl+C to interrupt; Ctrl+D to terminate.`)
+Blocks of input are terminated with a semicolon.`)
 
 	h, err := history.LoadHistory("test.history")
 	if err != nil {
@@ -131,7 +130,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 		if atStart {
 			atStart = false
 		} else {
-			fmt.Println("\nEnter more input (Ctrl+D to terminate):")
+			fmt.Println("\nEnter more input:")
 		}
 		p := tea.NewProgram(m)
 		m.Reset()
