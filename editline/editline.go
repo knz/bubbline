@@ -16,6 +16,7 @@ import (
 	"github.com/knz/bubbline/complete"
 	"github.com/knz/bubbline/editline/internal/textarea"
 	rw "github.com/mattn/go-runewidth"
+	"github.com/muesli/reflow/wordwrap"
 	"github.com/muesli/termenv"
 )
 
@@ -64,6 +65,8 @@ type KeyMap struct {
 	HideShowPrompt  key.Binding
 	AlwaysNewline   key.Binding
 	MoreHelp        key.Binding
+	ReflowLine      key.Binding
+	ReflowAll       key.Binding
 }
 
 // DefaultKeyMap is the default set of key bindings.
@@ -83,6 +86,8 @@ var DefaultKeyMap = KeyMap{
 	HistoryNext:     key.NewBinding(key.WithKeys("alt+n"), key.WithHelp("M-n", "next history entry")),
 	HideShowPrompt:  key.NewBinding(key.WithKeys("alt+."), key.WithHelp("M-.", "hide/show prompt")),
 	MoreHelp:        key.NewBinding(key.WithKeys("alt+?"), key.WithHelp("M-?", "toggle key help")),
+	ReflowLine:      key.NewBinding(key.WithKeys("alt+q"), key.WithHelp("M-q", "reflow line")),
+	ReflowAll:       key.NewBinding(key.WithKeys("alt+Q"), key.WithHelp("M-S-q", "reflow all")),
 }
 
 // AutoCompleteFn is called upon the user pressing the
@@ -162,7 +167,10 @@ type Model struct {
 	// Only takes effect at Reset().
 	NextPrompt string
 
-	// TODO: separate 1st line prompt vs all-but-first-line prompt.
+	// ReflowFn, if defined, is used for the reflowing commands (M-q/M-Q).
+	// The info returned value, if any, is displayed as an informational
+	// message above the editor.
+	ReflowFn func(all bool, currentText string, targetWidth int) (changed bool, newText, info string)
 
 	// SearchPrompt is the prompt displayed before the history search pattern.
 	SearchPrompt string
@@ -209,11 +217,12 @@ type Model struct {
 // New creates a new Model.
 func New() *Model {
 	focusedStyle, blurredStyle := DefaultStyles()
-	m := Model{
+	m := &Model{
 		text:                 textarea.New(),
 		Err:                  nil,
 		KeyMap:               DefaultKeyMap,
 		MaxHistorySize:       0, // no limit
+		ReflowFn:             DefaultReflow,
 		DedupHistory:         true,
 		DeleteCharIfNotEOF:   true,
 		FocusedStyle:         focusedStyle,
@@ -231,7 +240,7 @@ func New() *Model {
 	m.hctrl.pattern = textinput.New()
 	m.hctrl.pattern.Placeholder = "enter search term, or C-g to cancel search"
 	m.Reset()
-	return &m
+	return m
 }
 
 // SetHistory sets the history navigation list all at once.
@@ -558,6 +567,51 @@ func (m *Model) SetWidth(w int) {
 	m.help.Width = w - 1
 }
 
+// DefaultReflow is the default/initial value of ReflowFn.
+func DefaultReflow(
+	allText bool, currentText string, targetWidth int,
+) (changed bool, newText, info string) {
+	if rw.StringWidth(currentText) <= targetWidth {
+		return false, currentText, ""
+	}
+	return true, wordwrap.String(currentText, targetWidth), ""
+}
+
+// reflowLine reflows the current line.
+func (m *Model) reflowLine() (cmd tea.Cmd) {
+	if m.ReflowFn == nil {
+		return nil
+	}
+	s := m.text.CurrentLine()
+	changed, newText, info := m.ReflowFn(false /*all*/, s, m.text.Width()-1)
+	if !changed {
+		return nil
+	}
+	m.text.ClearLine()
+	m.text.InsertString(newText)
+	if info != "" {
+		cmd = tea.Println(info)
+	}
+	return tea.Batch(cmd, m.updateTextSz())
+}
+
+// reflowAll reflows the entire text.
+func (m *Model) reflowAll() (cmd tea.Cmd) {
+	if m.ReflowFn == nil {
+		return nil
+	}
+	s := m.text.Value()
+	changed, newText, info := m.ReflowFn(true /*all*/, s, m.text.Width()-1)
+	if !changed {
+		return nil
+	}
+	m.text.SetValue(newText)
+	if info != "" {
+		cmd = tea.Println(info)
+	}
+	return tea.Batch(cmd, m.updateTextSz())
+}
+
 // handleCompletions navigates through the completion screen.
 func (m *Model) handleCompletions(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	_, cmd := m.completions.Update(imsg)
@@ -758,6 +812,20 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				imsg = nil // consume message
 			}
 
+		case key.Matches(msg, m.KeyMap.ReflowLine):
+			if m.currentlySearching() {
+				m.acceptSearch()
+			}
+			cmd = tea.Batch(cmd, m.reflowLine())
+			imsg = nil
+
+		case key.Matches(msg, m.KeyMap.ReflowAll):
+			if m.currentlySearching() {
+				m.acceptSearch()
+			}
+			cmd = tea.Batch(cmd, m.reflowAll())
+			imsg = nil
+
 		case key.Matches(msg, m.KeyMap.CharacterForward) ||
 			key.Matches(msg, m.KeyMap.CharacterBackward) ||
 			key.Matches(msg, m.KeyMap.WordForward) ||
@@ -865,7 +933,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.DeleteAfterCursor,
 			k.LineNext,
 			k.HistoryNext,
-			k.AutoComplete,
+			k.ReflowLine,
 		},
 		{
 			k.Interrupt,
@@ -877,6 +945,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.DeleteBeforeCursor,
 			k.LinePrevious,
 			k.HistoryPrevious,
+			k.ReflowAll,
 		},
 		{
 			k.HideShowPrompt,
@@ -888,6 +957,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.LowercaseWordForward,
 			k.UppercaseWordForward,
 			k.SearchBackward,
+			k.AutoComplete,
 		},
 	}
 	return nil

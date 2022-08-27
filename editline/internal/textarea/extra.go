@@ -27,6 +27,18 @@ func (m *Model) CursorRight(n int) {
 	}
 }
 
+// CurrentLine retrieves the current line as a string.
+func (m *Model) CurrentLine() string {
+	return string(m.value[m.row])
+}
+
+// ClearLine clears the current line.
+func (m *Model) ClearLine() {
+	m.value[m.row] = m.value[m.row][:0]
+	m.col = 0
+	m.lastCharOffset = 0
+}
+
 // ValueRunes retrieves the current value decomposed as runes.
 func (m *Model) ValueRunes() [][]rune {
 	return m.value
