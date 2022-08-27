@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knz/bubbline/complete"
 	"github.com/knz/bubbline/editline"
@@ -105,7 +104,7 @@ Blocks of input are terminated with a semicolon.`)
 	m.Reflow = func(x bool, y string, _ int) (bool, string, string) {
 		return editline.DefaultReflow(x, y, 72)
 	}
-	m.KeyMap.Debug = key.NewBinding(key.WithKeys("ctrl+_", "ctrl+@"))
+	m.SetDebugEnabled(true)
 	m.Placeholder = "(your text here)"
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
