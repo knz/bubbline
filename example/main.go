@@ -107,7 +107,7 @@ Blocks of input are terminated with a semicolon.`)
 	m.Prompt = "hello> "
 	m.NextPrompt = "-> "
 	m.AutoComplete = func(v [][]rune, line, col int) (msg string, moveRight, deleteLeft int, completions complete.Values) {
-		word, wstart, wend := editline.FindWord(v, line, col)
+		word, wstart, wend := complete.FindWord(v, line, col)
 		moveRight = wend - col
 		const loremIpsum = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
@@ -123,32 +123,32 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 		} else {
 			msg = fmt.Sprintf("autocomplete: ...%q\ntip: try completing after 'lorem' or 'r'", word)
 			// Select r-words.
-			var complete []string
+			var comps []string
 			var rcomp []string
 			var acomp []string
 			wu := strings.ToUpper(word)
 			for _, r := range rnames {
 				if strings.HasPrefix(strings.ToUpper(r), wu) {
-					complete = append(complete, r)
+					comps = append(comps, r)
 					acomp = append(acomp, r)
 				}
 			}
 			for _, r := range rwords {
 				if strings.HasPrefix(strings.ToUpper(r), wu) {
-					complete = append(complete, r)
+					comps = append(comps, r)
 					rcomp = append(rcomp, r)
 				}
 			}
-			sort.Slice(complete, func(i, j int) bool { return strings.ToLower(complete[i]) < strings.ToLower(complete[j]) })
-			if len(complete) == 0 {
+			sort.Slice(comps, func(i, j int) bool { return strings.ToLower(comps[i]) < strings.ToLower(comps[j]) })
+			if len(comps) == 0 {
 				// No match.
-			} else if len(complete) == 1 {
+			} else if len(comps) == 1 {
 				// Just 1 match.
-				completions.Prefill = complete[0]
+				completions.Prefill = comps[0]
 				deleteLeft = wend - wstart
 			} else {
 				// Find longest common prefix.
-				completions.Prefill = editline.FindLongestCommonPrefix(complete[0], complete[len(complete)-1], false)
+				completions.Prefill = complete.FindLongestCommonPrefix(comps[0], comps[len(comps)-1], false)
 				deleteLeft = wend - wstart
 				// Populate values.
 				completions.Completions = map[string][]string{}
