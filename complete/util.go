@@ -21,11 +21,6 @@ func FindWord(v [][]rune, line, col int) (word string, wordStart, wordEnd int) {
 	if curLen == 0 {
 		return "", 0, 0
 	}
-	// If the cursor is beyond the end of the line, move
-	// it backwards once.
-	if col >= curLen {
-		col = curLen - 1
-	}
 	wordStart = col
 	// Find beginning of word.
 	for wordStart > 0 && !unicode.IsSpace(curLine[wordStart-1]) {

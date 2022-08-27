@@ -121,7 +121,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 			n, _ := strconv.Atoi(m[1])
 			completions.Prefill = loremIpsum[:n]
 		} else {
-			msg = fmt.Sprintf("autocomplete: ...%q\ntip: try completing after 'lorem' or 'r'", word)
+			msg = fmt.Sprintf("autocomplete: ...%q (%d %d %d)\ntip: try completing after 'lorem' or 'r'", word, wstart, wend, col)
 			// Select r-words.
 			var comps []string
 			var rcomp []string
