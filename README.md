@@ -23,6 +23,8 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
   - Ctrl+Z (suspend process), Ctrl+\ (send SIGQUIT to process e.g. to get stack dump).
 
 - Additional features not in the original libedit or textarea:
+  - Fancy presentation of completions with menu navigation.
+  - Key combination to reflow the text to fit within a specific width.
   - Hide/show the prompt to simplify copy-paste from terminal.
   - Secondary prompt for multi-line input.
   - Debug mode for troubleshooting.
