@@ -102,6 +102,9 @@ Blocks of input are terminated with a semicolon.`)
 	}
 	m := editline.New()
 
+	m.ReflowFn = func(x bool, y string, _ int) (bool, string, string) {
+		return editline.DefaultReflow(x, y, 72)
+	}
 	m.KeyMap.Debug = key.NewBinding(key.WithKeys("ctrl+_", "ctrl+@"))
 	m.Placeholder = "(your text here)"
 	m.Prompt = "hello> "
