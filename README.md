@@ -45,7 +45,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Alt+P                  | Recall previous history entry.                                                               | HistoryPrevious            |
 | Alt+N                  | Recall next history entry.                                                                   | HistoryNext                |
 | Ctrl+M, Enter          | Enter a new line; or terminate input if `CheckInputComplete` returns true.                   | InsertNewline              |
-| Alt+Enter              | Always enter a newline.                                                                      | AlwaysNewline              |
+| Alt+Enter              | Always enter a newline; ignore input termination condition.                                  | AlwaysNewline              |
 | Ctrl+F, Right          | Move one character to the right.                                                             | CharacterBackward          |
 | Ctrl+B, Left           | Move one character to the left.                                                              | CharacterForward           |
 | Alt+F, Alt+Right       | Move cursor to the previous word.                                                            | WordForward                |
@@ -67,6 +67,9 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Alt+D, Alt+Delete      | Delete the word after the cursor.                                                            | DeleteWordForward          |
 | Ctrl+\                 | Send SIGQUIT to process.                                                                     | SignalQuit                 |
 | Ctrl+Z                 | Send SIGTSTOP to process (suspend).                                                          | SignalTTYStop              |
+| Alt+?                  | Toggle display of keybindings.                                                               | MoreHelp                   |
+| Alt+q                  | Reflow the current line.                                                                     | ReflowLine                 |
+| Alt+Shift+Q            | Reflow the entire input.                                                                     | ReflowAll                  |
 | (not bound by default) | Print debug information about the editor.                                                    | Debug                      |
 
 ## Example use
@@ -81,38 +84,37 @@ import (
     "log"
 
     tea "github.com/charmbracelet/bubbletea"
-    "github.com/knz/bubbline/editline"
+    "github.com/knz/bubbline"
 )
 
 func main() {
     // Instantiate the widget.
-    m := editline.New()
-    for {
-        // Prepare for a new input.
-        m.Reset()
+    m := bubbline.New()
 
-        // Run the widget.
-        p := tea.NewProgram(m)
-        if err := p.Start(); err != nil {
-            log.Fatal(err)
-        }
+    for {
+        // Read a line of input using the widget.
+        val, err := m.GetLine()
+
         // Handle the end of input.
-        if m.Err != nil {
-            if m.Err == io.EOF {
+        if err != nil {
+            if err == io.EOF {
+                // No more input.
                 break
             }
-            if errors.Is(m.Err, editline.ErrInterrupted) {
+            if errors.Is(err, bubbline.ErrInterrupted) {
+                // Entered Ctrl+C to cancel input.
                 fmt.Println("^C")
             } else {
-                fmt.Println("error: %v", m.Err)
+                fmt.Println("error:", err)
             }
             continue
         }
 
         // Handle regular input.
-        val := m.Value()
         fmt.Printf("\nYou have entered: %q\n", val)
-        m.AddHistoryEntry(val)
+        m.AddHistory(val)
     }
 }
 ```
+
+See the `examples` subdirectory for more examples!
