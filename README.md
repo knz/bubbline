@@ -15,13 +15,14 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Resizes vertically automatically as the input grows.                               | ❌                    | ✅                                | ✅                      |
 | Secondary prompt for multi-line input.                                             | ❌ [^p2]              | ✅                                | ✅                      |
 | Supports history navigation and search.                                            | ❌                    | ✅                                | ✅                      |
-| Word navigation across input lines.                                                | ❌                    | ❌                                | ✅                      |
+| Word navigation across input lines.                                                | ❌                    | ✅                                | ✅                      |
 | Enter key conditionally ends the input.                                            | ❌                    | ✅                                | ✅                      |
 | Tab completion callback.                                                           | ❌                    | ✅                                | ✅                      |
 | Fancy presentation of completions with menu navigation.                            | ❌                    | ✅ [^cp]                          | ✅                      |
 | Intelligent input interruption with Ctrl+C.                                        | ❌                    | ✅                                | ✅                      |
 | Ctrl+Z (suspend process), Ctrl+\ (send SIGQUIT to process e.g. to get stack dump). | ❌                    | ✅                                | ✅                      |
 | Uppercase/lowercase/capitalize next word, transpose characters.                    | ✅                    | ✅                                | ✅                      |
+| Inline help for key bindings.                                                      | ❌                    | ❌                                | ✅                      |
 | Toggle overwrite mode.                                                             | ❌ [^p1]              | ❌                                | ✅ [^p3]                |
 | Key combination to reflow the text to fit within a specific width.                 | ❌                    | ❌                                | ✅                      |
 | Hide/show the prompt to simplify copy-paste from terminal.                         | ❌                    | ❌                                | ✅                      |
