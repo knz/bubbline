@@ -167,10 +167,10 @@ type Model struct {
 	// Only takes effect at Reset().
 	NextPrompt string
 
-	// ReflowFn, if defined, is used for the reflowing commands (M-q/M-Q).
+	// Reflow, if defined, is used for the reflowing commands (M-q/M-Q).
 	// The info returned value, if any, is displayed as an informational
 	// message above the editor.
-	ReflowFn func(all bool, currentText string, targetWidth int) (changed bool, newText, info string)
+	Reflow func(all bool, currentText string, targetWidth int) (changed bool, newText, info string)
 
 	// SearchPrompt is the prompt displayed before the history search pattern.
 	SearchPrompt string
@@ -222,7 +222,7 @@ func New() *Model {
 		Err:                  nil,
 		KeyMap:               DefaultKeyMap,
 		MaxHistorySize:       0, // no limit
-		ReflowFn:             DefaultReflow,
+		Reflow:               DefaultReflow,
 		DedupHistory:         true,
 		DeleteCharIfNotEOF:   true,
 		FocusedStyle:         focusedStyle,
@@ -567,7 +567,7 @@ func (m *Model) SetWidth(w int) {
 	m.help.Width = w - 1
 }
 
-// DefaultReflow is the default/initial value of ReflowFn.
+// DefaultReflow is the default/initial value of Reflow.
 func DefaultReflow(
 	allText bool, currentText string, targetWidth int,
 ) (changed bool, newText, info string) {
@@ -579,11 +579,11 @@ func DefaultReflow(
 
 // reflowLine reflows the current line.
 func (m *Model) reflowLine() (cmd tea.Cmd) {
-	if m.ReflowFn == nil {
+	if m.Reflow == nil {
 		return nil
 	}
 	s := m.text.CurrentLine()
-	changed, newText, info := m.ReflowFn(false /*all*/, s, m.text.Width()-1)
+	changed, newText, info := m.Reflow(false /*all*/, s, m.text.Width()-1)
 	if !changed {
 		return nil
 	}
@@ -597,11 +597,11 @@ func (m *Model) reflowLine() (cmd tea.Cmd) {
 
 // reflowAll reflows the entire text.
 func (m *Model) reflowAll() (cmd tea.Cmd) {
-	if m.ReflowFn == nil {
+	if m.Reflow == nil {
 		return nil
 	}
 	s := m.text.Value()
-	changed, newText, info := m.ReflowFn(true /*all*/, s, m.text.Width()-1)
+	changed, newText, info := m.Reflow(true /*all*/, s, m.text.Width()-1)
 	if !changed {
 		return nil
 	}
