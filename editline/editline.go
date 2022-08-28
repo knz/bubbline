@@ -80,10 +80,10 @@ var DefaultKeyMap = KeyMap{
 	SignalTTYStop:   key.NewBinding(key.WithKeys("ctrl+z")),
 	Refresh:         key.NewBinding(key.WithKeys("ctrl+l"), key.WithHelp("C-l", "refresh display")),
 	EndOfInput:      key.NewBinding(key.WithKeys("ctrl+d"), key.WithHelp("C-d", "erase/stop")),
-	AbortSearch:     key.NewBinding(key.WithKeys("ctrl+g")),
-	SearchBackward:  key.NewBinding(key.WithKeys("ctrl+r"), key.WithHelp("C-r", "search hist")),
-	HistoryPrevious: key.NewBinding(key.WithKeys("alt+p"), key.WithHelp("M-p", "prev history entry")),
-	HistoryNext:     key.NewBinding(key.WithKeys("alt+n"), key.WithHelp("M-n", "next history entry")),
+	AbortSearch:     key.NewBinding(key.WithKeys("ctrl+g"), key.WithDisabled()),
+	SearchBackward:  key.NewBinding(key.WithKeys("ctrl+r"), key.WithHelp("C-r", "search hist"), key.WithDisabled()),
+	HistoryPrevious: key.NewBinding(key.WithKeys("alt+p"), key.WithHelp("M-p", "prev history entry"), key.WithDisabled()),
+	HistoryNext:     key.NewBinding(key.WithKeys("alt+n"), key.WithHelp("M-n", "next history entry"), key.WithDisabled()),
 	HideShowPrompt:  key.NewBinding(key.WithKeys("alt+."), key.WithHelp("M-.", "hide/show prompt")),
 	MoreHelp:        key.NewBinding(key.WithKeys("alt+?"), key.WithHelp("M-?", "toggle key help")),
 	ReflowLine:      key.NewBinding(key.WithKeys("alt+q"), key.WithHelp("M-q", "reflow line")),
@@ -253,6 +253,7 @@ func (m *Model) SetHistory(h []string) {
 	for _, e := range h {
 		m.history = append(m.history, e)
 	}
+	m.checkHistoryEnabled()
 	m.resetNavCursor()
 }
 
@@ -281,7 +282,16 @@ func (m *Model) AddHistoryEntry(s string) {
 		copy(m.history, m.history[1:])
 		m.history = m.history[:m.MaxHistorySize]
 	}
+	m.checkHistoryEnabled()
 	m.resetNavCursor()
+}
+
+func (m *Model) checkHistoryEnabled() {
+	enabled := len(m.history) > 0
+	m.KeyMap.AbortSearch.SetEnabled(enabled)
+	m.KeyMap.SearchBackward.SetEnabled(enabled)
+	m.KeyMap.HistoryPrevious.SetEnabled(enabled)
+	m.KeyMap.HistoryNext.SetEnabled(enabled)
 }
 
 // Value retrieves the value of the text input.
