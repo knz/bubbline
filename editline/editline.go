@@ -991,6 +991,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.LineNext,
 			k.HistoryNext,
 			k.ReflowLine,
+			k.HideShowPrompt,
 		},
 		{
 			k.Interrupt,
@@ -1004,13 +1005,14 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.LinePrevious,
 			k.HistoryPrevious,
 			k.ReflowAll,
+			k.Debug,
 		},
 		{
-			k.HideShowPrompt,
-			key.NewBinding(key.WithKeys("_"), key.WithHelp("C-d", "del next char/EOF")),
+			k.InsertNewline,
 			k.AlwaysNewline,
 			k.AlwaysComplete,
 			k.Refresh,
+			key.NewBinding(key.WithKeys("_"), key.WithHelp("C-d", "del next char/EOF")),
 			k.ToggleOverwriteMode,
 			k.TransposeCharacterBackward,
 			k.LowercaseWordForward,
@@ -1019,7 +1021,6 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.AutoComplete,
 		},
 	}
-	return nil
 }
 
 func clamp(v, low, high int) int {
