@@ -82,7 +82,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Alt+?                  | Toggle display of keybindings.                                                               | MoreHelp                   |
 | Alt+q                  | Reflow the current line.                                                                     | ReflowLine                 |
 | Alt+Shift+Q            | Reflow the entire input.                                                                     | ReflowAll                  |
-| (not bound by default) | Print debug information about the editor.                                                    | Debug                      |
+| Ctrl+_, Ctrl+@         | Print debug information about the editor. (not enabled by default)                           | Debug                      |
 
 ## Example use
 

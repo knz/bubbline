@@ -53,6 +53,9 @@ or the letter 'r'.
 	}
 	m.SetAutoSaveHistory("test.history", true)
 
+	// Enable debug mode.
+	m.SetDebugEnabled(true)
+
 	// Read-print loop starts here.
 	for {
 		val, err := m.GetLine()

@@ -88,7 +88,7 @@ var DefaultKeyMap = KeyMap{
 	MoreHelp:        key.NewBinding(key.WithKeys("alt+?"), key.WithHelp("M-?", "toggle key help")),
 	ReflowLine:      key.NewBinding(key.WithKeys("alt+q"), key.WithHelp("M-q", "reflow line")),
 	ReflowAll:       key.NewBinding(key.WithKeys("alt+Q"), key.WithHelp("M-S-q", "reflow all")),
-	Debug:           key.NewBinding(key.WithKeys("ctrl+_", "ctrl+@"), key.WithHelp("C-_/C-@", "debug mode")),
+	Debug:           key.NewBinding(key.WithKeys("ctrl+_", "ctrl+@"), key.WithHelp("C-_/C-@", "debug mode"), key.WithDisabled()),
 }
 
 // AutoCompleteFn is called upon the user pressing the
@@ -237,7 +237,6 @@ func New() *Model {
 		help:                 help.New(),
 		completions:          complete.New(),
 	}
-	m.KeyMap.Debug.SetEnabled(false)
 	m.text.KeyMap.Paste.Unbind() // paste from clipboard not supported.
 	m.hctrl.pattern = textinput.New()
 	m.hctrl.pattern.Placeholder = "enter search term, or C-g to cancel search"
