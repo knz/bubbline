@@ -64,6 +64,7 @@ type KeyMap struct {
 	Debug           key.Binding
 	HideShowPrompt  key.Binding
 	AlwaysNewline   key.Binding
+	AlwaysComplete  key.Binding
 	MoreHelp        key.Binding
 	ReflowLine      key.Binding
 	ReflowAll       key.Binding
@@ -75,7 +76,8 @@ type KeyMap struct {
 var DefaultKeyMap = KeyMap{
 	KeyMap: textarea.DefaultKeyMap,
 
-	AlwaysNewline:   key.NewBinding(key.WithKeys("alt+enter", "alt+\r"), key.WithHelp("M-⤶", "force newline")),
+	AlwaysNewline:   key.NewBinding(key.WithKeys("ctrl+j"), key.WithHelp("C-j", "force newline")),
+	AlwaysComplete:  key.NewBinding(key.WithKeys("alt+enter", "alt+\r"), key.WithHelp("M-⤶/M-C-m", "force complete")),
 	AutoComplete:    key.NewBinding(key.WithKeys("tab"), key.WithHelp("tab", "try autocomplete")),
 	Interrupt:       key.NewBinding(key.WithKeys("ctrl+c"), key.WithHelp("C-c", "clear/cancel")),
 	SignalQuit:      key.NewBinding(key.WithKeys(`ctrl+\`)),
@@ -801,6 +803,14 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			m.text.InsertNewline()
 			imsg = nil // consume message
 
+		case key.Matches(msg, m.KeyMap.AlwaysComplete):
+			if m.currentlySearching() {
+				// Stop the completion first.
+				m.acceptSearch()
+			}
+			stop = true
+			imsg = nil // consume message
+
 		case key.Matches(msg, m.KeyMap.MoveToBegin):
 			if m.currentlySearching() {
 				// Stop the completion first.
@@ -999,6 +1009,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.HideShowPrompt,
 			key.NewBinding(key.WithKeys("_"), key.WithHelp("C-d", "del next char/EOF")),
 			k.AlwaysNewline,
+			k.AlwaysComplete,
 			k.Refresh,
 			k.ToggleOverwriteMode,
 			k.TransposeCharacterBackward,
