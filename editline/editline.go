@@ -67,6 +67,8 @@ type KeyMap struct {
 	MoreHelp        key.Binding
 	ReflowLine      key.Binding
 	ReflowAll       key.Binding
+	MoveToBegin     key.Binding
+	MoveToEnd       key.Binding
 }
 
 // DefaultKeyMap is the default set of key bindings.
@@ -89,6 +91,8 @@ var DefaultKeyMap = KeyMap{
 	ReflowLine:      key.NewBinding(key.WithKeys("alt+q"), key.WithHelp("M-q", "reflow line")),
 	ReflowAll:       key.NewBinding(key.WithKeys("alt+Q"), key.WithHelp("M-S-q", "reflow all")),
 	Debug:           key.NewBinding(key.WithKeys("ctrl+_", "ctrl+@"), key.WithHelp("C-_/C-@", "debug mode"), key.WithDisabled()),
+	MoveToBegin:     key.NewBinding(key.WithKeys("alt+<", "ctrl+home"), key.WithHelp("M-</C-home", "go to begin")),
+	MoveToEnd:       key.NewBinding(key.WithKeys("alt+>", "ctrl+end"), key.WithHelp("M->/C-end", "go to end")),
 }
 
 // AutoCompleteFn is called upon the user pressing the
@@ -797,6 +801,22 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			m.text.InsertNewline()
 			imsg = nil // consume message
 
+		case key.Matches(msg, m.KeyMap.MoveToBegin):
+			if m.currentlySearching() {
+				// Stop the completion first.
+				m.acceptSearch()
+			}
+			m.text.MoveToBegin()
+			imsg = nil // consume message
+
+		case key.Matches(msg, m.KeyMap.MoveToEnd):
+			if m.currentlySearching() {
+				// Stop the completion first.
+				m.acceptSearch()
+			}
+			m.text.MoveToEnd()
+			imsg = nil // consume message
+
 		case key.Matches(msg, m.KeyMap.InsertNewline):
 			if m.currentlySearching() {
 				// Stop the completion first.
@@ -953,6 +973,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.MoreHelp,
 			k.CharacterForward,
 			k.WordForward,
+			k.MoveToEnd,
 			key.NewBinding(key.WithKeys("_"), key.WithHelp("del", "del next char")), // k.DeleteCharacterForward,
 			k.DeleteWordForward,
 			k.LineEnd,
@@ -965,6 +986,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.Interrupt,
 			k.CharacterBackward,
 			k.WordBackward,
+			k.MoveToBegin,
 			k.DeleteCharacterBackward,
 			k.DeleteWordBackward,
 			k.LineStart,

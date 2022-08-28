@@ -64,6 +64,8 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Alt+B, Alt+Left        | Move cursor to the next word.                                                                | WordBackward               |
 | Ctrl+A, Home           | Move cursor to beginning of line.                                                            | LineNext                   |
 | Ctrl+E, End            | Move cursor to end of line.                                                                  | LineEnd                    |
+| Alt+<, Ctrl+Home       | Move cursor to beginning of input.                                                           | MoveToBegin                |
+| Alt+>, Ctrl+End        | Move cursor to end of input.                                                                 | MoveToEnd                  |
 | Ctrl+P, Up             | Move cursor one line up, or to previous history entry if already on first line.              | LinePrevious               |
 | Ctrl+N, Down           | Move cursor one line down, or to next history entry if already on last line.                 | LineStart                  |
 | Ctrl+T                 | Transpose the last two characters.                                                           | TransposeCharacterBackward |

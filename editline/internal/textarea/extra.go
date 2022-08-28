@@ -39,6 +39,19 @@ func (m *Model) ClearLine() {
 	m.lastCharOffset = 0
 }
 
+// MoveToBegin moves the cursor to the beginning of the input.
+func (m *Model) MoveToBegin() {
+	m.row = 0
+	m.col = 0
+	m.lastCharOffset = 0
+}
+
+// MoveToEnd moves the cursor to the end of the input.
+func (m *Model) MoveToEnd() {
+	m.row = len(m.value) - 1
+	m.SetCursor(len(m.value[m.row]))
+}
+
 // ValueRunes retrieves the current value decomposed as runes.
 func (m *Model) ValueRunes() [][]rune {
 	return m.value
