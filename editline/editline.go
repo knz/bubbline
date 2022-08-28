@@ -357,6 +357,7 @@ func (m *Model) currentlySearching() bool {
 }
 
 func (m *Model) historyStartSearch() {
+	m.KeyMap.AbortSearch.SetEnabled(true)
 	m.hctrl.c.searching = true
 	m.hctrl.c.prevPattern = ""
 	m.hctrl.pattern.Prompt = m.SearchPrompt
@@ -371,6 +372,7 @@ func (m *Model) resetNavCursor() {
 }
 
 func (m *Model) cancelHistorySearch() (cmd tea.Cmd) {
+	m.KeyMap.AbortSearch.SetEnabled(false)
 	m.hctrl.c.searching = false
 	m.hctrl.pattern.Blur()
 	cmd = m.restoreValue()
@@ -388,6 +390,7 @@ func (m *Model) restoreValue() (cmd tea.Cmd) {
 }
 
 func (m *Model) acceptSearch() {
+	m.KeyMap.AbortSearch.SetEnabled(false)
 	m.hctrl.c.searching = false
 	m.hctrl.c.valueSaved = false
 	m.hctrl.c.prevValue = ""
@@ -638,6 +641,57 @@ func (m *Model) reflowAll() (cmd tea.Cmd) {
 	return tea.Batch(cmd, m.updateTextSz())
 }
 
+// handleSearching navigates through the history search.
+func (m *Model) handleSearching(imsg tea.Msg) (stillSearching bool, restMsg tea.Msg, cmd tea.Cmd) {
+	switch msg := imsg.(type) {
+	case tea.KeyMsg:
+		switch {
+		case key.Matches(msg, m.KeyMap.EndOfInput):
+			if m.hctrl.pattern.Cursor() == 0 {
+				return false, nil, m.cancelHistorySearch()
+			}
+			// Del-next-char or EOF. Let the editor see it.
+			m.acceptSearch()
+			return false, nil, nil
+
+		case key.Matches(msg, m.KeyMap.AbortSearch, m.KeyMap.Interrupt):
+			return false, nil, m.cancelHistorySearch()
+
+		case key.Matches(msg, m.KeyMap.SearchBackward):
+			m.incrementalSearch(true /* nextMatch */)
+			return true, nil, nil
+
+		case key.Matches(msg, m.KeyMap.AlwaysComplete):
+			m.acceptSearch()
+			return false, imsg, nil
+
+		case key.Matches(msg, m.KeyMap.InsertNewline):
+			m.acceptSearch()
+			// This differs from the above in that we consume the input key,
+			// to avoid inserting a newline after accepting the search.
+			return false, nil, nil
+
+		default:
+			if !msg.Alt && (msg.Type == tea.KeySpace ||
+				msg.Type == tea.KeyBackspace ||
+				msg.Type == tea.KeyCtrlH ||
+				msg.Type == tea.KeyRunes) {
+				// Handle by widget below.
+				break
+			}
+			// Any other key combo: accept current result then let the
+			// editor do its job.
+			m.acceptSearch()
+			return false, imsg, nil
+		}
+	}
+
+	// Still searching.
+	m.hctrl.pattern, cmd = m.hctrl.pattern.Update(imsg)
+	cmd = tea.Batch(cmd, m.incrementalSearch(false /* nextMatch */))
+	return true, nil, cmd
+}
+
 // handleCompletions navigates through the completion screen.
 func (m *Model) handleCompletions(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	_, cmd := m.completions.Update(imsg)
@@ -699,6 +753,11 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			m.help.ShowAll = !m.help.ShowAll
 			imsg = nil // consume message
 
+		case key.Matches(msg, m.KeyMap.HideShowPrompt):
+			m.hidePrompt = !m.hidePrompt
+			m.updatePrompt()
+			return m, m.updateTextSz()
+
 		default:
 			m.help.ShowAll = false
 
@@ -715,35 +774,31 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	if m.showCompletions {
 		return m.handleCompletions(imsg)
 	}
-
 	var cmd tea.Cmd
+
+	if m.currentlySearching() {
+		var stillSearching bool
+		stillSearching, imsg, cmd = m.handleSearching(imsg)
+		if stillSearching {
+			return m, cmd
+		}
+	}
+
 	stop := false
 
 	switch msg := imsg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, m.KeyMap.HideShowPrompt):
-			m.hidePrompt = !m.hidePrompt
-			m.updatePrompt()
-			cmd = tea.Batch(cmd, m.updateTextSz())
-			imsg = nil // consume message
-
 		case key.Matches(msg, m.KeyMap.AutoComplete):
 			if m.AutoComplete == nil {
 				// Pass-through to the editor.
 				break
-			}
-			if m.currentlySearching() {
-				m.acceptSearch()
 			}
 			cmd = m.autoComplete()
 			imsg = 0 // consume message
 
 		case key.Matches(msg, m.KeyMap.EndOfInput):
 			if m.text.AtBeginningOfLine() {
-				if m.currentlySearching() {
-					cmd = tea.Batch(cmd, m.cancelHistorySearch())
-				}
 				m.Err = io.EOF
 				stop = true
 				imsg = nil // consume message
@@ -752,32 +807,15 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				imsg = nil // consume message
 			}
 
-		case key.Matches(msg, m.KeyMap.AbortSearch):
-			if m.currentlySearching() {
-				cmd = tea.Batch(cmd, m.cancelHistorySearch())
-				imsg = nil // consume message
-			}
-
 		case key.Matches(msg, m.KeyMap.SearchBackward):
-			if m.currentlySearching() {
-				m.incrementalSearch(true /* nextMatch */)
-			} else {
-				// Start completion.
-				m.historyStartSearch()
-			}
+			m.historyStartSearch()
 			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.HistoryPrevious):
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
 			m.historyUp()
 			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.HistoryNext):
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
 			m.historyDown()
 			imsg = nil // consume message
 
@@ -788,53 +826,25 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				stop = true
 				break
 			}
-			if m.currentlySearching() {
-				// Stop the completion. Do nothing further.
-				cmd = tea.Batch(cmd, m.cancelHistorySearch())
-			} else {
-				m.text.SetValue("")
-			}
+			m.text.SetValue("")
 
 		case key.Matches(msg, m.KeyMap.AlwaysNewline):
-			if m.currentlySearching() {
-				// Stop the completion first.
-				m.acceptSearch()
-			}
 			m.text.InsertNewline()
 			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.AlwaysComplete):
-			if m.currentlySearching() {
-				// Stop the completion first.
-				m.acceptSearch()
-			}
 			stop = true
 			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.MoveToBegin):
-			if m.currentlySearching() {
-				// Stop the completion first.
-				m.acceptSearch()
-			}
 			m.text.MoveToBegin()
 			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.MoveToEnd):
-			if m.currentlySearching() {
-				// Stop the completion first.
-				m.acceptSearch()
-			}
 			m.text.MoveToEnd()
 			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.InsertNewline):
-			if m.currentlySearching() {
-				// Stop the completion first.
-				m.acceptSearch()
-				// If we were searching, do not process the enter key -- otherwise
-				// it will add a newline character in the middle of the completion.
-				imsg = nil // consume message
-			}
 			if m.CheckInputComplete == nil ||
 				m.CheckInputComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos()) {
 				stop = true
@@ -845,58 +855,30 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case key.Matches(msg, m.KeyMap.LinePrevious):
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
 			if m.text.AtFirstLineOfInputAndView() {
 				m.historyUp()
 				imsg = nil // consume message
 			}
 
 		case key.Matches(msg, m.KeyMap.LineNext):
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
 			if m.text.AtLastLineOfInputAndView() {
 				m.historyDown()
 				imsg = nil // consume message
 			}
 
 		case key.Matches(msg, m.KeyMap.ReflowLine):
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
 			cmd = tea.Batch(cmd, m.reflowLine())
 			imsg = nil
 
 		case key.Matches(msg, m.KeyMap.ReflowAll):
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
 			cmd = tea.Batch(cmd, m.reflowAll())
 			imsg = nil
-
-		case key.Matches(msg, m.KeyMap.CharacterForward) ||
-			key.Matches(msg, m.KeyMap.CharacterBackward) ||
-			key.Matches(msg, m.KeyMap.WordForward) ||
-			key.Matches(msg, m.KeyMap.WordBackward):
-			if m.currentlySearching() {
-				m.acceptSearch()
-			}
 		}
 	}
 
-	if m.currentlySearching() {
-		// Add text to the pattern. Also incremental search.
-		var newCmd tea.Cmd
-		m.hctrl.pattern, newCmd = m.hctrl.pattern.Update(imsg)
-		cmd = tea.Batch(cmd, newCmd,
-			m.incrementalSearch(false /* nextMatch */))
-	} else {
-		var newCmd tea.Cmd
-		m.text, newCmd = m.text.Update(imsg)
-		cmd = tea.Batch(cmd, newCmd, m.updateTextSz())
-	}
+	var newCmd tea.Cmd
+	m.text, newCmd = m.text.Update(imsg)
+	cmd = tea.Batch(cmd, newCmd, m.updateTextSz())
 
 	if stop {
 		m.help.ShowAll = false
