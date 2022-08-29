@@ -27,6 +27,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Key combination to reflow the text to fit within a specific width.                 | ❌                    | ❌                                | ✅                      |
 | Hide/show the prompt to simplify copy-paste from terminal.                         | ❌                    | ❌                                | ✅                      |
 | Debug mode for troubleshooting.                                                    | ❌                    | ❌                                | ✅                      |
+| Open with external editor.                                                         | ❌                    | (✅) [^ed]                        | ✅                      |
 | Bracketed paste [^bp]                                                              | ❌ [^p4]              | ✅                                | ❌ [^p4]                |
 
 [^T]: https://github.com/charmbracelet/bubbles
@@ -38,6 +39,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 [^cp]: libedit/readline's completion menu is a single line of options with wraparound.
 [^bp]: https://en.wikipedia.org/wiki/Bracketed-paste
 [^p4]: Pending https://github.com/charmbracelet/bubbletea/pull/397 and https://github.com/charmbracelet/bubbletea/pull/397
+[^ed]: Possible to configure via key binding macro.
 
 ## Demo / explanation
 
@@ -85,6 +87,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Alt+?                 | Toggle display of keybindings.                                                               | MoreHelp                   |
 | Alt+q                 | Reflow the current line.                                                                     | ReflowLine                 |
 | Alt+Shift+Q           | Reflow the entire input.                                                                     | ReflowAll                  |
+| Alt+2, Alt+F2         | Edit with an external editor, as defined by env var EDITOR. (not enabled by default)         | ExternalEdit               |
 | Ctrl+_, Ctrl+@        | Print debug information about the editor. (not enabled by default)                           | Debug                      |
 
 ## Example use

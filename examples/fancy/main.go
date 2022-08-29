@@ -56,6 +56,9 @@ or the letter 'r'.
 	// Enable debug mode.
 	m.SetDebugEnabled(true)
 
+	// Enable external editor.
+	m.SetExternalEditorEnabled(true, "sql")
+
 	// Read-print loop starts here.
 	for {
 		val, err := m.GetLine()

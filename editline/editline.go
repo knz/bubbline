@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"os/exec"
 	"strings"
 	"syscall"
 
@@ -70,6 +72,7 @@ type KeyMap struct {
 	ReflowAll       key.Binding
 	MoveToBegin     key.Binding
 	MoveToEnd       key.Binding
+	ExternalEdit    key.Binding
 }
 
 // DefaultKeyMap is the default set of key bindings.
@@ -95,6 +98,7 @@ var DefaultKeyMap = KeyMap{
 	Debug:           key.NewBinding(key.WithKeys("ctrl+_", "ctrl+@"), key.WithHelp("C-_/C-@", "debug mode"), key.WithDisabled()),
 	MoveToBegin:     key.NewBinding(key.WithKeys("alt+<", "ctrl+home"), key.WithHelp("M-</C-home", "go to begin")),
 	MoveToEnd:       key.NewBinding(key.WithKeys("alt+>", "ctrl+end"), key.WithHelp("M->/C-end", "go to end")),
+	ExternalEdit:    key.NewBinding(key.WithKeys("alt+f2", "alt+2"), key.WithHelp("M-2/M-F2", "external edit")),
 }
 
 // AutoCompleteFn is called upon the user pressing the
@@ -190,6 +194,10 @@ type Model struct {
 	// Only takes effect at Reset() or Focus().
 	ShowLineNumbers bool
 
+	// externalEditorExt is the extension to use when creating a temporary file for
+	// an external editor.
+	externalEditorExt string
+
 	showCompletions        bool
 	consumeAfterCompletion int
 	completions            complete.Model
@@ -248,6 +256,15 @@ func New() *Model {
 	m.hctrl.pattern.Placeholder = "enter search term, or C-g to cancel search"
 	m.Reset()
 	return m
+}
+
+// SetExternalEditorEnabled enables using an external editor (via
+// $EDITOR). The extension is added to the generated file name so that
+// the editor can auto-select a language for syntax highlighting. If
+// the extension is left empty, "txt" is assumed.
+func (m *Model) SetExternalEditorEnabled(enable bool, extension string) {
+	m.KeyMap.ExternalEdit.SetEnabled(enable)
+	m.externalEditorExt = extension
 }
 
 // SetHistory sets the history navigation list all at once.
@@ -709,6 +726,44 @@ func (m *Model) handleCompletions(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmd, m.updateTextSz())
 }
 
+func (m *Model) externalEdit() tea.Cmd {
+	ed := os.Getenv("EDITOR")
+	if ed == "" {
+		return tea.Println("env var EDITOR empty or not set")
+	}
+	tempFile, err := ioutil.TempFile("", "bubbline*."+m.externalEditorExt)
+	if err != nil {
+		return tea.Printf("temp file creation error: %v", err)
+	}
+	fileName := tempFile.Name()
+	if _, err := tempFile.WriteString(m.Value()); err != nil {
+		_ = os.Remove(fileName)
+		return tea.Printf("temp file write error: %v", err)
+	}
+	if err := tempFile.Close(); err != nil {
+		_ = os.Remove(fileName)
+		return tea.Printf("temp file close error: %v", err)
+	}
+
+	callback := func(err error) tea.Msg {
+		defer func() { _ = os.Remove(fileName) }()
+		if err != nil {
+			return &externalEditDone{err: err}
+		}
+		data, err := os.ReadFile(fileName)
+		if err != nil {
+			return &externalEditDone{err: err}
+		}
+		return &externalEditDone{err: nil, newText: string(data)}
+	}
+	return tea.ExecProcess(exec.Command(ed, fileName), callback)
+}
+
+type externalEditDone struct {
+	err     error
+	newText string
+}
+
 // Update is the Bubble Tea event handler.
 // This is part of the tea.Model interface.
 func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
@@ -787,6 +842,13 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	stop := false
 
 	switch msg := imsg.(type) {
+	case *externalEditDone:
+		if msg.err != nil {
+			return m, tea.Batch(cmd, tea.Printf("external editor error: %v", msg.err))
+		}
+		m.text.SetValue(msg.newText)
+		imsg = nil
+
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.KeyMap.AutoComplete):
@@ -806,6 +868,10 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 				m.text.DeleteCharacterForward()
 				imsg = nil // consume message
 			}
+
+		case key.Matches(msg, m.KeyMap.ExternalEdit):
+			cmd = m.externalEdit()
+			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.SearchBackward):
 			m.historyStartSearch()
@@ -1001,6 +1067,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.UppercaseWordForward,
 			k.SearchBackward,
 			k.AutoComplete,
+			k.ExternalEdit,
 		},
 	}
 }
