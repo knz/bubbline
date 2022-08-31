@@ -19,7 +19,7 @@ func main() {
 		fmt.Println("history load error:", err)
 	}
 
-	m := editline.New()
+	m := editline.New(80, 25)
 	m.SetHistory(h)
 
 	for {

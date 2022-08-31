@@ -22,7 +22,7 @@ Try to autocomplete (tab) on the few letters at the beginning
 of a name. Or just maybe one letter of the alphabet.
 `)
 
-	m := editline.New()
+	m := editline.New(80, 25)
 
 	// Configure the autocomplete function.
 	m.AutoComplete = autocomplete

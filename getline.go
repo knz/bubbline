@@ -19,8 +19,20 @@ type Editor struct {
 // New instantiates an editor.
 func New() *Editor {
 	return &Editor{
-		Model: editline.New(),
+		Model: editline.New(0, 0),
 	}
+}
+
+var _ tea.Model = (*Editor)(nil)
+
+// Update is part of the tea.Model interface.
+func (m *Editor) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := imsg.(type) {
+	case tea.WindowSizeMsg:
+		m.Model.SetSize(msg.Width, msg.Height)
+	}
+	_, next := m.Model.Update(imsg)
+	return m, next
 }
 
 // Close should be called when the editor is not used any more.

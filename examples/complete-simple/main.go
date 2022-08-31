@@ -24,7 +24,7 @@ followed by a few digits (e.g. 'lo30').
 You can also press tab with the cursor in the middle of a word!
 `)
 
-	m := editline.New()
+	m := editline.New(80, 25)
 
 	// Configure the autocomplete function.
 	m.AutoComplete = autocomplete

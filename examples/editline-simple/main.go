@@ -13,7 +13,7 @@ import (
 func main() {
 	fmt.Println(`hello!`)
 
-	m := editline.New()
+	m := editline.New(80, 25)
 
 	for {
 		m.Reset()

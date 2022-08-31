@@ -18,7 +18,7 @@ Blocks of input are automatically ended when you enter
 after a semicolon (;).
 `)
 
-	m := editline.New()
+	m := editline.New(80, 25)
 
 	m.CheckInputComplete = func(v [][]rune, line, col int) bool {
 		if line == len(v)-1 && // Enter on last row.

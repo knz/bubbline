@@ -227,10 +227,14 @@ type Model struct {
 	// Debugging data.
 	debugMode bool
 	lastEvent tea.Msg
+
+	// Delayed resize.
+	hasNewSize          bool
+	newWidth, newHeight int
 }
 
 // New creates a new Model.
-func New() *Model {
+func New(width, height int) *Model {
 	focusedStyle, blurredStyle := DefaultStyles()
 	m := &Model{
 		text:                 textarea.New(),
@@ -250,6 +254,11 @@ func New() *Model {
 		ShowLineNumbers:      false,
 		help:                 help.New(),
 		completions:          complete.New(),
+	}
+	if width != 0 || height != 0 {
+		m.hasNewSize = true
+		m.newWidth = width
+		m.newHeight = height
 	}
 	m.text.KeyMap.Paste.Unbind() // paste from clipboard not supported.
 	m.hctrl.pattern = textinput.New()
@@ -604,8 +613,25 @@ func (m *Model) Debug() string {
 	return buf.String()
 }
 
-// SetWidth changes the width of the editor.
-func (m *Model) SetWidth(w int) {
+// SetSize changes the size of the editor.
+// NB: it only takes effect at the first next event processed.
+func (m *Model) SetSize(width, height int) {
+	m.hasNewSize = true
+	m.newWidth = width
+	m.newHeight = height
+}
+
+// updateSize processes a delayed SetSize call.
+func (m *Model) updateSize() tea.Cmd {
+	m.maxWidth = m.newWidth
+	m.maxHeight = m.newHeight
+	m.setWidth(m.newWidth - 1)
+	m.hasNewSize = false
+	return m.updateTextSz()
+}
+
+// setWidth changes the width of the editor.
+func (m *Model) setWidth(w int) {
 	w = clamp(w, 1, m.maxWidth)
 	m.text.SetWidth(w - 1)
 	m.completions.SetWidth(w - 1)
@@ -767,42 +793,41 @@ type externalEditDone struct {
 // Update is the Bubble Tea event handler.
 // This is part of the tea.Model interface.
 func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	if m.hasNewSize {
+		cmd = m.updateSize()
+	}
+
 	m.lastEvent = imsg
 
 	switch msg := imsg.(type) {
-	case tea.WindowSizeMsg:
-		m.maxWidth = msg.Width
-		m.maxHeight = msg.Height
-		m.SetWidth(msg.Width - 1)
-		return m, m.updateTextSz()
-
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.KeyMap.Debug):
 			m.debugMode = !m.debugMode
 
 		case key.Matches(msg, m.KeyMap.SignalQuit):
-			return m, tea.Exec(doProgram(func() {
+			return m, tea.Batch(cmd, tea.Exec(doProgram(func() {
 				pr, err := os.FindProcess(os.Getpid())
 				if err != nil {
 					// No-op.
 					return
 				}
 				pr.Signal(syscall.SIGQUIT)
-			}), nil)
+			}), nil))
 
 		case key.Matches(msg, m.KeyMap.SignalTTYStop):
-			return m, tea.Exec(doProgram(func() {
+			return m, tea.Batch(cmd, tea.Exec(doProgram(func() {
 				pr, err := os.FindProcess(os.Getpid())
 				if err != nil {
 					// No-op.
 					return
 				}
 				pr.Signal(syscall.SIGTSTP)
-			}), nil)
+			}), nil))
 
 		case key.Matches(msg, m.KeyMap.Refresh):
-			return m, tea.Exec(doProgram(termenv.ClearScreen), nil)
+			return m, tea.Batch(cmd, tea.Exec(doProgram(termenv.ClearScreen), nil))
 
 		case key.Matches(msg, m.KeyMap.MoreHelp):
 			m.help.ShowAll = !m.help.ShowAll
@@ -811,7 +836,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.KeyMap.HideShowPrompt):
 			m.hidePrompt = !m.hidePrompt
 			m.updatePrompt()
-			return m, m.updateTextSz()
+			return m, tea.Batch(cmd, m.updateTextSz())
 
 		default:
 			m.help.ShowAll = false
@@ -827,13 +852,15 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	if m.showCompletions {
-		return m.handleCompletions(imsg)
+		newM, newC := m.handleCompletions(imsg)
+		return newM, tea.Batch(cmd, newC)
 	}
-	var cmd tea.Cmd
 
 	if m.currentlySearching() {
 		var stillSearching bool
-		stillSearching, imsg, cmd = m.handleSearching(imsg)
+		var nextCmd tea.Cmd
+		stillSearching, imsg, nextCmd = m.handleSearching(imsg)
+		cmd = tea.Batch(cmd, nextCmd)
 		if stillSearching {
 			return m, cmd
 		}

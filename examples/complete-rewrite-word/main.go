@@ -21,7 +21,7 @@ Try to autocomplete (tab) on 'h', 'he', 'hel', 'hell', or 'hello'.
 It's case-insensitive!
 `)
 
-	m := editline.New()
+	m := editline.New(80, 25)
 
 	// Configure the autocomplete function.
 	m.AutoComplete = autocomplete
