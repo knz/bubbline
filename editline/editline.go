@@ -815,14 +815,16 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}), nil))
 
 		case key.Matches(msg, m.KeyMap.SignalTTYStop):
-			return m, tea.Batch(cmd, tea.Exec(doProgram(func() {
-				pr, err := os.FindProcess(os.Getpid())
-				if err != nil {
-					// No-op.
-					return
-				}
-				_ = pr.Signal(syscall.SIGTSTP)
-			}), nil))
+			if sigTermStop != 0 {
+				return m, tea.Batch(cmd, tea.Exec(doProgram(func() {
+					pr, err := os.FindProcess(os.Getpid())
+					if err != nil {
+						// No-op.
+						return
+					}
+					_ = pr.Signal(sigTermStop)
+				}), nil))
+			}
 
 		case key.Matches(msg, m.KeyMap.Refresh):
 			return m, tea.Batch(cmd, tea.Exec(doProgram(termenv.ClearScreen), nil))
