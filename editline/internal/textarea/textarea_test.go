@@ -3,7 +3,6 @@ package textarea
 import (
 	"fmt"
 	"io"
-	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -96,14 +95,22 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 			n = i
 		}
 		t.text.CursorRight(n)
+	case "resetviewcursordown":
+		t.text.ResetViewCursorDown()
 	case "insert":
 		input := strings.Join(args, " ")
-		fmt.Fprintf(os.Stderr, "to unquote: %s", input)
 		s, err := strconv.Unquote(input)
 		if err != nil {
 			return true, t, nil, err
 		}
 		t.text.InsertString(s)
+	case "setvalue":
+		input := strings.Join(args, " ")
+		s, err := strconv.Unquote(input)
+		if err != nil {
+			return true, t, nil, err
+		}
+		t.text.SetValue(s)
 	default:
 		return false, t, nil, nil
 	}

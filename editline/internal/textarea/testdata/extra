@@ -67,3 +67,53 @@ cursorright 2
 ┃  ~                                    ␤
 ┃  ~                                    ␤
 ┃  ~                                    🛇
+
+run
+resetviewcursordown
+----
+-- view:
+┃  1 hel[7ml[0mo                              ␤
+┃  2                                    ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+setvalue "one\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten"
+resetviewcursordown
+----
+-- view:
+┃  5 five                               ␤
+┃  6 six                                ␤
+┃  7 seven                              ␤
+┃  8 eight                              ␤
+┃  9 nine                               ␤
+┃ 10 ten[7m [0m                               🛇
+
+run
+key up
+resetviewcursordown
+----
+-- view:
+┃  4 four                               ␤
+┃  5 five                               ␤
+┃  6 six                                ␤
+┃  7 seven                              ␤
+┃  8 eight                              ␤
+┃  9 nin[7me[0m                               🛇
+
+run
+key up
+key up
+key up
+key up
+resetviewcursordown
+----
+-- view:
+┃  1 one                                ␤
+┃  2 two                                ␤
+┃  3 three                              ␤
+┃  4 four                               ␤
+┃  5 fiv[7me[0m                               ␤
+┃  6 six                                🛇
