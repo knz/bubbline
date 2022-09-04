@@ -1,0 +1,69 @@
+run
+focus
+enter hello
+enter world!
+----
+-- view:
+┃  1 hello                              ␤
+┃  2 world!                             ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+key up
+clearline
+----
+-- view:
+┃  1 hello                              ␤
+┃  2 [7m [0m                                  ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+key up
+movetoend
+----
+-- view:
+┃  1 hello                              ␤
+┃  2                                    ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+movetobegin
+----
+-- view:
+┃  1 [7mh[0mello                              ␤
+┃  2                                    ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+cursorright
+----
+-- view:
+┃  1 h[7me[0mllo                              ␤
+┃  2                                    ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+cursorright 2
+----
+-- view:
+┃  1 hel[7ml[0mo                              ␤
+┃  2                                    ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇

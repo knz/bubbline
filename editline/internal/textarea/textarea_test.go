@@ -26,6 +26,11 @@ func TestTextArea(t *testing.T) {
 				fmt.Fprintf(out, "%q", s)
 				return nil
 			}),
+			catwalk.WithObserver("runes", func(out io.Writer, m tea.Model) error {
+				s := m.(*testModel).text.ValueRunes()
+				fmt.Fprintf(out, "%+v", s)
+				return nil
+			}),
 			catwalk.WithObserver("curline", func(out io.Writer, m tea.Model) error {
 				s := m.(*testModel).text.CurrentLine()
 				fmt.Fprintf(out, "%q", s)
@@ -35,15 +40,15 @@ func TestTextArea(t *testing.T) {
 				t := &m.(*testModel).text
 				fmt.Fprintf(out, "Focused: %v\n", t.Focused())
 				fmt.Fprintf(out, "Width: %d, Height: %d, LogicalHeight: %d\n", t.Width(), t.Height(), t.LogicalHeight())
-				fmt.Fprintf(out, "Length: %d, LineCount: %d, NumLinesInValue: %d\n",
-					t.Length(), t.LineCount(), t.NumLinesInValue(),
+				fmt.Fprintf(out, "Length: %d, LineCount: %d, NumLinesInValue: %d, EmptyValue: %v\n",
+					t.Length(), t.LineCount(), t.NumLinesInValue(), t.EmptyValue(),
 				)
 				return nil
 			}),
 			catwalk.WithObserver("pos", func(out io.Writer, m tea.Model) error {
 				t := &m.(*testModel).text
-				fmt.Fprintf(out, "Line: %d (row %d, col %d, lastCharOffset %d)\n",
-					t.Line(), t.row, t.col, t.lastCharOffset,
+				fmt.Fprintf(out, "Line: %d, Pos %d, (row %d, col %d, lastCharOffset %d)\n",
+					t.Line(), t.CursorPos(), t.row, t.col, t.lastCharOffset,
 				)
 				fmt.Fprintf(out, "LineInfo: %+v\n", t.LineInfo())
 				fmt.Fprintf(out, "AtBeginningOfLine: %v, AtFirstLineOfInputAndView: %v, AtLastLineOfInputAndView: %v\n",
@@ -75,6 +80,22 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 		t.text.Focus()
 	case "blur":
 		t.text.Blur()
+	case "clearline":
+		t.text.ClearLine()
+	case "movetobegin":
+		t.text.MoveToBegin()
+	case "movetoend":
+		t.text.MoveToEnd()
+	case "cursorright":
+		n := 1
+		if len(args) > 0 {
+			i, err := strconv.Atoi(args[0])
+			if err != nil {
+				return true, t, nil, err
+			}
+			n = i
+		}
+		t.text.CursorRight(n)
 	case "insert":
 		input := strings.Join(args, " ")
 		fmt.Fprintf(os.Stderr, "to unquote: %s", input)

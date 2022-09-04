@@ -14,7 +14,7 @@ insert "hello, world!\nisn't it a nice day?\n"
 -- props:
 Focused: true
 Width: 35, Height: 6, LogicalHeight: 3
-Length: 35, LineCount: 3, NumLinesInValue: 3
+Length: 35, LineCount: 3, NumLinesInValue: 3, EmptyValue: false
 
 # One line up, then one line up again.
 run observe=(view, props)
@@ -30,7 +30,13 @@ key up
 -- props:
 Focused: true
 Width: 35, Height: 6, LogicalHeight: 3
-Length: 35, LineCount: 3, NumLinesInValue: 3
+Length: 35, LineCount: 3, NumLinesInValue: 3, EmptyValue: false
+
+# What's the text of the current line?
+run observe=curline
+----
+-- curline:
+"isn't it a nice day?"
 
 run observe=(view, pos)
 key up
@@ -43,7 +49,7 @@ key up
 ┃  ~                                    ␤
 ┃  ~                                    🛇
 -- pos:
-Line: 0 (row 0, col 0, lastCharOffset 0)
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
 AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
@@ -61,7 +67,7 @@ key ctrl+e
 ┃  ~                                    ␤
 ┃  ~                                    🛇
 -- pos:
-Line: 1 (row 1, col 20, lastCharOffset 0)
+Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
 AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
@@ -80,7 +86,7 @@ key up
 ┃  ~                                    ␤
 ┃  ~                                    🛇
 -- pos:
-Line: 0 (row 0, col 13, lastCharOffset 20)
+Line: 0, Pos 13, (row 0, col 13, lastCharOffset 20)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:13 RowOffset:0 CharOffset:13}
 AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
@@ -98,6 +104,6 @@ key down
 ┃  ~                                    ␤
 ┃  ~                                    🛇
 -- pos:
-Line: 1 (row 1, col 20, lastCharOffset 20)
+Line: 1, Pos 20, (row 1, col 20, lastCharOffset 20)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
 AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
