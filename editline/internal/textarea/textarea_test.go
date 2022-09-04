@@ -95,6 +95,8 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 			n = i
 		}
 		t.text.CursorRight(n)
+	case "cursorstart":
+		t.text.CursorStart()
 	case "resetviewcursordown":
 		t.text.ResetViewCursorDown()
 	case "insert":

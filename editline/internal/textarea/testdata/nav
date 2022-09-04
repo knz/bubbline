@@ -107,3 +107,19 @@ key down
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 20)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
 AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# Cursor to beginning of line using method call.
+run observe=(view, pos)
+cursorstart
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 [7mi[0msn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 0, (row 1, col 0, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false

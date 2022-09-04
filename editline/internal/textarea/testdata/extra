@@ -79,8 +79,20 @@ resetviewcursordown
 ┃  ~                                    ␤
 ┃  ~                                    🛇
 
+# Hmm it's sad a long input moves the cursor out of view?
+# See: https://github.com/charmbracelet/bubbles/issues/231
 run
 setvalue "one\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten"
+----
+-- view:
+┃  1 one                                ␤
+┃  2 two                                ␤
+┃  3 three                              ␤
+┃  4 four                               ␤
+┃  5 five                               ␤
+┃  6 six                                🛇
+
+run
 resetviewcursordown
 ----
 -- view:
