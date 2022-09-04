@@ -13,18 +13,21 @@ enter hello world!
 
 # Initially, its value is the empty string.
 # The other properties are set to defaults.
-run observe=(value,props)
+run observe=(value,props,pos)
 ----
 -- value:
 ""
 -- props:
 Focused: false
 Width: 35, Height: 6, LogicalHeight: 1
-Length: 0, LineCount: 1, Line: 0 (row 0, col 0, lastCharOffset 0)
+Length: 0, LineCount: 1, NumLinesInValue: 1
+-- pos:
+Line: 0 (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 
 # Once focused, it works. The cursor is also displayed.
-run observe=(view,value,props)
+run observe=(view,value,props,pos)
 focus
 enter hello world!
 ----
@@ -40,12 +43,15 @@ enter hello world!
 -- props:
 Focused: true
 Width: 35, Height: 6, LogicalHeight: 2
-Length: 13, LineCount: 2, Line: 1 (row 1, col 0, lastCharOffset 0)
+Length: 13, LineCount: 2, NumLinesInValue: 2
+-- pos:
+Line: 1 (row 1, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
 
 # Once blurred, the contents are still displayed.
 # But the cursor is not.
-run observe=(view,value,props)
+run observe=(view,value,props,pos)
 blur
 ----
 -- view:
@@ -60,5 +66,8 @@ blur
 -- props:
 Focused: false
 Width: 35, Height: 6, LogicalHeight: 2
-Length: 13, LineCount: 2, Line: 1 (row 1, col 0, lastCharOffset 0)
+Length: 13, LineCount: 2, NumLinesInValue: 2
+-- pos:
+Line: 1 (row 1, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true

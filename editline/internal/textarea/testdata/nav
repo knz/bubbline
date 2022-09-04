@@ -1,0 +1,103 @@
+run observe=(view,value,props)
+focus
+insert "hello, world!\nisn't it a nice day?\n"
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- value:
+"hello, world!\nisn't it a nice day?\n"
+-- props:
+Focused: true
+Width: 35, Height: 6, LogicalHeight: 3
+Length: 35, LineCount: 3, NumLinesInValue: 3
+
+# One line up, then one line up again.
+run observe=(view, props)
+key up
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 [7mi[0msn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- props:
+Focused: true
+Width: 35, Height: 6, LogicalHeight: 3
+Length: 35, LineCount: 3, NumLinesInValue: 3
+
+run observe=(view, pos)
+key up
+----
+-- view:
+┃  1 [7mh[0mello, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0 (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+# Move the cursor to the 2nd line (the longest).
+# Then move the cursor at the end of the line.
+run observe=(view, pos)
+key down
+key ctrl+e
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?[7m [0m              ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1 (row 1, col 20, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+
+# Move the cursor up. Notice how the cursor moves
+# to the end of the 1st line, even though the 2nd line was longer.
+# The position on the 2nd line is remembered though, via lastCharOffset.
+run observe=(view, pos)
+key up
+----
+-- view:
+┃  1 hello, world![7m [0m                     ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0 (row 0, col 13, lastCharOffset 20)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:13 RowOffset:0 CharOffset:13}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+
+# Move down. Notice how the cursor gets back to the end of the longest
+# line, even though the line just above was shorter.
+run observe=(view, pos)
+key down
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?[7m [0m              ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1 (row 1, col 20, lastCharOffset 20)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
