@@ -120,6 +120,16 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 			return true, t, nil, err
 		}
 		t.text.SetValue(s)
+	case "customprompt":
+		t.text.SetPromptFunc(3, func(i int) string {
+			switch i {
+			case 0:
+				return "@@>"
+			case 3:
+				return "! >"
+			}
+			return ">"
+		})
 	default:
 		return false, t, nil, nil
 	}

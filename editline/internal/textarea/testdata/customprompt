@@ -1,0 +1,36 @@
+run
+customprompt
+focus
+enter hello, world!
+----
+-- view:
+@@> 1 hello, world!                     ␤
+  > 2 [7m [0m                                 ␤
+  > ~                                   ␤
+! > ~                                   ␤
+  > ~                                   ␤
+  > ~                                   🛇
+
+run
+insert "one\ntwo\nthree\nfour\nfive\nsix\n"
+resetviewcursordown
+----
+-- view:
+  > 3 two                               ␤
+! > 4 three                             ␤
+  > 5 four                              ␤
+  > 6 five                              ␤
+  > 7 six                               ␤
+  > 8 [7m [0m                                 🛇
+
+run
+movetobegin
+resetviewcursordown
+----
+-- view:
+@@> 1 [7mh[0mello, world!                     ␤
+  > 2 one                               ␤
+  > 3 two                               ␤
+! > 4 three                             ␤
+  > 5 four                              ␤
+  > 6 five                              🛇
