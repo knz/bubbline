@@ -81,7 +81,7 @@ func TestSaveHistory(t *testing.T) {
 func Example_history() {
 	_, err := LoadHistory("notexist")
 	fmt.Println(err)
-	_, err = LoadHistory("/dev")
+	_, err = LoadHistory("/dev/null/notvalid")
 	fmt.Println(err)
 	err = SaveHistory(nil, "/dev/null/notvalid")
 	fmt.Println(err)
@@ -101,7 +101,7 @@ func Example_history() {
 
 	// Output:
 	// <nil>
-	// read /dev: is a directory
+	// open /dev/null/notvalid: not a directory
 	// open /dev/null/notvalid: not a directory
 	// <nil>
 	// <nil>
