@@ -1,0 +1,38 @@
+# By default, the textarea is blurred and
+# does not react to key bindings.
+run
+enter hello world!
+----
+-- view:
+┃  1                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+# Once focused, it works. The cursor is also displayed.
+run
+focus
+enter hello world!
+----
+-- view:
+┃  1 hello world!                       ␤
+┃  2 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+# Once blurred, the contents are still displayed.
+# But the cursor is not.
+run
+blur
+----
+-- view:
+┃  1 hello world!                       ␤
+┃  2                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
