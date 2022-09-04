@@ -1,0 +1,76 @@
+# The placeholder is "under" the main text while
+# the text area is empty.
+# If there's a newline, it gets munged.
+# (Also see issue: https://github.com/charmbracelet/lipgloss/issues/116 )
+run
+placeholder "this is\na nice placeholder text!"
+focus
+----
+-- view:
+┃  1 [7mt[0mhis isa nice placeholder text!    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+# As soon as we enter something, the placeholder disappears.
+run
+type h
+----
+-- view:
+┃  1 h[7m [0m                                 ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+enter ello
+----
+-- view:
+┃  1 hello                              ␤
+┃  2 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+
+# But it reappears once we delete everything.
+run
+key ctrl+h
+clearline
+----
+-- view:
+┃  1 [7mt[0mhis isa nice placeholder text!    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+# If the placeholder is very wide, it gets truncated.
+run
+placeholder "A very very very, so very long, very long placeholder!"
+----
+-- view:
+┃  1 [7mA[0m very very very, so very long, ...␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+# If it's both long and multiline...
+run
+placeholder "A very very very, so\nvery long, very long placeholder!"
+----
+-- view:
+┃  1 [7mA[0m very very very, sovery long, v...␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇

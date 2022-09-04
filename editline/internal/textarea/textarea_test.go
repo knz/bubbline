@@ -106,6 +106,13 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 			return true, t, nil, err
 		}
 		t.text.InsertString(s)
+	case "placeholder":
+		input := strings.Join(args, " ")
+		s, err := strconv.Unquote(input)
+		if err != nil {
+			return true, t, nil, err
+		}
+		t.text.Placeholder = s
 	case "setvalue":
 		input := strings.Join(args, " ")
 		s, err := strconv.Unquote(input)
