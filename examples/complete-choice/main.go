@@ -19,8 +19,8 @@ func main() {
 Enter some text below.
 
 Try to autocomplete (tab) on the few letters at the beginning
-of a name. Or just maybe one letter of the alphabet.
-`)
+of a name. Or just maybe one letter of the alphabet.`)
+	fmt.Println()
 
 	m := editline.New(80, 25)
 

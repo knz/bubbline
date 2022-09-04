@@ -18,8 +18,8 @@ func main() {
 Enter some text below.
 
 Try to autocomplete (tab) on 'h', 'he', 'hel', 'hell', or 'hello'.
-It's case-insensitive!
-`)
+It's case-insensitive!`)
+	fmt.Println()
 
 	m := editline.New(80, 25)
 

@@ -15,8 +15,8 @@ func main() {
 	fmt.Println(`hello!
 
 Blocks of input are automatically ended when you enter
-after a semicolon (;).
-`)
+after a semicolon (;).`)
+	fmt.Println()
 
 	m := editline.New(80, 25)
 
