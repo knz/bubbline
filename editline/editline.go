@@ -282,9 +282,7 @@ func (m *Model) SetHistory(h []string) {
 		h = h[:m.MaxHistorySize]
 	}
 	m.history = make([]string, 0, len(h))
-	for _, e := range h {
-		m.history = append(m.history, e)
-	}
+	m.history = append(m.history, h...)
 	m.checkHistoryEnabled()
 	m.resetNavCursor()
 }
@@ -813,7 +811,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 					// No-op.
 					return
 				}
-				pr.Signal(syscall.SIGQUIT)
+				_ = pr.Signal(syscall.SIGQUIT)
 			}), nil))
 
 		case key.Matches(msg, m.KeyMap.SignalTTYStop):
@@ -823,7 +821,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 					// No-op.
 					return
 				}
-				pr.Signal(syscall.SIGTSTP)
+				_ = pr.Signal(syscall.SIGTSTP)
 			}), nil))
 
 		case key.Matches(msg, m.KeyMap.Refresh):
