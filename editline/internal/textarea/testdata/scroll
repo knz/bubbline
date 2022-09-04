@@ -1,0 +1,46 @@
+run
+focus
+setvalue "one\ntwo\nthree\nfour\nfive\nsix\nseven"
+movetobegin
+----
+-- view:
+┃  1 [7mo[0mne                                ␤
+┃  2 two                                ␤
+┃  3 three                              ␤
+┃  4 four                               ␤
+┃  5 five                               ␤
+┃  6 six                                🛇
+
+# Show scroll down.
+run
+key down
+key down
+key down
+key down
+key down
+key down
+----
+-- view:
+┃  2 two                                ␤
+┃  3 three                              ␤
+┃  4 four                               ␤
+┃  5 five                               ␤
+┃  6 six                                ␤
+┃  7 [7ms[0meven                              🛇
+
+# Show scroll up.
+run
+key up
+key up
+key up
+key up
+key up
+key up
+----
+-- view:
+┃  1 [7mo[0mne                                ␤
+┃  2 two                                ␤
+┃  3 three                              ␤
+┃  4 four                               ␤
+┃  5 five                               ␤
+┃  6 six                                🛇

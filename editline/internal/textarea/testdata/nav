@@ -1,0 +1,346 @@
+run observe=(view,value,props)
+focus
+insert "hello, world!\nisn't it a nice day?\n"
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- value:
+"hello, world!\nisn't it a nice day?\n"
+-- props:
+Focused: true
+Width: 35, Height: 6, LogicalHeight: 3
+Length: 35, LineCount: 3, NumLinesInValue: 3, EmptyValue: false
+
+# One line up, then one line up again.
+run observe=(view, props)
+key up
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 [7mi[0msn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- props:
+Focused: true
+Width: 35, Height: 6, LogicalHeight: 3
+Length: 35, LineCount: 3, NumLinesInValue: 3, EmptyValue: false
+
+# What's the text of the current line?
+run observe=curline
+----
+-- curline:
+"isn't it a nice day?"
+
+run observe=(view, pos)
+key up
+----
+-- view:
+┃  1 [7mh[0mello, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+# Move the cursor to the 2nd line (the longest).
+# Then move the cursor at the end of the line.
+run observe=(view, pos)
+key down
+key ctrl+e
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?[7m [0m              ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+
+# Move the cursor up. Notice how the cursor moves
+# to the end of the 1st line, even though the 2nd line was longer.
+# The position on the 2nd line is remembered though, via lastCharOffset.
+run observe=(view, pos)
+key up
+----
+-- view:
+┃  1 hello, world![7m [0m                     ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 13, (row 0, col 13, lastCharOffset 20)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:13 RowOffset:0 CharOffset:13}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+
+# Move down. Notice how the cursor gets back to the end of the longest
+# line, even though the line just above was shorter.
+run observe=(view, pos)
+key down
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?[7m [0m              ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 20, (row 1, col 20, lastCharOffset 20)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# Cursor to beginning of line using method call.
+run observe=(view, pos)
+cursorstart
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 [7mi[0msn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 0, (row 1, col 0, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# Cursor to end of line, then back to beginning, using keystrokes.
+run observe=(view, pos)
+key up
+key ctrl+e
+key ctrl+a
+----
+-- view:
+┃  1 [7mh[0mello, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+# Word forward.
+run observe=(view,pos)
+key alt+f
+----
+-- view:
+┃  1 hello,[7m [0mworld!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 6, (row 0, col 6, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:6 RowOffset:0 CharOffset:6}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+
+# Word forward, end of line.
+run observe=(view,pos)
+key alt+f
+----
+-- view:
+┃  1 hello, world![7m [0m                     ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 13, (row 0, col 13, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:13 RowOffset:0 CharOffset:13}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+# Word forward, first word on next line.
+run observe=(view,pos)
+key alt+f
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't[7m [0mit a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 5, (row 1, col 5, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# Word forward, end of text.
+run observe=(view,pos)
+key alt+f
+key alt+f
+key alt+f
+key alt+f
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?[7m [0m              ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# Word backward.
+run observe=(view,pos)
+key alt+b
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice [7md[0may?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 16, (row 1, col 16, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:16 RowOffset:0 CharOffset:16}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# Word backward, previous line
+run observe=(view,pos)
+key alt+b
+key alt+b
+key alt+b
+key alt+b
+key alt+b
+----
+-- view:
+┃  1 hello, [7mw[0morld!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 7, (row 0, col 7, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:7 RowOffset:0 CharOffset:7}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+# Word backward, beginning of text.
+run observe=(view,pos)
+key alt+b
+key alt+b
+key alt+b
+----
+-- view:
+┃  1 [7mh[0mello, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+# Character next, prev.
+run observe=(view,pos)
+key right
+----
+-- view:
+┃  1 h[7me[0mllo, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+run observe=(view,pos)
+key left
+----
+-- view:
+┃  1 [7mh[0mello, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+# Character next, to past end of text.
+run observe=(view,pos)
+key down
+key down
+key right
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?               ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 2, Pos 0, (row 2, col 0, lastCharOffset 0)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+
+# Character left at beginning of line: cursor moves to end of previous line.
+run observe=(view,pos)
+key left
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day?[7m [0m              ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# Character right from end of line: moves to next line.
+run observe=(view,pos)
+key left
+----
+-- view:
+┃  1 hello, world!                      ␤
+┃  2 isn't it a nice day[7m?[0m               ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 19, (row 1, col 19, lastCharOffset 0)
+LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:19 RowOffset:0 CharOffset:19}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false

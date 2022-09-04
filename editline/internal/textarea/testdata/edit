@@ -1,0 +1,611 @@
+run
+focus
+insert "hello, world!"
+----
+-- view:
+┃  1 hello, world![7m [0m                     ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+# Erase previous char
+run observe=(view,pos,value)
+key ctrl+h
+----
+-- view:
+┃  1 hello, world[7m [0m                      ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 12, (row 0, col 12, lastCharOffset 0)
+LineInfo: {Width:13 CharWidth:13 Height:1 StartColumn:0 ColumnOffset:12 RowOffset:0 CharOffset:12}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"hello, world"
+
+# Erase next char from end of line: no-op.
+run observe=(view,pos,value)
+key delete
+----
+-- view:
+┃  1 hello, world[7m [0m                      ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 12, (row 0, col 12, lastCharOffset 0)
+LineInfo: {Width:13 CharWidth:13 Height:1 StartColumn:0 ColumnOffset:12 RowOffset:0 CharOffset:12}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"hello, world"
+
+# Left, then erase next char: arrive to end of line.
+run observe=(view,pos,value)
+key left
+key delete
+----
+-- view:
+┃  1 hello, worl[7m [0m                       ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 11, (row 0, col 11, lastCharOffset 0)
+LineInfo: {Width:12 CharWidth:12 Height:1 StartColumn:0 ColumnOffset:11 RowOffset:0 CharOffset:11}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"hello, worl"
+
+# Erase previous word.
+run observe=(view,pos,value)
+key ctrl+w
+----
+-- view:
+┃  1 hello, [7m [0m                           ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 7, (row 0, col 7, lastCharOffset 0)
+LineInfo: {Width:8 CharWidth:8 Height:1 StartColumn:0 ColumnOffset:7 RowOffset:0 CharOffset:7}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"hello, "
+
+# Add some words, then move to begin and delete next word.
+run observe=(view,pos,value)
+type more text
+key ctrl+a
+key alt+d
+----
+-- view:
+┃  1 [7m [0mmore text                         ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+" more text"
+
+# Add some text.
+run observe=(view,pos,value)
+type Some
+----
+-- view:
+┃  1 Some[7m [0mmore text                     ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
+LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"Some more text"
+
+# Uppercase next word.
+run observe=(view,pos,value)
+key alt+u
+----
+-- view:
+┃  1 Some MORE[7m [0mtext                     ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 9, (row 0, col 9, lastCharOffset 0)
+LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:9 RowOffset:0 CharOffset:9}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"Some MORE text"
+
+# Title next word.
+run observe=(view,pos,value)
+key alt+c
+----
+-- view:
+┃  1 Some MORE Text[7m [0m                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
+LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"Some MORE Text"
+
+# Lowercase words.
+run observe=(view,pos,value)
+key ctrl+a
+key alt+l
+key alt+l
+key alt+l
+----
+-- view:
+┃  1 some more text[7m [0m                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
+LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"some more text"
+
+# Word-based changes are no-op at the end of the line.
+run observe=(view,pos,value)
+key alt+c
+key alt+u
+key alt+l
+----
+-- view:
+┃  1 some more text[7m [0m                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
+LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"some more text"
+
+# Transpose
+run observe=(view,pos,value)
+key ctrl+a
+key right
+key ctrl+t
+----
+-- view:
+┃  1 os[7mm[0me more text                     ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 2, (row 0, col 2, lastCharOffset 0)
+LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:2 RowOffset:0 CharOffset:2}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"osme more text"
+
+# Multiple transpose inputs bring the current character to the right via transpositions.
+run observe=(view,pos,value)
+key ctrl+t
+key ctrl+t
+----
+-- view:
+┃  1 omes[7m [0mmore text                     ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
+LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"omes more text"
+
+# Split a line in two.
+run observe=(view,pos,value)
+key enter
+----
+-- view:
+┃  1 omes                               ␤
+┃  2 [7m [0mmore text                         ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 0, (row 1, col 0, lastCharOffset 0)
+LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+-- value:
+"omes\n more text"
+
+# Merge two lines back together.
+run observe=(view,pos,value)
+key ctrl+h
+----
+-- view:
+┃  1 omes[7m [0mmore text                     ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
+LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"omes more text"
+
+# Delete to end of line.
+run observe=(view,pos,value)
+key ctrl+k
+----
+-- view:
+┃  1 omes[7m [0m                              ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
+LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"omes"
+
+
+# Delete to beginning of line.
+run observe=(view,pos,value)
+key ctrl+u
+----
+-- view:
+┃  1 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+""
+
+# Delete to end of line, from the end of the line, brings the line up.
+run observe=(view,pos,value)
+insert "hello\nworld"
+key up
+key ctrl+k
+----
+-- view:
+┃  1 hello[7mw[0morld                         ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 5, (row 0, col 5, lastCharOffset 5)
+LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"helloworld"
+
+# Delete to end of line, from the beginning of the line, brings the line up.
+run observe=(view,pos,value)
+key enter
+key ctrl+u
+----
+-- view:
+┃  1 hello[7mw[0morld                         ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 5, (row 0, col 5, lastCharOffset 5)
+LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"helloworld"
+
+
+# Delete next/prev work on empty input.
+run observe=(view,pos,value)
+setvalue ""
+key ctrl+w
+----
+-- view:
+┃  1 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+""
+
+run observe=(view,pos,value)
+key alt+d
+----
+-- view:
+┃  1 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+""
+
+# Delete next word when the next word is on the next line, moves
+# the line up.
+run observe=(view,pos,value)
+insert "first line\nsecondline"
+movetobegin
+key alt+d
+key alt+d
+----
+-- view:
+┃  1 [7m [0m                                  ␤
+┃  2 secondline                         ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+-- value:
+"\nsecondline"
+
+run observe=(view,pos,value)
+key alt+d
+----
+-- view:
+┃  1 [7ms[0mecondline                         ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"secondline"
+
+# Delete prev word from beginning of line: brings the line up.
+run observe=(view,pos,value)
+key enter
+key ctrl+w
+----
+-- view:
+┃  1 [7ms[0mecondline                         ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"secondline"
+
+
+# Delete word right with many spaces skips past the spaces.
+run observe=(view,pos,value)
+setvalue "hello             world yay"
+key ctrl+a
+key alt+d
+key alt+d
+----
+-- view:
+┃  1 [7m [0myay                               ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+" yay"
+
+# Delete word left with many spaces skips pas the spaces backwards.
+run observe=(view,pos,value)
+setvalue "yay hello             world"
+key ctrl+e
+key ctrl+w
+key ctrl+w
+----
+-- view:
+┃  1 yay [7m [0m                              ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
+LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"yay "
+
+# Delete word right if there are only spaces, just erases the spaces.
+run observe=(view,pos,value)
+setvalue "             \nworld"
+movetobegin
+key alt+d
+----
+-- view:
+┃  1 [7m [0m                                  ␤
+┃  2 world                              ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+-- value:
+"\nworld"
+
+# Delete word left if there are only spaces, just erases the spaces.
+run observe=(view,pos,value)
+setvalue "             \nworld"
+movetobegin
+key ctrl+e
+key ctrl+w
+----
+-- view:
+┃  1 [7m [0m                                  ␤
+┃  2 world                              ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+-- value:
+"\nworld"
+
+
+# Transpose on first char: no-op.
+run observe=(view,pos,value)
+setvalue "hello"
+movetobegin
+key ctrl+a
+key ctrl+t
+----
+-- view:
+┃  1 [7mh[0mello                              ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:6 CharWidth:6 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"hello"
+
+# Transpose at end of line: cursor remains on line.
+run observe=(view,pos,value)
+key ctrl+e
+key ctrl+t
+----
+-- view:
+┃  1 helol[7m [0m                             ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 5, (row 0, col 5, lastCharOffset 0)
+LineInfo: {Width:6 CharWidth:6 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+-- value:
+"helol"
+
+# If there are multiple lines, they all move up when one is deleted.
+run observe=(view,pos,value)
+setvalue "one\ntwo\nthree\nfour\nfive"
+movetobegin
+key ctrl+k
+key ctrl+k
+----
+-- view:
+┃  1 [7mt[0mwo                                ␤
+┃  2 three                              ␤
+┃  3 four                               ␤
+┃  4 five                               ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
+LineInfo: {Width:4 CharWidth:4 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+-- value:
+"two\nthree\nfour\nfive"
+
+# Ditto when deleting up.
+run observe=(view,pos,value)
+key down
+key ctrl+a
+key ctrl+h
+----
+-- view:
+┃  1 two[7mt[0mhree                           ␤
+┃  2 four                               ␤
+┃  3 five                               ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 3, (row 0, col 3, lastCharOffset 0)
+LineInfo: {Width:9 CharWidth:9 Height:1 StartColumn:0 ColumnOffset:3 RowOffset:0 CharOffset:3}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+-- value:
+"twothree\nfour\nfive"

@@ -21,8 +21,8 @@ Enter some text below.
 Try to autocomplete (tab) after 'hello', 'all', 'lorem' or 'lo'
 followed by a few digits (e.g. 'lo30').
 
-You can also press tab with the cursor in the middle of a word!
-`)
+You can also press tab with the cursor in the middle of a word!`)
+	fmt.Println()
 
 	m := editline.New(80, 25)
 

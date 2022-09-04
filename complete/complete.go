@@ -285,7 +285,7 @@ func (m *Model) SetValues(values Values) {
 // MatchesKeys returns true when the completion
 // editor can use the given key message.
 func (m *Model) MatchesKey(msg tea.KeyMsg) bool {
-	if m.focused == false || len(m.valueLists) == 0 {
+	if !m.focused || len(m.valueLists) == 0 {
 		return false
 	}
 	curList := m.valueLists[m.selectedList]

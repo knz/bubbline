@@ -2,6 +2,9 @@ package history
 
 import (
 	"bytes"
+	"fmt"
+	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -15,6 +18,7 @@ func TestLoadHistory(t *testing.T) {
 		{"", nil, ""},
 		{"foo", nil, ""},
 		{"_HiStOrY_V2_\nfoo\nbar", []string{"foo", "bar"}, ""},
+		{"_HiStOrY_V2_\nfoo\nbar\n", []string{"foo", "bar"}, ""},
 		{"_HiStOrY_V2_\nfo\\?o\n\134b\\01ar\\", []string{"fo\\?o", "\\b\\01ar\\"}, ""},
 		{"_HiStOrY_V2_\nfoo\\040", []string{"foo "}, ""},
 		{"_HiStOrY_V2_\nfoo\\040bar", []string{"foo bar"}, ""},
@@ -72,4 +76,33 @@ func TestSaveHistory(t *testing.T) {
 			t.Errorf("%q: expected:\n%q\ngot:\n%q", tc.input, tc.exp, result)
 		}
 	}
+}
+
+func Example_history() {
+	_, err := LoadHistory("notexist")
+	fmt.Println(err)
+	_, err = LoadHistory("/dev")
+	fmt.Println(err)
+	err = SaveHistory(nil, "/dev/null/notvalid")
+	fmt.Println(err)
+
+	f, err := ioutil.TempFile("", "test")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fname := f.Name()
+	f.Close()
+	defer os.Remove(fname)
+	err = SaveHistory(nil, fname)
+	fmt.Println(err)
+	_, err = LoadHistory(fname)
+	fmt.Println(err)
+
+	// Output:
+	// <nil>
+	// read /dev: is a directory
+	// open /dev/null/notvalid: not a directory
+	// <nil>
+	// <nil>
 }

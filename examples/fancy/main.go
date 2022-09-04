@@ -19,8 +19,8 @@ func main() {
 
 Input ends automatically on semicolon.
 Try autocompleting on 'lorem', 'all', 'hello', 'lo' followed by digits,
-or the letter 'r'.
-`)
+or the letter 'r'.`)
+	fmt.Println()
 
 	m := bubbline.New()
 

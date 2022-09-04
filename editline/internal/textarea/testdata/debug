@@ -1,0 +1,9 @@
+run observe=debug
+----
+-- debug:
+focus: false
+promptWidth: 2
+width: 35, height: 6
+col: 0, row: 0
+lastCharOffset: 0
+line 0: [] ("")

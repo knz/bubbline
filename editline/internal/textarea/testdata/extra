@@ -1,0 +1,131 @@
+run
+focus
+enter hello
+enter world!
+----
+-- view:
+┃  1 hello                              ␤
+┃  2 world!                             ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+key up
+clearline
+----
+-- view:
+┃  1 hello                              ␤
+┃  2 [7m [0m                                  ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+key up
+movetoend
+----
+-- view:
+┃  1 hello                              ␤
+┃  2                                    ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+movetobegin
+----
+-- view:
+┃  1 [7mh[0mello                              ␤
+┃  2                                    ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+cursorright
+----
+-- view:
+┃  1 h[7me[0mllo                              ␤
+┃  2                                    ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+cursorright 2
+----
+-- view:
+┃  1 hel[7ml[0mo                              ␤
+┃  2                                    ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+run
+resetviewcursordown
+----
+-- view:
+┃  1 hel[7ml[0mo                              ␤
+┃  2                                    ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+
+# Hmm it's sad a long input moves the cursor out of view?
+# See: https://github.com/charmbracelet/bubbles/issues/231
+run
+setvalue "one\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten"
+----
+-- view:
+┃  1 one                                ␤
+┃  2 two                                ␤
+┃  3 three                              ␤
+┃  4 four                               ␤
+┃  5 five                               ␤
+┃  6 six                                🛇
+
+run
+resetviewcursordown
+----
+-- view:
+┃  5 five                               ␤
+┃  6 six                                ␤
+┃  7 seven                              ␤
+┃  8 eight                              ␤
+┃  9 nine                               ␤
+┃ 10 ten[7m [0m                               🛇
+
+run
+key up
+resetviewcursordown
+----
+-- view:
+┃  4 four                               ␤
+┃  5 five                               ␤
+┃  6 six                                ␤
+┃  7 seven                              ␤
+┃  8 eight                              ␤
+┃  9 nin[7me[0m                               🛇
+
+run
+key up
+key up
+key up
+key up
+resetviewcursordown
+----
+-- view:
+┃  1 one                                ␤
+┃  2 two                                ␤
+┃  3 three                              ␤
+┃  4 four                               ␤
+┃  5 fiv[7me[0m                               ␤
+┃  6 six                                🛇
