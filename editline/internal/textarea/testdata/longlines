@@ -1,0 +1,287 @@
+# When we insert a very long line, it wraps around.
+run
+focus
+enter lorem ipsum dolor sit amet, consectetur adipiscing elit,
+enter sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    🛇
+
+# When we move the cursor around, it navigates around the wrapped text.
+run observe=(view,pos)
+key up
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt   ␤
+┃    [7mu[0mt labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 33, (row 1, col 33, lastCharOffset 0)
+LineInfo: {Width:34 CharWidth:33 Height:2 StartColumn:33 ColumnOffset:0 RowOffset:1 CharOffset:0}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+run observe=(view,pos)
+key left
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt[7m [0m  ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 32, (row 1, col 32, lastCharOffset 0)
+LineInfo: {Width:33 CharWidth:33 Height:2 StartColumn:0 ColumnOffset:32 RowOffset:0 CharOffset:32}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+run
+key left
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididun[7mt[0m   ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+
+# When we move to "beginning of line" or "end of line", it's the
+# entire wrapped line.
+run
+key ctrl+e
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.[7m [0m ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+
+run
+key ctrl+a
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 [7ms[0med do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+
+# When we move to a previous long line, we get into the middle of it.
+run
+key right
+key up
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    c[7mo[0mnsectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+
+# Then back down.
+run
+key down
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 s[7me[0md do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+
+# If we are far right, and we move up, the original column of the
+# cursor is preserved.
+run observe=(view,pos)
+key ctrl+e
+key up
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt[7m [0m  ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 32, (row 1, col 32, lastCharOffset 33)
+LineInfo: {Width:33 CharWidth:33 Height:2 StartColumn:0 ColumnOffset:32 RowOffset:0 CharOffset:32}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+run observe=(view,pos)
+key up
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,[7m [0m      ␤
+┃  2 sed do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 56, (row 0, col 56, lastCharOffset 33)
+LineInfo: {Width:29 CharWidth:29 Height:2 StartColumn:28 ColumnOffset:28 RowOffset:1 CharOffset:28}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# So we get back to position on the way down.
+run observe=(view,pos)
+key down
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt[7m [0m  ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 32, (row 1, col 32, lastCharOffset 33)
+LineInfo: {Width:33 CharWidth:33 Height:2 StartColumn:0 ColumnOffset:32 RowOffset:0 CharOffset:32}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+run observe=(view,pos)
+key down
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.[7m [0m ␤
+┃  3                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 1, Pos 66, (row 1, col 66, lastCharOffset 33)
+LineInfo: {Width:34 CharWidth:34 Height:2 StartColumn:33 ColumnOffset:33 RowOffset:1 CharOffset:33}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+
+# When moving down from a long line into an empty line, cursor
+# moves to the beginning.
+run observe=(view,pos)
+key down
+----
+-- view:
+┃  1 lorem ipsum dolor sit amet,        ␤
+┃    consectetur adipiscing elit,       ␤
+┃  2 sed do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3 [7m [0m                                  ␤
+┃  ~                                    🛇
+-- pos:
+Line: 2, Pos 0, (row 2, col 0, lastCharOffset 33)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+
+# When moving up from a long line into an empty line, cursor
+# also moves to the beginning.
+run observe=(view,pos)
+movetobegin
+# Erase first line
+key ctrl+k
+# go to long line
+key down
+key ctrl+e
+# move up
+key up
+key up
+----
+-- view:
+┃  1 [7m [0m                                  ␤
+┃  2 sed do eiusmod tempor incididunt   ␤
+┃    ut labore et dolore magna aliqua.  ␤
+┃  3                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 0, (row 0, col 0, lastCharOffset 33)
+LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
+AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+
+
+# Special long line behavior with wide runes.
+# The last position on the first line is skipped because
+# we're not sure if the wide run would fit.
+run observe=(view,pos,value)
+setvalue ""
+type ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩
+----
+-- view:
+┃  1 ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩   ␤
+┃    ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩[7m [0m           ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 37, (row 0, col 37, lastCharOffset 0)
+LineInfo: {Width:16 CharWidth:24 Height:2 StartColumn:22 ColumnOffset:15 RowOffset:1 CharOffset:23}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+-- value:
+"⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩"
+
+# Insert characters from the beginning, see the wrap adapt.
+run observe=(view,pos,value)
+key ctrl+a
+type a
+----
+-- view:
+┃  1 a[7m⏩[0m ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩  ␤
+┃    ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩            ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
+LineInfo: {Width:23 CharWidth:34 Height:2 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+-- value:
+"a⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩"
+
+run observe=(view,pos,value)
+key ctrl+a
+type a
+----
+-- view:
+┃  1 a[7ma[0m⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ␤
+┃    ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩            ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
+LineInfo: {Width:24 CharWidth:35 Height:2 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+-- value:
+"aa⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩"
+
+run observe=(view,pos,value)
+key ctrl+a
+type a
+----
+-- view:
+┃  1 a[7ma[0ma⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩   ␤
+┃    ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩         ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
+-- pos:
+Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
+LineInfo: {Width:23 CharWidth:33 Height:2 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
+AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+-- value:
+"aaa⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩"
