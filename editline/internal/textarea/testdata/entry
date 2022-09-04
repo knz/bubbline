@@ -73,3 +73,18 @@ Length: 13, LineCount: 2, NumLinesInValue: 2, EmptyValue: false
 Line: 1, Pos 0, (row 1, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
 AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+
+# Paste from clipboard has nothing to offer in unit tests.
+# But we include it here for coverage testing.
+run
+setvalue "hello"
+movetoend
+key ctrl+v
+----
+-- view:
+┃  1 hello                              ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    ␤
+┃  ~                                    🛇
