@@ -15,6 +15,7 @@ func TestLoadHistory(t *testing.T) {
 		{"", nil, ""},
 		{"foo", nil, ""},
 		{"_HiStOrY_V2_\nfoo\nbar", []string{"foo", "bar"}, ""},
+		{"_HiStOrY_V2_\nfoo\nbar\n", []string{"foo", "bar"}, ""},
 		{"_HiStOrY_V2_\nfo\\?o\n\134b\\01ar\\", []string{"fo\\?o", "\\b\\01ar\\"}, ""},
 		{"_HiStOrY_V2_\nfoo\\040", []string{"foo "}, ""},
 		{"_HiStOrY_V2_\nfoo\\040bar", []string{"foo bar"}, ""},
