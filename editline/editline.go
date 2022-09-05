@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"syscall"
 
@@ -188,6 +189,12 @@ type Model struct {
 	// SearchPromptNotFound is the prompt displayed before the history search pattern,
 	// when no match is found.
 	SearchPromptNotFound string
+	// SearchPromptInvalid is the prompt displayed before the history search pattern,
+	// when the pattern is invalid.
+	SearchPromptInvalid string
+
+	// CaseSensitiveSearch, if enabled, makes history search case-sensitive.
+	CaseSensitiveSearch bool
 
 	// ShowLineNumbers if true shows line numbers at the beginning
 	// of each input line.
@@ -251,6 +258,7 @@ func New(width, height int) *Model {
 		NextPrompt:           "",
 		SearchPrompt:         "bck:",
 		SearchPromptNotFound: "bck?",
+		SearchPromptInvalid:  "bck!",
 		ShowLineNumbers:      false,
 		help:                 help.New(),
 		completions:          complete.New(),
@@ -424,7 +432,10 @@ func (m *Model) acceptSearch() {
 }
 
 func (m *Model) incrementalSearch(nextMatch bool) (cmd tea.Cmd) {
-	pat := m.hctrl.pattern.Value()
+	pat := m.hctrl.pattern.Value() + "*"
+	if !m.CaseSensitiveSearch {
+		pat = strings.ToLower(pat)
+	}
 	if pat == m.hctrl.c.prevPattern {
 		if !nextMatch {
 			// Nothing changed, and no request for incremental search: do nothing.
@@ -440,9 +451,17 @@ func (m *Model) incrementalSearch(nextMatch bool) (cmd tea.Cmd) {
 	i := m.hctrl.c.cursor - 1
 	for ; i >= 0; i-- {
 		entry := m.history[i]
-		for j := len(entry) - len(pat); j >= 0; j-- {
-			// TODO: use glob search instead of simple strings.
-			if strings.HasPrefix(entry[j:], pat) {
+		lentry := entry
+		if !m.CaseSensitiveSearch {
+			lentry = strings.ToLower(lentry)
+		}
+		for j := len(lentry) - len(pat); j >= 0; j-- {
+			match, err := filepath.Match(pat, lentry[j:])
+			if err != nil {
+				m.hctrl.pattern.Prompt = m.SearchPromptInvalid
+				return cmd
+			}
+			if match {
 				// It's a match!
 				m.hctrl.pattern.Prompt = m.SearchPrompt
 				m.hctrl.c.cursor = i
