@@ -52,6 +52,12 @@ func (m *Model) MoveToEnd() {
 	m.SetCursor(len(m.value[m.row]))
 }
 
+// MoveTo moves the cursor to the specified position.
+func (m *Model) MoveTo(row, col int) {
+	m.row = clamp(row, 0, len(m.value)-1)
+	m.SetCursor(clamp(col, 0, len(m.value[m.row])))
+}
+
 // ValueRunes retrieves the current value decomposed as runes.
 func (m *Model) ValueRunes() [][]rune {
 	return m.value

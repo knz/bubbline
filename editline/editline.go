@@ -477,8 +477,14 @@ func (m *Model) incrementalSearch(nextMatch bool) (cmd tea.Cmd) {
 }
 
 func (m *Model) updateValue(value string, cursor int) (cmd tea.Cmd) {
-	m.text.SetValue(value)
-	m.text.SetCursor(cursor)
+	m.text.SetValue(value[:cursor])
+
+	// Remember where the display cursor is.
+	row, col := m.text.Line(), m.text.CursorPos()
+	m.text.InsertString(value[cursor:])
+
+	// Reposition the display cursor to the desired position.
+	m.text.MoveTo(row, col)
 	cmd = m.updateTextSz()
 	return cmd
 }

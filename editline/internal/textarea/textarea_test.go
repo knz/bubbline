@@ -85,6 +85,20 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 		t.text.MoveToBegin()
 	case "movetoend":
 		t.text.MoveToEnd()
+	case "moveto":
+		if len(args) != 2 {
+			return true, t, nil, fmt.Errorf("expected 2 args")
+		}
+		i1, err := strconv.Atoi(args[0])
+		if err != nil {
+			return true, t, nil, err
+		}
+		i2, err := strconv.Atoi(args[1])
+		if err != nil {
+			return true, t, nil, err
+		}
+		t.text.MoveTo(i1, i2)
+
 	case "cursorright":
 		n := 1
 		if len(args) > 0 {
