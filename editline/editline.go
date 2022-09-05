@@ -268,6 +268,7 @@ func New(width, height int) *Model {
 		m.newWidth = width
 		m.newHeight = height
 	}
+	m.SetExternalEditorEnabled(false, "")
 	m.text.KeyMap.Paste.Unbind() // paste from clipboard not supported.
 	m.hctrl.pattern = textinput.New()
 	m.hctrl.pattern.Placeholder = "enter search term, or C-g to cancel search"
