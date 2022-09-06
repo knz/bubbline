@@ -73,7 +73,7 @@ var DefaultKeyMap = KeyMap{
 	DeleteWordForward:       key.NewBinding(key.WithKeys("alt+delete", "alt+d"), key.WithHelp("M-d/M-del", "del next word")),
 	DeleteAfterCursor:       key.NewBinding(key.WithKeys("ctrl+k"), key.WithHelp("C-k", "del line end")),
 	DeleteBeforeCursor:      key.NewBinding(key.WithKeys("ctrl+u"), key.WithHelp("C-u", "del line start")),
-	InsertNewline:           key.NewBinding(key.WithKeys("enter", "ctrl+m"), key.WithHelp("C-m/⤶", "new line/enter")),
+	InsertNewline:           key.NewBinding(key.WithKeys("enter", "ctrl+m", "ctrl+j"), key.WithHelp("C-m/⤶", "new line/enter")),
 	DeleteCharacterBackward: key.NewBinding(key.WithKeys("backspace", "ctrl+h"), key.WithHelp("C-h/bksp", "del prev char")),
 	DeleteCharacterForward:  key.NewBinding(key.WithKeys("delete", "ctrl+d"), key.WithHelp("C-d/del", "del next char")),
 	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a"), key.WithHelp("C-a/home", "start of line")),
