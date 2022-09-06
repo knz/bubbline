@@ -37,7 +37,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 [^l2]: [GNU readline](https://en.wikipedia.org/wiki/GNU_Readline)
 [^p1]: Pending https://github.com/charmbracelet/bubbles/pull/225
 [^p2]: Pending https://github.com/charmbracelet/bubbles/pull/211
-[^p3]: Only Ctrl+O for now; insert key support pending https://github.com/charmbracelet/bubbletea/pull/418
+[^p3]: Only Alt+O for now; insert key support pending https://github.com/charmbracelet/bubbletea/pull/418
 [^cp]: libedit/readline's completion menu is a single line of options with wraparound.
 [^bp]: https://en.wikipedia.org/wiki/Bracketed-paste
 [^p4]: Pending https://github.com/charmbracelet/bubbletea/pull/397 and https://github.com/charmbracelet/bubbletea/pull/397
@@ -62,7 +62,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Alt+N                 | Recall next history entry.                                                                   | HistoryNext                |
 | Enter, Ctrl+M         | Enter a new line; or terminate input if `CheckInputComplete` returns true.                   | InsertNewline              |
 | Alt+Enter, Alt+Ctrl+M | Always complete the input; ignore input termination condition.                               | AlwaysComplete             |
-| Ctrl+J                | Always insert a newline; ignore input termination condition.                                 | AlwaysNewline              |
+| Ctrl+O                | Always insert a newline; ignore input termination condition.                                 | AlwaysNewline              |
 | Ctrl+F, Right         | Move one character to the right.                                                             | CharacterBackward          |
 | Ctrl+B, Left          | Move one character to the left.                                                              | CharacterForward           |
 | Alt+F, Alt+Right      | Move cursor to the previous word.                                                            | WordForward                |
@@ -74,7 +74,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Ctrl+P, Up            | Move cursor one line up, or to previous history entry if already on first line.              | LinePrevious               |
 | Ctrl+N, Down          | Move cursor one line down, or to next history entry if already on last line.                 | LineStart                  |
 | Ctrl+T                | Transpose the last two characters.                                                           | TransposeCharacterBackward |
-| Ctrl+O, Insert        | Toggle overwrite mode.                                                                       | ToggleOverwriteMode        |
+| Alt+O, Insert         | Toggle overwrite mode.                                                                       | ToggleOverwriteMode        |
 | Alt+U                 | Make the next word uppercase.                                                                | UppercaseWordForward       |
 | Alt+L                 | Make the next word lowercase.                                                                | LowercaseWordForward       |
 | Alt+C                 | Capitalize the next word.                                                                    | CapitalizeWordForward      |

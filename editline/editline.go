@@ -80,7 +80,7 @@ type KeyMap struct {
 var DefaultKeyMap = KeyMap{
 	KeyMap: textarea.DefaultKeyMap,
 
-	AlwaysNewline:   key.NewBinding(key.WithKeys("ctrl+j"), key.WithHelp("C-j", "force newline")),
+	AlwaysNewline:   key.NewBinding(key.WithKeys("ctrl+o"), key.WithHelp("C-o", "force newline")),
 	AlwaysComplete:  key.NewBinding(key.WithKeys("alt+enter", "alt+\r"), key.WithHelp("M-⤶/M-C-m", "force complete")),
 	AutoComplete:    key.NewBinding(key.WithKeys("tab"), key.WithHelp("tab", "try autocomplete")),
 	Interrupt:       key.NewBinding(key.WithKeys("ctrl+c"), key.WithHelp("C-c", "clear/cancel")),

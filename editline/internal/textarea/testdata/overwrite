@@ -14,7 +14,7 @@ key ctrl+a
 
 # Enter overwrite mode then type over.
 run observe=(view,value)
-key ctrl+o
+key alt+o
 type un
 ----
 -- view:

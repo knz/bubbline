@@ -79,7 +79,7 @@ var DefaultKeyMap = KeyMap{
 	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a"), key.WithHelp("C-a/home", "start of line")),
 	LineEnd:                 key.NewBinding(key.WithKeys("end", "ctrl+e"), key.WithHelp("C-e/end", "end of line")),
 	Paste:                   key.NewBinding(key.WithKeys("ctrl+v"), key.WithHelp("C-v", "paste")),
-	ToggleOverwriteMode:     key.NewBinding(key.WithKeys("insert", "ctrl+o"), key.WithHelp("C-o/ins", "toggle overwrite")),
+	ToggleOverwriteMode:     key.NewBinding(key.WithKeys("insert", "alt+o"), key.WithHelp("M-o/ins", "toggle overwrite")),
 
 	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t"), key.WithHelp("C-t", "transpose char")),
 	CapitalizeWordForward:      key.NewBinding(key.WithKeys("alt+c"), key.WithHelp("M-c", "capitalize word")),
