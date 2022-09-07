@@ -1,5 +1,5 @@
 --- textarea.go.orig	2022-08-26 00:26:34.714932000 +0200
-+++ textarea.go	2022-08-26 00:28:57.077786000 +0200
++++ textarea.go	2022-09-06 12:51:29.476143000 +0200
 @@ -1,3 +1,9 @@
 +// The code below is imported from
 +// https://github.com/charmbracelet/bubbles/tree/master/textarea
@@ -10,7 +10,7 @@
  package textarea
  
  import (
-@@ -46,12 +52,12 @@
+@@ -46,39 +52,39 @@
  	Paste                   key.Binding
  	WordBackward            key.Binding
  	WordForward             key.Binding
@@ -27,20 +27,51 @@
  }
  
  // DefaultKeyMap is the default set of key bindings for navigating and acting
-@@ -73,12 +79,12 @@
- 	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a")),
- 	LineEnd:                 key.NewBinding(key.WithKeys("end", "ctrl+e")),
- 	Paste:                   key.NewBinding(key.WithKeys("ctrl+v")),
-+	ToggleOverwriteMode:     key.NewBinding(key.WithKeys("insert", "ctrl+o")),
+ // upon the textarea.
+ var DefaultKeyMap = KeyMap{
+-	CharacterForward:        key.NewBinding(key.WithKeys("right", "ctrl+f")),
+-	CharacterBackward:       key.NewBinding(key.WithKeys("left", "ctrl+b")),
+-	WordForward:             key.NewBinding(key.WithKeys("alt+right", "alt+f")),
+-	WordBackward:            key.NewBinding(key.WithKeys("alt+left", "alt+b")),
+-	LineNext:                key.NewBinding(key.WithKeys("down", "ctrl+n")),
+-	LinePrevious:            key.NewBinding(key.WithKeys("up", "ctrl+p")),
+-	DeleteWordBackward:      key.NewBinding(key.WithKeys("alt+backspace", "ctrl+w")),
+-	DeleteWordForward:       key.NewBinding(key.WithKeys("alt+delete", "alt+d")),
+-	DeleteAfterCursor:       key.NewBinding(key.WithKeys("ctrl+k")),
+-	DeleteBeforeCursor:      key.NewBinding(key.WithKeys("ctrl+u")),
+-	InsertNewline:           key.NewBinding(key.WithKeys("enter", "ctrl+m")),
+-	DeleteCharacterBackward: key.NewBinding(key.WithKeys("backspace", "ctrl+h")),
+-	DeleteCharacterForward:  key.NewBinding(key.WithKeys("delete", "ctrl+d")),
+-	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a")),
+-	LineEnd:                 key.NewBinding(key.WithKeys("end", "ctrl+e")),
+-	Paste:                   key.NewBinding(key.WithKeys("ctrl+v")),
++	CharacterForward:        key.NewBinding(key.WithKeys("right", "ctrl+f"), key.WithHelp("C-f/→", "next char")),
++	CharacterBackward:       key.NewBinding(key.WithKeys("left", "ctrl+b"), key.WithHelp("C-b/←", "prev char")),
++	WordForward:             key.NewBinding(key.WithKeys("alt+right", "alt+f"), key.WithHelp("M-f/M-→", "next word")),
++	WordBackward:            key.NewBinding(key.WithKeys("alt+left", "alt+b"), key.WithHelp("M-b/M-←", "prev word")),
++	LineNext:                key.NewBinding(key.WithKeys("down", "ctrl+n"), key.WithHelp("C-n/↓", "move down")),
++	LinePrevious:            key.NewBinding(key.WithKeys("up", "ctrl+p"), key.WithHelp("C-p/↑", "move up")),
++	DeleteWordBackward:      key.NewBinding(key.WithKeys("alt+backspace", "ctrl+w"), key.WithHelp("C-w/M-bksp", "del prev word")),
++	DeleteWordForward:       key.NewBinding(key.WithKeys("alt+delete", "alt+d"), key.WithHelp("M-d/M-del", "del next word")),
++	DeleteAfterCursor:       key.NewBinding(key.WithKeys("ctrl+k"), key.WithHelp("C-k", "del line end")),
++	DeleteBeforeCursor:      key.NewBinding(key.WithKeys("ctrl+u"), key.WithHelp("C-u", "del line start")),
++	InsertNewline:           key.NewBinding(key.WithKeys("enter", "ctrl+m", "ctrl+j"), key.WithHelp("C-m/⤶", "new line/enter")),
++	DeleteCharacterBackward: key.NewBinding(key.WithKeys("backspace", "ctrl+h"), key.WithHelp("C-h/bksp", "del prev char")),
++	DeleteCharacterForward:  key.NewBinding(key.WithKeys("delete", "ctrl+d"), key.WithHelp("C-d/del", "del next char")),
++	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a"), key.WithHelp("C-a/home", "start of line")),
++	LineEnd:                 key.NewBinding(key.WithKeys("end", "ctrl+e"), key.WithHelp("C-e/end", "end of line")),
++	Paste:                   key.NewBinding(key.WithKeys("ctrl+v"), key.WithHelp("C-v", "paste")),
++	ToggleOverwriteMode:     key.NewBinding(key.WithKeys("insert", "alt+o"), key.WithHelp("M-o/ins", "toggle overwrite")),
  
 -	CapitalizeWordForward: key.NewBinding(key.WithKeys("alt+c")),
 -	LowercaseWordForward:  key.NewBinding(key.WithKeys("alt+l")),
 -	UppercaseWordForward:  key.NewBinding(key.WithKeys("alt+u")),
 -
- 	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t")),
-+	CapitalizeWordForward:      key.NewBinding(key.WithKeys("alt+c")),
-+	LowercaseWordForward:       key.NewBinding(key.WithKeys("alt+l")),
-+	UppercaseWordForward:       key.NewBinding(key.WithKeys("alt+u")),
+-	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t")),
++	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t"), key.WithHelp("C-t", "transpose char")),
++	CapitalizeWordForward:      key.NewBinding(key.WithKeys("alt+c"), key.WithHelp("M-c", "capitalize word")),
++	LowercaseWordForward:       key.NewBinding(key.WithKeys("alt+l"), key.WithHelp("M-l", "lowercase word")),
++	UppercaseWordForward:       key.NewBinding(key.WithKeys("alt+u"), key.WithHelp("M-u", "uppercase word")),
  }
  
  // LineInfo is a helper for keeping track of line information regarding
@@ -357,7 +388,7 @@
 -			s.WriteString(style.Render(m.style.Prompt.Render(m.Prompt)))
 +			prompt := m.getPromptString(displayLine)
 +			prompt = m.style.Prompt.Render(prompt)
-+			s.WriteString(prompt)
++			s.WriteString(style.Render(prompt))
 +			displayLine++
  
  			if m.ShowLineNumbers {
