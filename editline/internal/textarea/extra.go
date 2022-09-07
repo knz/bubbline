@@ -39,19 +39,6 @@ func (m *Model) ClearLine() {
 	m.lastCharOffset = 0
 }
 
-// MoveToBegin moves the cursor to the beginning of the input.
-func (m *Model) MoveToBegin() {
-	m.row = 0
-	m.col = 0
-	m.lastCharOffset = 0
-}
-
-// MoveToEnd moves the cursor to the end of the input.
-func (m *Model) MoveToEnd() {
-	m.row = len(m.value) - 1
-	m.SetCursor(len(m.value[m.row]))
-}
-
 // MoveTo moves the cursor to the specified position.
 func (m *Model) MoveTo(row, col int) {
 	m.row = clamp(row, 0, len(m.value)-1)

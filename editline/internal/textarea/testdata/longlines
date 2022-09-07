@@ -187,7 +187,7 @@ AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndV
 # When moving up from a long line into an empty line, cursor
 # also moves to the beginning.
 run observe=(view,pos)
-movetobegin
+key alt+<
 # Erase first line
 key ctrl+k
 # go to long line

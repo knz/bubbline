@@ -71,8 +71,6 @@ type KeyMap struct {
 	MoreHelp        key.Binding
 	ReflowLine      key.Binding
 	ReflowAll       key.Binding
-	MoveToBegin     key.Binding
-	MoveToEnd       key.Binding
 	ExternalEdit    key.Binding
 }
 
@@ -97,8 +95,6 @@ var DefaultKeyMap = KeyMap{
 	ReflowLine:      key.NewBinding(key.WithKeys("alt+q"), key.WithHelp("M-q", "reflow line")),
 	ReflowAll:       key.NewBinding(key.WithKeys("alt+Q"), key.WithHelp("M-S-q", "reflow all")),
 	Debug:           key.NewBinding(key.WithKeys("ctrl+_", "ctrl+@"), key.WithHelp("C-_/C-@", "debug mode"), key.WithDisabled()),
-	MoveToBegin:     key.NewBinding(key.WithKeys("alt+<", "ctrl+home"), key.WithHelp("M-</C-home", "go to begin")),
-	MoveToEnd:       key.NewBinding(key.WithKeys("alt+>", "ctrl+end"), key.WithHelp("M->/C-end", "go to end")),
 	ExternalEdit:    key.NewBinding(key.WithKeys("alt+f2", "alt+2"), key.WithHelp("M-2/M-F2", "external edit")),
 }
 
@@ -955,14 +951,6 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			stop = true
 			imsg = nil // consume message
 
-		case key.Matches(msg, m.KeyMap.MoveToBegin):
-			m.text.MoveToBegin()
-			imsg = nil // consume message
-
-		case key.Matches(msg, m.KeyMap.MoveToEnd):
-			m.text.MoveToEnd()
-			imsg = nil // consume message
-
 		case key.Matches(msg, m.KeyMap.InsertNewline):
 			if m.CheckInputComplete == nil ||
 				m.CheckInputComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos()) {
@@ -1084,7 +1072,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.MoreHelp,
 			k.CharacterForward,
 			k.WordForward,
-			k.MoveToEnd,
+			k.InputEnd,
 			key.NewBinding(key.WithKeys("_"), key.WithHelp("del", "del next char")), // k.DeleteCharacterForward,
 			k.DeleteWordForward,
 			k.LineEnd,
@@ -1098,7 +1086,7 @@ func (m Model) FullHelp() [][]key.Binding {
 			k.Interrupt,
 			k.CharacterBackward,
 			k.WordBackward,
-			k.MoveToBegin,
+			k.InputBegin,
 			k.DeleteCharacterBackward,
 			k.DeleteWordBackward,
 			k.LineStart,

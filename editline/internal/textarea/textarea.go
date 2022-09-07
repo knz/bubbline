@@ -52,6 +52,8 @@ type KeyMap struct {
 	Paste                   key.Binding
 	WordBackward            key.Binding
 	WordForward             key.Binding
+	InputBegin              key.Binding
+	InputEnd                key.Binding
 	ToggleOverwriteMode     key.Binding
 
 	TransposeCharacterBackward key.Binding
@@ -79,12 +81,16 @@ var DefaultKeyMap = KeyMap{
 	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a"), key.WithHelp("C-a/home", "start of line")),
 	LineEnd:                 key.NewBinding(key.WithKeys("end", "ctrl+e"), key.WithHelp("C-e/end", "end of line")),
 	Paste:                   key.NewBinding(key.WithKeys("ctrl+v"), key.WithHelp("C-v", "paste")),
-	ToggleOverwriteMode:     key.NewBinding(key.WithKeys("insert", "alt+o"), key.WithHelp("M-o/ins", "toggle overwrite")),
+	InputBegin:              key.NewBinding(key.WithKeys("alt+<", "ctrl+home"), key.WithHelp("M-</C-home", "go to begin")),
+	InputEnd: key.NewBinding(key.WithKeys("alt+>", "ctrl+end"),
+		key.WithHelp("M->/C-end", "go to end")),
 
 	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t"), key.WithHelp("C-t", "transpose char")),
 	CapitalizeWordForward:      key.NewBinding(key.WithKeys("alt+c"), key.WithHelp("M-c", "capitalize word")),
 	LowercaseWordForward:       key.NewBinding(key.WithKeys("alt+l"), key.WithHelp("M-l", "lowercase word")),
 	UppercaseWordForward:       key.NewBinding(key.WithKeys("alt+u"), key.WithHelp("M-u", "uppercase word")),
+
+	ToggleOverwriteMode: key.NewBinding(key.WithKeys("insert", "alt+o"), key.WithHelp("M-o/ins", "toggle overwrite")),
 }
 
 // LineInfo is a helper for keeping track of line information regarding
@@ -788,6 +794,18 @@ func (m Model) Width() int {
 	return m.width
 }
 
+// moveToBegin moves the cursor to the beginning of the input.
+func (m *Model) moveToBegin() {
+	m.row = 0
+	m.SetCursor(0)
+}
+
+// moveToEnd moves the cursor to the end of the input.
+func (m *Model) moveToEnd() {
+	m.row = len(m.value) - 1
+	m.SetCursor(len(m.value[m.row]))
+}
+
 // SetWidth sets the width of the textarea to fit exactly within the given width.
 // This means that the textarea will account for the width of the prompt and
 // whether or not line numbers are being shown.
@@ -937,14 +955,6 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.CursorEnd()
 		case key.Matches(msg, m.KeyMap.LineStart):
 			m.CursorStart()
-		case key.Matches(msg, m.KeyMap.TransposeCharacterBackward):
-			m.transposeLeft()
-		case key.Matches(msg, m.KeyMap.UppercaseWordForward):
-			m.uppercaseRight()
-		case key.Matches(msg, m.KeyMap.LowercaseWordForward):
-			m.lowercaseRight()
-		case key.Matches(msg, m.KeyMap.CapitalizeWordForward):
-			m.capitalizeRight()
 		case key.Matches(msg, m.KeyMap.CharacterForward):
 			m.characterRight()
 		case key.Matches(msg, m.KeyMap.LineNext):
@@ -959,6 +969,18 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			m.CursorUp()
 		case key.Matches(msg, m.KeyMap.WordBackward):
 			m.wordLeft()
+		case key.Matches(msg, m.KeyMap.InputBegin):
+			m.moveToBegin()
+		case key.Matches(msg, m.KeyMap.InputEnd):
+			m.moveToEnd()
+		case key.Matches(msg, m.KeyMap.LowercaseWordForward):
+			m.lowercaseRight()
+		case key.Matches(msg, m.KeyMap.UppercaseWordForward):
+			m.uppercaseRight()
+		case key.Matches(msg, m.KeyMap.CapitalizeWordForward):
+			m.capitalizeRight()
+		case key.Matches(msg, m.KeyMap.TransposeCharacterBackward):
+			m.transposeLeft()
 		case key.Matches(msg, m.KeyMap.ToggleOverwriteMode):
 			m.overwrite = !m.overwrite
 		default:

@@ -390,7 +390,7 @@ AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndVi
 # the line up.
 run observe=(view,pos,value)
 insert "first line\nsecondline"
-movetobegin
+key alt+<
 key alt+d
 key alt+d
 ----
@@ -490,7 +490,7 @@ AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndV
 # Delete word right if there are only spaces, just erases the spaces.
 run observe=(view,pos,value)
 setvalue "             \nworld"
-movetobegin
+key alt+<
 key alt+d
 ----
 -- view:
@@ -510,7 +510,7 @@ AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndVi
 # Delete word left if there are only spaces, just erases the spaces.
 run observe=(view,pos,value)
 setvalue "             \nworld"
-movetobegin
+key alt+<
 key ctrl+e
 key ctrl+w
 ----
@@ -532,7 +532,7 @@ AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndVi
 # Transpose on first char: no-op.
 run observe=(view,pos,value)
 setvalue "hello"
-movetobegin
+key alt+<
 key ctrl+a
 key ctrl+t
 ----
@@ -572,7 +572,7 @@ AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndV
 # If there are multiple lines, they all move up when one is deleted.
 run observe=(view,pos,value)
 setvalue "one\ntwo\nthree\nfour\nfive"
-movetobegin
+key alt+<
 key ctrl+k
 key ctrl+k
 ----

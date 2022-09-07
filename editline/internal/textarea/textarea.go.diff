@@ -1,5 +1,5 @@
---- textarea.go.orig	2022-08-26 00:26:34.714932000 +0200
-+++ textarea.go	2022-09-06 12:51:29.476143000 +0200
+--- textarea.go.orig	2022-09-07 23:16:31.119958000 +0200
++++ textarea.go	2022-09-07 23:19:02.628834000 +0200
 @@ -1,3 +1,9 @@
 +// The code below is imported from
 +// https://github.com/charmbracelet/bubbles/tree/master/textarea
@@ -10,10 +10,10 @@
  package textarea
  
  import (
-@@ -46,39 +52,39 @@
- 	Paste                   key.Binding
- 	WordBackward            key.Binding
+@@ -48,41 +54,43 @@
  	WordForward             key.Binding
+ 	InputBegin              key.Binding
+ 	InputEnd                key.Binding
 +	ToggleOverwriteMode     key.Binding
  
 -	UppercaseWordForward  key.Binding
@@ -45,6 +45,8 @@
 -	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a")),
 -	LineEnd:                 key.NewBinding(key.WithKeys("end", "ctrl+e")),
 -	Paste:                   key.NewBinding(key.WithKeys("ctrl+v")),
+-	InputBegin:              key.NewBinding(key.WithKeys("alt+<", "ctrl+home")),
+-	InputEnd:                key.NewBinding(key.WithKeys("alt+>", "ctrl+end")),
 +	CharacterForward:        key.NewBinding(key.WithKeys("right", "ctrl+f"), key.WithHelp("C-f/→", "next char")),
 +	CharacterBackward:       key.NewBinding(key.WithKeys("left", "ctrl+b"), key.WithHelp("C-b/←", "prev char")),
 +	WordForward:             key.NewBinding(key.WithKeys("alt+right", "alt+f"), key.WithHelp("M-f/M-→", "next word")),
@@ -61,69 +63,24 @@
 +	LineStart:               key.NewBinding(key.WithKeys("home", "ctrl+a"), key.WithHelp("C-a/home", "start of line")),
 +	LineEnd:                 key.NewBinding(key.WithKeys("end", "ctrl+e"), key.WithHelp("C-e/end", "end of line")),
 +	Paste:                   key.NewBinding(key.WithKeys("ctrl+v"), key.WithHelp("C-v", "paste")),
-+	ToggleOverwriteMode:     key.NewBinding(key.WithKeys("insert", "alt+o"), key.WithHelp("M-o/ins", "toggle overwrite")),
++	InputBegin:              key.NewBinding(key.WithKeys("alt+<", "ctrl+home"), key.WithHelp("M-</C-home", "go to begin")),
++	InputEnd: key.NewBinding(key.WithKeys("alt+>", "ctrl+end"),
++		key.WithHelp("M->/C-end", "go to end")),
  
 -	CapitalizeWordForward: key.NewBinding(key.WithKeys("alt+c")),
 -	LowercaseWordForward:  key.NewBinding(key.WithKeys("alt+l")),
 -	UppercaseWordForward:  key.NewBinding(key.WithKeys("alt+u")),
--
--	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t")),
 +	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t"), key.WithHelp("C-t", "transpose char")),
 +	CapitalizeWordForward:      key.NewBinding(key.WithKeys("alt+c"), key.WithHelp("M-c", "capitalize word")),
 +	LowercaseWordForward:       key.NewBinding(key.WithKeys("alt+l"), key.WithHelp("M-l", "lowercase word")),
 +	UppercaseWordForward:       key.NewBinding(key.WithKeys("alt+u"), key.WithHelp("M-u", "uppercase word")),
+ 
+-	TransposeCharacterBackward: key.NewBinding(key.WithKeys("ctrl+t")),
++	ToggleOverwriteMode: key.NewBinding(key.WithKeys("insert", "alt+o"), key.WithHelp("M-o/ins", "toggle overwrite")),
  }
  
  // LineInfo is a helper for keeping track of line information regarding
-@@ -129,12 +135,29 @@
- 	Err error
- 
- 	// General settings.
--	Prompt               string
--	Placeholder          string
--	ShowLineNumbers      bool
-+
-+	// Prompt is printed at the beginning of each line.
-+	//
-+	// When changing the value of Prompt after the model has been
-+	// initialized, ensure that SetWidth() gets called afterwards.
-+	//
-+	// See also SetPromptFunc().
-+	Prompt string
-+
-+	// Placeholder is the text displayed when the user
-+	// hasn't entered anything yet.
-+	Placeholder string
-+
-+	// ShowLineNumbers, if enabled, causes line numbers to be printed
-+	// after the prompt.
-+	ShowLineNumbers bool
-+
-+	// EndOfBufferCharacter is displayed at the end of the input.
- 	EndOfBufferCharacter rune
--	KeyMap               KeyMap
- 
-+	// KeyMap encodes the keybindings recognized by the widget.
-+	KeyMap KeyMap
-+
- 	// Styling. FocusedStyle and BlurredStyle are used to style the textarea in
- 	// focused and blurred states.
- 	FocusedStyle Style
-@@ -152,6 +175,13 @@
- 	// accept. If 0 or less, there's no limit.
- 	CharLimit int
- 
-+	// If promptFunc is set, it replaces Prompt as a generator for
-+	// prompt strings at the beginning of each line.
-+	promptFunc func(line int) string
-+
-+	// promptWidth is the width of the prompt.
-+	promptWidth int
-+
- 	// width is the maximum number of characters that can be displayed at once.
- 	// If 0 or less this setting is ignored.
- 	width int
-@@ -168,6 +198,9 @@
+@@ -196,6 +204,9 @@
  	// component. When false, ignore keyboard input and hide the cursor.
  	focus bool
  
@@ -133,7 +90,7 @@
  	// Cursor column.
  	col int
  
-@@ -268,7 +301,7 @@
+@@ -296,7 +307,7 @@
  
  // InsertRune inserts a rune at the cursor position.
  func (m *Model) InsertRune(r rune) {
@@ -142,7 +99,7 @@
  		m.splitLine(m.row, m.col)
  		return
  	}
-@@ -277,6 +310,18 @@
+@@ -305,6 +316,18 @@
  	m.col++
  }
  
@@ -161,7 +118,7 @@
  // Value returns the value of the text input.
  func (m Model) Value() string {
  	if m.value == nil {
-@@ -681,14 +726,20 @@
+@@ -709,14 +732,20 @@
  // LineInfo returns the number of characters from the start of the
  // (soft-wrapped) line and the (soft-wrapped) line width.
  func (m Model) LineInfo() LineInfo {
@@ -184,7 +141,7 @@
  			// We wrap around to the next line if we are at the end of the
  			// previous line so that we can be at the very beginning of the row
  			return LineInfo{
-@@ -696,16 +747,16 @@
+@@ -724,16 +753,16 @@
  				ColumnOffset: 0,
  				Height:       len(grid),
  				RowOffset:    i + 1,
@@ -205,35 +162,7 @@
  				Height:       len(grid),
  				RowOffset:    i,
  				StartColumn:  counter,
-@@ -757,10 +808,26 @@
- 	// Account for base style borders and padding.
- 	inputWidth -= m.style.Base.GetHorizontalFrameSize()
- 
--	inputWidth -= rw.StringWidth(m.Prompt)
-+	if m.promptFunc == nil {
-+		m.promptWidth = rw.StringWidth(m.Prompt)
-+	}
-+
-+	inputWidth -= m.promptWidth
- 	m.width = clamp(inputWidth, minWidth, maxWidth)
- }
- 
-+// SetPromptFunc supersedes the Prompt field and sets a dynamic prompt
-+// instead.
-+// If the function returns a prompt that is shorter than the
-+// specified promptWidth, it will be padded to the left.
-+// If it returns a prompt that is longer, display artifacts
-+// may occur; the caller is responsible for computing an adequate
-+// promptWidth.
-+func (m *Model) SetPromptFunc(promptWidth int, fn func(lineIdx int) string) {
-+	m.promptFunc = fn
-+	m.promptWidth = promptWidth
-+}
-+
- // Height returns the current height of the textarea.
- func (m Model) Height() int {
- 	return m.height
-@@ -772,6 +839,48 @@
+@@ -828,6 +857,48 @@
  	m.viewport.Height = clamp(h, minHeight, maxHeight)
  }
  
@@ -282,7 +211,7 @@
  // Update is the Bubble Tea update loop.
  func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
  	if !m.focus {
-@@ -806,25 +915,9 @@
+@@ -862,25 +933,9 @@
  			}
  			m.deleteBeforeCursor()
  		case key.Matches(msg, m.KeyMap.DeleteCharacterBackward):
@@ -310,7 +239,7 @@
  		case key.Matches(msg, m.KeyMap.DeleteWordBackward):
  			if m.col <= 0 {
  				m.mergeLineAbove(m.row)
-@@ -839,15 +932,19 @@
+@@ -895,11 +950,7 @@
  			}
  			m.deleteWordRight()
  		case key.Matches(msg, m.KeyMap.InsertNewline):
@@ -323,31 +252,10 @@
  		case key.Matches(msg, m.KeyMap.LineEnd):
  			m.CursorEnd()
  		case key.Matches(msg, m.KeyMap.LineStart):
- 			m.CursorStart()
-+		case key.Matches(msg, m.KeyMap.TransposeCharacterBackward):
-+			m.transposeLeft()
-+		case key.Matches(msg, m.KeyMap.UppercaseWordForward):
-+			m.uppercaseRight()
-+		case key.Matches(msg, m.KeyMap.LowercaseWordForward):
-+			m.lowercaseRight()
-+		case key.Matches(msg, m.KeyMap.CapitalizeWordForward):
-+			m.capitalizeRight()
- 		case key.Matches(msg, m.KeyMap.CharacterForward):
- 			m.characterRight()
- 		case key.Matches(msg, m.KeyMap.LineNext):
-@@ -862,24 +959,21 @@
- 			m.CursorUp()
- 		case key.Matches(msg, m.KeyMap.WordBackward):
- 			m.wordLeft()
--
--		case key.Matches(msg, m.KeyMap.LowercaseWordForward):
--			m.lowercaseRight()
--		case key.Matches(msg, m.KeyMap.UppercaseWordForward):
--			m.uppercaseRight()
--		case key.Matches(msg, m.KeyMap.CapitalizeWordForward):
--			m.capitalizeRight()
--		case key.Matches(msg, m.KeyMap.TransposeCharacterBackward):
--			m.transposeLeft()
+@@ -930,15 +981,21 @@
+ 			m.capitalizeRight()
+ 		case key.Matches(msg, m.KeyMap.TransposeCharacterBackward):
+ 			m.transposeLeft()
 -
 +		case key.Matches(msg, m.KeyMap.ToggleOverwriteMode):
 +			m.overwrite = !m.overwrite
@@ -373,74 +281,3 @@
  		}
  
  	case pasteMsg:
-@@ -919,6 +1013,7 @@
- 
- 	var newLines int
- 
-+	displayLine := 0
- 	for l, line := range m.value {
- 		wrappedLines := wrap(line, m.width)
- 
-@@ -929,7 +1024,10 @@
- 		}
- 
- 		for wl, wrappedLine := range wrappedLines {
--			s.WriteString(style.Render(m.style.Prompt.Render(m.Prompt)))
-+			prompt := m.getPromptString(displayLine)
-+			prompt = m.style.Prompt.Render(prompt)
-+			s.WriteString(style.Render(prompt))
-+			displayLine++
- 
- 			if m.ShowLineNumbers {
- 				if wl == 0 {
-@@ -978,7 +1076,10 @@
- 	// Always show at least `m.Height` lines at all times.
- 	// To do this we can simply pad out a few extra new lines in the view.
- 	for i := 0; i < m.height; i++ {
--		s.WriteString(m.style.Prompt.Render(m.Prompt))
-+		prompt := m.getPromptString(displayLine)
-+		prompt = m.style.Prompt.Render(prompt)
-+		s.WriteString(prompt)
-+		displayLine++
- 
- 		if m.ShowLineNumbers {
- 			lineNumber := m.style.EndOfBuffer.Render((fmt.Sprintf(m.lineNumberFormat, string(m.EndOfBufferCharacter))))
-@@ -991,6 +1092,19 @@
- 	return m.style.Base.Render(m.viewport.View())
- }
- 
-+func (m Model) getPromptString(displayLine int) (prompt string) {
-+	prompt = m.Prompt
-+	if m.promptFunc == nil {
-+		return prompt
-+	}
-+	prompt = m.promptFunc(displayLine)
-+	pl := rw.StringWidth(prompt)
-+	if pl < m.promptWidth {
-+		prompt = fmt.Sprintf("%*s%s", m.promptWidth-pl, "", prompt)
-+	}
-+	return prompt
-+}
-+
- // placeholderView returns the prompt and placeholder view, if any.
- func (m Model) placeholderView() string {
- 	var (
-@@ -999,7 +1113,8 @@
- 		style = m.style.Placeholder.Inline(true)
- 	)
- 
--	prompt := m.style.Prompt.Render(m.Prompt)
-+	prompt := m.getPromptString(0)
-+	prompt = m.style.Prompt.Render(prompt)
- 	s.WriteString(m.style.CursorLine.Render(prompt))
- 
- 	if m.ShowLineNumbers {
-@@ -1016,6 +1131,8 @@
- 	// The rest of the new lines
- 	for i := 1; i < m.height; i++ {
- 		s.WriteRune('\n')
-+		prompt := m.getPromptString(i)
-+		prompt = m.style.Prompt.Render(prompt)
- 		s.WriteString(prompt)
- 
- 		if m.ShowLineNumbers {
