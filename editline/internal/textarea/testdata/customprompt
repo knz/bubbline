@@ -24,7 +24,7 @@ resetviewcursordown
   > 8 [7m [0m                                 🛇
 
 run
-movetobegin
+key alt+<
 resetviewcursordown
 ----
 -- view:

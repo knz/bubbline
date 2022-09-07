@@ -81,10 +81,6 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 		t.text.Blur()
 	case "clearline":
 		t.text.ClearLine()
-	case "movetobegin":
-		t.text.MoveToBegin()
-	case "movetoend":
-		t.text.MoveToEnd()
 	case "moveto":
 		if len(args) != 2 {
 			return true, t, nil, fmt.Errorf("expected 2 args")

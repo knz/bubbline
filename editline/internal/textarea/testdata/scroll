@@ -1,7 +1,7 @@
 run
 focus
 setvalue "one\ntwo\nthree\nfour\nfive\nsix\nseven"
-movetobegin
+key alt+<
 ----
 -- view:
 ┃  1 [7mo[0mne                                ␤

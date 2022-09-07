@@ -78,7 +78,7 @@ AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndV
 # But we include it here for coverage testing.
 run
 setvalue "hello"
-movetoend
+key alt+>
 key ctrl+v
 ----
 -- view:

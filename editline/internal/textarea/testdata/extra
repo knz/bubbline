@@ -25,7 +25,7 @@ clearline
 
 run
 key up
-movetoend
+key alt+>
 ----
 -- view:
 ┃  1 hello                              ␤
@@ -36,7 +36,7 @@ movetoend
 ┃  ~                                    🛇
 
 run
-movetobegin
+key alt+<
 ----
 -- view:
 ┃  1 [7mh[0mello                              ␤
