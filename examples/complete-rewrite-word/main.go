@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/knz/bubbline/complete"
+	"github.com/knz/bubbline/computil"
 	"github.com/knz/bubbline/editline"
 )
 
@@ -51,25 +51,15 @@ It's case-insensitive!`)
 	}
 }
 
-func autocomplete(
-	v [][]rune, line, col int,
-) (msg string, moveRight int, deleteLeft int, completions complete.Values) {
+func autocomplete(v [][]rune, line, col int) (msg string, completions editline.Completions) {
 	// Detect the word under the cursor.
-	word, wstart, wend := complete.FindWord(v, line, col)
-
-	// Before the completion starts, move the cursor
-	// that many positions to the right.
-	moveRight = wend - col
+	word, wstart, wend := computil.FindWord(v, line, col)
 
 	// Is this a part of the word "hello"?
 	const specialWord = "HELLO"
-	if strings.HasPrefix(specialWord, strings.ToUpper(word)) {
-		// Yes: rewrite.
-		completions.Prefill = specialWord
-		deleteLeft = wend - wstart
+	if !strings.HasPrefix(specialWord, strings.ToUpper(word)) {
+		return msg, nil
 	}
 
-	// Note: moveRight is ignored if the switch above did not set
-	// anything into the Prefill string.
-	return msg, moveRight, deleteLeft, completions
+	return msg, editline.SingleWordCompletion(specialWord, col, wstart, wend)
 }

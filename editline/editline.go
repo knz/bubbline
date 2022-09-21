@@ -98,19 +98,6 @@ var DefaultKeyMap = KeyMap{
 	ExternalEdit:    key.NewBinding(key.WithKeys("alt+f2", "alt+2"), key.WithHelp("M-2/M-F2", "external edit")),
 }
 
-// AutoCompleteFn is called upon the user pressing the
-// autocomplete key. The callback is provided the text of the input
-// and the position of the cursor in the input.
-// The returned msg is printed above the input box.
-//
-// If the moveRight is non-zero, the cursor is moved that number to the right.
-// If the deleteLeft are non-zero, that number of characters
-// is erased before the cursor, after it has been moved.
-// Then the first string in the returned extraInput value is added at the cursor position.
-// If there is more than 1 entry in the returned extraInput, they are
-// displayed above the input box too.
-type AutoCompleteFn func(entireInput [][]rune, line, col int) (msg string, moveRight, deleteLeft int, extraInput complete.Values)
-
 // Model represents a widget that supports multi-line entry with
 // auto-growing of the text height.
 type Model struct {
@@ -201,9 +188,9 @@ type Model struct {
 	// an external editor.
 	externalEditorExt string
 
-	showCompletions        bool
-	consumeAfterCompletion int
-	completions            complete.Model
+	showCompletions bool
+	compCandidates  Completions
+	completions     complete.Model
 
 	history []string
 	hctrl   struct {
@@ -563,43 +550,40 @@ func (m *Model) historyDown() (cmd tea.Cmd) {
 }
 
 func (m *Model) autoComplete() (cmd tea.Cmd) {
-	msgs, moveRight, deleteLeft, extra := m.AutoComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos())
+	msgs, comps := m.AutoComplete(m.text.ValueRunes(), m.text.Line(), m.text.CursorPos())
 	if msgs != "" {
 		// TODO(knz): maybe display the help using a viewport widget?
 		cmd = tea.Batch(cmd, tea.Println(msgs))
 	}
-	if len(extra.Prefill) == 0 && len(extra.Completions) == 0 {
-		// No completions. do nothing.
+
+	if noCompletions := comps == nil || comps.NumCategories() == 0; noCompletions {
+		// No completions. Do nothing.
 		return cmd
 	}
 
-	// Move the cursor to the right if requested.
-	if moveRight > 0 {
+	justOne := comps.NumCategories() == 1 && comps.NumEntries(0) == 1
+
+	hasPrefill, moveRight, deleteLeft, prefill, newCompletions := computePrefill(comps)
+	if hasPrefill {
 		m.text.CursorRight(moveRight)
-	}
+		m.text.DeleteCharactersBackward(deleteLeft)
+		m.text.InsertString(prefill)
 
-	// In any case, auto-complete the prefill text.
-	if len(extra.Prefill) > 0 {
-		if deleteLeft > 0 {
-			m.text.DeleteCharactersBackward(deleteLeft)
+		if justOne {
+			// Just one completion: the prefix was the candidate already.
+			// Insert a space.
+			m.text.InsertRune(' ')
 		}
-		m.text.InsertString(extra.Prefill)
-		deleteLeft = rw.StringWidth(extra.Prefill)
 	}
-
-	if len(extra.Completions) == 0 {
-		// If there was just a prefill, insert a space. We're done
-		// with auto-completion.
-		m.text.InsertRune(' ')
-	} else {
+	if hasPrefill {
+		cmd = tea.Batch(cmd, m.updateTextSz())
+	}
+	if !justOne {
 		m.showCompletions = true
-		m.consumeAfterCompletion = deleteLeft
-		m.completions.SetValues(extra)
+		m.compCandidates = newCompletions
+		m.completions.SetValues(newCompletions)
 		m.completions.Focus()
 	}
-
-	// Finally, refresh the size.
-	cmd = tea.Batch(cmd, m.updateTextSz())
 	return cmd
 }
 
@@ -628,7 +612,7 @@ func (m *Model) Debug() string {
 	fmt.Fprintf(&buf, "maxHeight: %d, maxWidth: %d\n", m.maxHeight, m.maxWidth)
 	fmt.Fprintf(&buf, "hidePrompt: %v\n", m.hidePrompt)
 	fmt.Fprintf(&buf, "hctrl.c: %+v\n", m.hctrl.c)
-	fmt.Fprintf(&buf, "showComp: %v, consume: %d\n", m.showCompletions, m.consumeAfterCompletion)
+	fmt.Fprintf(&buf, "showComp: %v\n", m.showCompletions)
 	fmt.Fprintf(&buf, "htctrl.pattern: %q\n", m.hctrl.pattern.Value())
 	return buf.String()
 }
@@ -762,11 +746,11 @@ func (m *Model) handleCompletions(imsg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 	v := m.completions.AcceptedValue
-	if v != "" {
-		m.text.DeleteCharactersBackward(m.consumeAfterCompletion)
-		m.text.InsertString(v)
-		m.text.InsertRune(' ')
-	}
+	c := m.compCandidates.Candidate(v)
+	m.text.CursorRight(c.MoveRight())
+	m.text.DeleteCharactersBackward(c.DeleteLeft())
+	m.text.InsertString(c.Replacement())
+	m.text.InsertRune(' ')
 	m.showCompletions = false
 	m.completions.Blur()
 	return m, tea.Batch(cmd, m.updateTextSz())

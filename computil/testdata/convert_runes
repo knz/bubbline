@@ -1,0 +1,32 @@
+convert pos=(0,0)
+----
+🛇
+^
+
+convert pos=(0,3)
+select foo
+----
+select foo🛇
+   ^
+
+convert pos=(1,15)
+select foo;
+select bar from baz;
+----
+select foo;␤select bar from baz;🛇
+                           ^
+
+convert pos=(0,6)
+select
+----
+select🛇
+      ^
+
+# Multi-byte runes. Note that the resulting offset is a byte offset,
+# so the location cursor in the test reference output is far to the
+# right. This is expected.
+convert pos=(0,6)
+⏩⏩⏩⏩⏩⏩⏩
+----
+⏩⏩⏩⏩⏩⏩⏩🛇
+                  ^

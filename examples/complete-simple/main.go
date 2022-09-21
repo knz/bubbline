@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/knz/bubbline/complete"
+	"github.com/knz/bubbline/computil"
 	"github.com/knz/bubbline/editline"
 )
 
@@ -54,27 +54,22 @@ You can also press tab with the cursor in the middle of a word!`)
 	}
 }
 
-func autocomplete(
-	v [][]rune, line, col int,
-) (msg string, moveRight int, _ int, completions complete.Values) {
+func autocomplete(v [][]rune, line, col int) (msg string, completions editline.Completions) {
 	// Detect the word under the cursor.
-	word, _, wend := complete.FindWord(v, line, col)
+	word, wstart, wend := computil.FindWord(v, line, col)
 
 	// Just an informational message to display at the top.
 	// This is optional!
 	msg = fmt.Sprintf("We're matching %q!", word)
 
-	// Before the completion starts, move the cursor
-	// that many positions to the right.
-	moveRight = wend - col
-
+	var complete string
 	switch word {
 	case "lorem":
-		completions.Prefill = loremIpsum
+		complete = loremIpsum
 	case "hello":
-		completions.Prefill = " world"
+		complete = "hello world"
 	case "all":
-		completions.Prefill = firstArticle
+		complete = firstArticle
 	default:
 		// Does the word match the string "lo" followed by digits?
 		if m := lore.FindStringSubmatch(word); m != nil {
@@ -82,18 +77,16 @@ func autocomplete(
 			if n > len(loremIpsum) {
 				n = len(loremIpsum)
 			}
-			completions.Prefill = loremIpsum[:n]
+			complete = loremIpsum[:n]
 		}
 	}
 
-	// Note: moveRight is ignored if the switch above did not set
-	// anything into the Prefill string.
-	return msg, moveRight, 0, completions
+	return msg, editline.SingleWordCompletion(complete, col, wstart, wend)
 }
 
 var lore = regexp.MustCompile(`lo(\d+)$`)
 
-const loremIpsum = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+const loremIpsum = `lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
 
-const firstArticle = ` human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.`
+const firstArticle = `all human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.`

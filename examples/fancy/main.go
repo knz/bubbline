@@ -11,6 +11,7 @@ import (
 
 	"github.com/knz/bubbline"
 	"github.com/knz/bubbline/complete"
+	"github.com/knz/bubbline/computil"
 	"github.com/knz/bubbline/editline"
 )
 
@@ -82,15 +83,9 @@ or the letter 'r'.`)
 	}
 }
 
-func autocomplete(
-	v [][]rune, line, col int,
-) (msg string, moveRight int, deleteLeft int, completions complete.Values) {
+func autocomplete(v [][]rune, line, col int) (msg string, completions editline.Completions) {
 	// Detect the word under the cursor.
-	word, wstart, wend := complete.FindWord(v, line, col)
-
-	// Before the completion starts, move the cursor
-	// that many positions to the right.
-	moveRight = wend - col
+	word, wstart, wend := computil.FindWord(v, line, col)
 
 	// Just an informational message to display at the top.
 	// This is optional!
@@ -99,11 +94,11 @@ func autocomplete(
 	// Try to complete the simple words first.
 	switch word {
 	case "lorem":
-		completions.Prefill = loremIpsum
+		completions = editline.SingleWordCompletion(loremIpsum, col, wstart, wend)
 	case "hello":
-		completions.Prefill = " world"
+		completions = editline.SingleWordCompletion("hello world", col, wstart, wend)
 	case "all":
-		completions.Prefill = firstArticle
+		completions = editline.SingleWordCompletion(firstArticle, col, wstart, wend)
 	default:
 		// Does the word match the string "lo" followed by digits?
 		if m := lore.FindStringSubmatch(word); m != nil {
@@ -111,82 +106,78 @@ func autocomplete(
 			if n > len(loremIpsum) {
 				n = len(loremIpsum)
 			}
-			completions.Prefill = loremIpsum[:n]
+			completions = editline.SingleWordCompletion(loremIpsum[:n], col, wstart, wend)
 		}
 	}
 
-	if completions.Prefill == "" {
+	if completions == nil {
 		// No luck so far? Try harder.
 
 		// Where we will collect the candidates.
 		candidatesPerCategory := map[string][]string{}
-		var allCandidates []string
 
 		// We're going to match the word lowercase.
 		lword := strings.ToLower(word)
 
+		numCandidates := 0
+
 		// Is the word the start of a name?
 		for _, name := range names {
 			if strings.HasPrefix(strings.ToLower(name), lword) {
-				allCandidates = append(allCandidates, name)
 				candidatesPerCategory["name"] = append(candidatesPerCategory["name"], name)
+				numCandidates++
 			}
 		}
 		// Is the word the start of a keyword?
 		for _, kw := range keywords {
 			if strings.HasPrefix(strings.ToLower(kw), lword) {
-				allCandidates = append(allCandidates, kw)
 				candidatesPerCategory["keywords"] = append(candidatesPerCategory["keywords"], kw)
+				numCandidates++
 			}
 		}
 		// Is the word the start of a Dutch word?
 		for _, dw := range dutchWords {
 			if strings.HasPrefix(strings.ToLower(dw), lword) {
-				allCandidates = append(allCandidates, dw)
 				candidatesPerCategory["Dutch"] = append(candidatesPerCategory["Dutch"], dw)
+				numCandidates++
 			}
 		}
-
-		if len(allCandidates) == 1 {
-			// Just one match. Fill that.
-			completions.Prefill = allCandidates[0]
-			deleteLeft = wend - wstart
-		} else if len(allCandidates) > 1 {
-			// More than one candidate. We will want to do two things
-			// - pre-fill the longest common prefix in the input directly.
-			// - present all the matches to the user as a menu.
-
-			// Find longest common prefix and prefill that.
-			// NB: this requires the candidates to be sorted
-			// in alphabetical order already!
-			sort.Slice(allCandidates, func(i, j int) bool {
-				return strings.ToLower(allCandidates[i]) < strings.ToLower(allCandidates[j])
-			})
-			completions.Prefill = complete.FindLongestCommonPrefix(
-				allCandidates[0], allCandidates[len(allCandidates)-1],
-				false /* case-sensitive */)
-			deleteLeft = wend - wstart
-
-			// Populate values to present to the user.
-			for k := range candidatesPerCategory {
-				completions.Categories = append(completions.Categories, k)
-			}
-			sort.Strings(completions.Categories)
-			completions.Completions = candidatesPerCategory
+		completions = &multiComplete{
+			Values:     complete.MapValues(candidatesPerCategory, nil),
+			moveRight:  wend - col,
+			deleteLeft: wend - wstart,
 		}
 	}
 
 	// Note: moveRight is ignored if the switch above did not set
 	// anything into the Prefill string.
-	return msg, moveRight, deleteLeft, completions
+	return msg, completions
 }
+
+type multiComplete struct {
+	complete.Values
+	moveRight, deleteLeft int
+}
+
+func (m *multiComplete) Candidate(e complete.Entry) editline.Candidate {
+	return candidate{e.Title(), m.moveRight, m.deleteLeft}
+}
+
+type candidate struct {
+	repl                  string
+	moveRight, deleteLeft int
+}
+
+func (m candidate) Replacement() string { return m.repl }
+func (m candidate) MoveRight() int      { return m.moveRight }
+func (m candidate) DeleteLeft() int     { return m.deleteLeft }
 
 var lore = regexp.MustCompile(`lo(\d+)$`)
 
-const loremIpsum = ` ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+const loremIpsum = `lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
 
-const firstArticle = ` human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.`
+const firstArticle = `all human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.`
 
 var dutchWords = []string{
 	"Reemst",
