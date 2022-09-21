@@ -12,17 +12,29 @@ import (
 	rw "github.com/mattn/go-runewidth"
 )
 
-// Values is the type of the possible completion inputs.
-type Values struct {
-	// Prefill is the string to insert at point, even when there are no
-	// completions.
-	Prefill string
+// Values is the interface to the values displayed by the completion
+// bubble.
+type Values interface {
+	// NumCategories returns the number of categories to display.
+	NumCategories() int
 
-	// Categories is the list of completion categories.
-	Categories []string
+	// CategoryTitle returns the title of a category.
+	CategoryTitle(catIdx int) string
 
-	// Completions is the list of completions per category.
-	Completions map[string][]string
+	// NumEntries returns the number of entries in a given category.
+	NumEntries(catIdx int) int
+
+	// Entry returns the entry in a category.
+	Entry(catIdx, entryIdx int) Entry
+}
+
+// Entry is the interface to one completion candidate.
+type Entry interface {
+	// Title is the main displayed text.
+	Title() string
+
+	// Description is the explanation for the entry.
+	Description() string
 }
 
 // Styles contain style definitions for the completions component.
@@ -112,7 +124,7 @@ type Model struct {
 	Styles Styles
 
 	// AcceptedValue is the result of the selection.
-	AcceptedValue string
+	AcceptedValue Entry
 
 	width     int
 	height    int
@@ -134,7 +146,7 @@ func (m *Model) Debug() string {
 	if len(m.valueLists) > 0 {
 		fmt.Fprintf(&buf, "selected item: %v\n", m.valueLists[m.selectedList].SelectedItem())
 	}
-	fmt.Fprintf(&buf, "accepted: %q / err %v\n", m.AcceptedValue, m.Err)
+	fmt.Fprintf(&buf, "accepted: %+v / err %v\n", m.AcceptedValue, m.Err)
 	return buf.String()
 }
 
@@ -148,19 +160,25 @@ func New() Model {
 	}
 }
 
-type stringItem string
+type candidateItem struct{ Entry }
 
-var _ list.Item = stringItem("")
+var _ list.Item = candidateItem{}
 
-// FilterValue implements the list.Item interface
-func (s stringItem) FilterValue() string { return string(s) }
+// FilterValue implements the list.Item interface.
+func (s candidateItem) FilterValue() string {
+	e := Entry(s)
+	return e.Title() + "\n" + e.Description()
+}
 
-func convertToItems(items []string) (res []list.Item, maxWidth int) {
-	res = make([]list.Item, len(items))
-	for i, it := range items {
+func convertToItems(values Values, catIdx int) (res []list.Item, maxWidth int) {
+	numE := values.NumEntries(catIdx)
+	res = make([]list.Item, numE)
+	for i := 0; i < numE; i++ {
+		it := values.Entry(catIdx, i)
 		// TODO(knz): Support multi-line items.
-		maxWidth = max(maxWidth, rw.StringWidth(it))
-		res[i] = stringItem(it)
+		maxWidth = max(maxWidth, rw.StringWidth(it.Title()))
+		maxWidth = max(maxWidth, rw.StringWidth(it.Description()))
+		res[i] = candidateItem{it}
 	}
 	return res, maxWidth
 }
@@ -175,11 +193,11 @@ var _ list.ItemDelegate = (*renderer)(nil)
 
 // Render is part of the list.ItemDelegate interface.
 func (r *renderer) Render(w io.Writer, m list.Model, index int, item list.Item) {
-	i, ok := item.(stringItem)
+	i, ok := item.(candidateItem)
 	if !ok {
 		return
 	}
-	s := string(i)
+	s := i.Title()
 	iw := rw.StringWidth(s)
 	if iw < r.width {
 		s += strings.Repeat(" ", r.width-iw)
@@ -236,8 +254,9 @@ func (m *Model) SetValues(values Values) {
 	m.Err = nil
 	m.selectedList = 0
 	m.values = values
-	m.valueLists = make([]*list.Model, len(values.Categories))
-	m.listItems = make([][]list.Item, len(values.Categories))
+	numCats := values.NumCategories()
+	m.valueLists = make([]*list.Model, numCats)
+	m.listItems = make([][]list.Item, numCats)
 	const stdHeight = 10
 	listDecorationRows :=
 		1 +
@@ -257,9 +276,10 @@ func (m *Model) SetValues(values Values) {
 		m.Styles.Item.GetVerticalPadding(),
 		m.Styles.SelectedItem.GetVerticalPadding())
 
-	for i, category := range values.Categories {
+	for i := 0; i < numCats; i++ {
+		category := values.CategoryTitle(i)
 		var maxWidth int
-		m.listItems[i], maxWidth = convertToItems(values.Completions[category])
+		m.listItems[i], maxWidth = convertToItems(values, i)
 		m.maxHeight = max(m.maxHeight, len(m.listItems[i])*perItemHeight+listDecorationRows)
 		maxWidth = max(maxWidth+1, rw.StringWidth(category))
 		r := &renderer{m: m, listIdx: i, width: maxWidth}
@@ -372,7 +392,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.KeyMap.Abort):
-			m.AcceptedValue = ""
+			m.AcceptedValue = nil
 			m.Err = io.EOF
 			imsg = nil
 		case !curList.SettingFilter():
@@ -394,8 +414,8 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 					imsg = nil
 				}
 			case key.Matches(msg, m.KeyMap.AcceptCompletion):
-				v := curList.SelectedItem().(stringItem)
-				m.AcceptedValue = string(v)
+				v := curList.SelectedItem().(candidateItem)
+				m.AcceptedValue = v.Entry
 				m.Err = io.EOF
 				imsg = nil
 			}
