@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/knz/bubbline/complete"
+	"github.com/knz/bubbline/computil"
 	"github.com/knz/bubbline/editline"
 )
 
@@ -73,15 +73,9 @@ var names = func() []string {
 	return s
 }()
 
-func autocomplete(
-	v [][]rune, line, col int,
-) (msg string, moveRight int, deleteLeft int, completions complete.Values) {
+func autocomplete(v [][]rune, line, col int) (msg string, completions editline.Completions) {
 	// Detect the word under the cursor.
-	word, wstart, wend := complete.FindWord(v, line, col)
-
-	// Before the completion starts, move the cursor
-	// that many positions to the right.
-	moveRight = wend - col
+	word, wstart, wend := computil.FindWord(v, line, col)
 
 	var titleWord string
 	if len(word) > 0 {
@@ -102,29 +96,9 @@ func autocomplete(
 	// This is optional!
 	msg = fmt.Sprintf("We're matching %q!", titleWord)
 
-	if len(candidates) == 1 {
-		// Just one match. Fill that.
-		completions.Prefill = candidates[0]
-		deleteLeft = wend - wstart
-	} else if len(candidates) > 1 {
-		// More than one candidate. We will want to do two things
-		// - pre-fill the longest common prefix in the input directly.
-		// - present all the matches to the user as a menu.
-
-		// Find longest common prefix and prefill that.
-		// NB: this requires the candidates to be sorted
-		// in alphabetical order already!
-		completions.Prefill = complete.FindLongestCommonPrefix(
-			candidates[0], candidates[len(candidates)-1],
-			false /* case-sensitive */)
-		deleteLeft = wend - wstart
-
-		// Populate values to present to the user.
-		completions.Categories = []string{"names"}
-		completions.Completions = map[string][]string{"names": candidates}
+	if len(candidates) == 0 {
+		return msg, nil
 	}
 
-	// Note: moveRight is ignored if the switch above did not set
-	// anything into the Prefill string.
-	return msg, moveRight, deleteLeft, completions
+	return msg, editline.SimpleWordsCompletion(candidates, "names", col, wstart, wend)
 }
