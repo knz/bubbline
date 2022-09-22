@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/knz/bubbline/complete"
 	"github.com/knz/bubbline/editline"
 	"github.com/knz/bubbline/history"
 )
@@ -91,3 +92,25 @@ func (m *Editor) SetAutoSaveHistory(file string, autoSave bool) {
 	m.autoSaveHistory = autoSave
 	m.histFile = file
 }
+
+// Values is the interface to the values displayed by the completion
+// bubble.
+type Values = complete.Values
+
+// Entry is the interface to one completion candidate in the menu
+// visualizer.
+type Entry = complete.Entry
+
+// AutoCompleteFn is called upon the user pressing the
+// autocomplete key. The callback is provided the text of the input
+// and the position of the cursor in the input.
+// The returned msg is printed above the input box.
+type AutoCompleteFn = editline.AutoCompleteFn
+
+// Completions is the return value of AutoCompleteFn. It is a
+// combination of Values and a Candidate function that converts a
+// display Entry into a replacement Candidate.
+type Completions = editline.Completions
+
+// Candidate is the type of one completion replacement candidate.
+type Candidate = editline.Candidate
