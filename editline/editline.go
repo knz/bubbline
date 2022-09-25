@@ -746,11 +746,13 @@ func (m *Model) handleCompletions(imsg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 	v := m.completions.AcceptedValue
-	c := m.compCandidates.Candidate(v)
-	m.text.CursorRight(c.MoveRight())
-	m.text.DeleteCharactersBackward(c.DeleteLeft())
-	m.text.InsertString(c.Replacement())
-	m.text.InsertRune(' ')
+	if v != nil {
+		c := m.compCandidates.Candidate(v)
+		m.text.CursorRight(c.MoveRight())
+		m.text.DeleteCharactersBackward(c.DeleteLeft())
+		m.text.InsertString(c.Replacement())
+		m.text.InsertRune(' ')
+	}
 	m.showCompletions = false
 	m.completions.Blur()
 	return m, tea.Batch(cmd, m.updateTextSz())
