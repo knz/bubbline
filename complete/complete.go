@@ -210,7 +210,7 @@ func (r *renderer) Render(w io.Writer, m list.Model, index int, item list.Item) 
 	fmt.Fprint(w, fn(s))
 }
 
-// Height is part of the list.ItemDelegae interface.
+// Height is part of the list.ItemDelegate interface.
 func (r *renderer) Height() int {
 	// TODO(knz): Support multi-line items, e.g. identifiers
 	// containing a newline character.
