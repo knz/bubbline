@@ -10,6 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	rw "github.com/mattn/go-runewidth"
+	"github.com/muesli/reflow/truncate"
 )
 
 // Values is the interface to the values displayed by the completion
@@ -54,6 +55,8 @@ type Styles struct {
 	InactivePaginationDot       lipgloss.Style
 	ArabicPagination            lipgloss.Style
 	DividerDot                  lipgloss.Style
+	PlaceholderDescription      lipgloss.Style
+	Description                 lipgloss.Style
 }
 
 // DefaultStyles returns a set of default style definitions for the
@@ -78,6 +81,9 @@ var DefaultStyles = func() (c Styles) {
 	c.InactivePaginationDot = ls.InactivePaginationDot
 	c.ArabicPagination = ls.ArabicPagination
 	c.DividerDot = ls.DividerDot
+	c.Description = lipgloss.NewStyle().Bold(true)
+	c.PlaceholderDescription = lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
+
 	return c
 }()
 
@@ -177,7 +183,6 @@ func convertToItems(values Values, catIdx int) (res []list.Item, maxWidth int) {
 		it := values.Entry(catIdx, i)
 		// TODO(knz): Support multi-line items.
 		maxWidth = max(maxWidth, rw.StringWidth(it.Title()))
-		maxWidth = max(maxWidth, rw.StringWidth(it.Description()))
 		res[i] = candidateItem{it}
 	}
 	return res, maxWidth
@@ -230,9 +235,10 @@ func (m *Model) SetWidth(width int) {
 
 // SetHeight changes the height.
 func (m *Model) SetHeight(height int) {
-	m.height = clamp(height, 1, m.maxHeight)
+	// Make space for the description string.
+	m.height = clamp(height, 2, m.maxHeight)
 	for _, l := range m.valueLists {
-		l.SetHeight(m.height)
+		l.SetHeight(m.height - 1)
 		// Force recomputing the keybindigns, which
 		// is dependent on the page size.
 		l.SetFilteringEnabled(true)
@@ -291,6 +297,9 @@ func (m *Model) SetValues(values Values) {
 		l.SetShowStatusBar(false)
 		m.valueLists[i] = &l
 	}
+
+	// Make space for the description.
+	m.maxHeight++
 
 	// Propagate the logical weights to all lists.
 	m.SetHeight(m.maxHeight)
@@ -359,7 +368,7 @@ func (m *Model) prevCompletions() {
 	m.Blur()
 	m.selectedList = (m.selectedList + len(m.valueLists) - 1) % len(m.valueLists)
 	curList := m.valueLists[m.selectedList]
-	curList.Select(len(curList.VisibleItems()) - 1)
+	curList.Select(0)
 	if wasFocused {
 		m.Focus()
 	}
@@ -439,7 +448,15 @@ func (m *Model) View() string {
 	for i, l := range m.valueLists {
 		contents[i] = l.View()
 	}
-	return lipgloss.JoinHorizontal(lipgloss.Top, contents...)
+	result := lipgloss.JoinHorizontal(lipgloss.Top, contents...)
+	item := m.valueLists[m.selectedList].SelectedItem().(candidateItem)
+	desc := item.Description()
+	if desc != "" {
+		desc = m.Styles.Description.Render(truncate.String(item.Title()+": "+desc, uint(m.width)))
+	} else {
+		desc = m.Styles.PlaceholderDescription.Render(fmt.Sprintf("(entry %q has no description)", item.Title()))
+	}
+	return result + "\n" + desc
 }
 
 // ShortHelp is part of the help.KeyMap interface.
