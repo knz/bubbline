@@ -694,7 +694,7 @@ func (m *Model) handleSearching(imsg tea.Msg) (stillSearching bool, restMsg tea.
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.KeyMap.EndOfInput):
-			if m.hctrl.pattern.Cursor() == 0 {
+			if m.hctrl.pattern.Position() == 0 {
 				return false, nil, m.cancelHistorySearch()
 			}
 			// Del-next-char or EOF. Let the editor see it.
