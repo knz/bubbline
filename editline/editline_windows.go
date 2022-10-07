@@ -3,7 +3,6 @@
 
 package editline
 
-import "syscall"
+var canSuspendProcess = false
 
-// sigTermStop is a fake signal - it's not supported on Windows.
-const sigTermStop = syscall.Signal(0)
+func suspendProcess() {}

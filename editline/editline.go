@@ -823,14 +823,9 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}), nil))
 
 		case key.Matches(msg, m.KeyMap.SignalTTYStop):
-			if sigTermStop != 0 {
+			if canSuspendProcess {
 				return m, tea.Batch(cmd, tea.Exec(doProgram(func() {
-					pr, err := os.FindProcess(os.Getpid())
-					if err != nil {
-						// No-op.
-						return
-					}
-					_ = pr.Signal(sigTermStop)
+					suspendProcess()
 				}), nil))
 			}
 
