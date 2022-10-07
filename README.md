@@ -14,8 +14,8 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Feature                                                                            | Charm `textarea` [^T] | `libedit` [^l1] /`readline` [^l2] | Bubbline (this library) |
 |------------------------------------------------------------------------------------|:---------------------:|:---------------------------------:|:-----------------------:|
 | Multi-line editor with both horizontal and vertical cursor navigation.             | ✅                    | ✅                                | ✅                      |
+| Secondary prompt for multi-line input.                                             | ✅                    | ✅                                | ✅                      |
 | Resizes vertically automatically as the input grows.                               | ❌                    | ✅                                | ✅                      |
-| Secondary prompt for multi-line input.                                             | ❌ [^p2]              | ✅                                | ✅                      |
 | Supports history navigation and search.                                            | ❌                    | ✅                                | ✅                      |
 | Word navigation across input lines.                                                | ❌                    | ✅                                | ✅                      |
 | Enter key conditionally ends the input.                                            | ❌                    | ✅                                | ✅                      |
@@ -25,7 +25,7 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 | Ctrl+Z (suspend process), Ctrl+\ (send SIGQUIT to process e.g. to get stack dump). | ❌                    | ✅                                | ✅                      |
 | Uppercase/lowercase/capitalize next word, transpose characters.                    | ✅                    | ✅                                | ✅                      |
 | Inline help for key bindings.                                                      | ❌                    | ❌                                | ✅                      |
-| Toggle overwrite mode.                                                             | ❌ [^p1]              | ❌                                | ✅ [^p3]                |
+| Toggle overwrite mode.                                                             | ❌ [^p1]              | ❌                                | ✅                      |
 | Key combination to reflow the text to fit within a specific width.                 | ❌                    | ❌                                | ✅                      |
 | Hide/show the prompt to simplify copy-paste from terminal.                         | ❌                    | ❌                                | ✅                      |
 | Debug mode for troubleshooting.                                                    | ❌                    | ❌                                | ✅                      |
@@ -36,8 +36,6 @@ Based off the [bubbletea](https://github.com/charmbracelet/bubbletea) library.
 [^l1]: [editline/libedit](https://man.netbsd.org/editline.3)
 [^l2]: [GNU readline](https://en.wikipedia.org/wiki/GNU_Readline)
 [^p1]: Pending https://github.com/charmbracelet/bubbles/pull/225
-[^p2]: Pending https://github.com/charmbracelet/bubbles/pull/211
-[^p3]: Only Alt+O for now; insert key support pending https://github.com/charmbracelet/bubbletea/pull/418
 [^cp]: libedit/readline's completion menu is a single line of options with wraparound.
 [^bp]: https://en.wikipedia.org/wiki/Bracketed-paste
 [^p4]: Pending https://github.com/charmbracelet/bubbletea/pull/397 and https://github.com/charmbracelet/bubbletea/pull/397
