@@ -20,7 +20,6 @@ import (
 	"github.com/knz/bubbline/editline/internal/textarea"
 	rw "github.com/mattn/go-runewidth"
 	"github.com/muesli/reflow/wordwrap"
-	"github.com/muesli/termenv"
 )
 
 // ErrInterrupted is returned when the input is terminated
@@ -694,7 +693,7 @@ func (m *Model) handleSearching(imsg tea.Msg) (stillSearching bool, restMsg tea.
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.KeyMap.EndOfInput):
-			if m.hctrl.pattern.Cursor() == 0 {
+			if m.hctrl.pattern.Position() == 0 {
 				return false, nil, m.cancelHistorySearch()
 			}
 			// Del-next-char or EOF. Let the editor see it.
@@ -830,7 +829,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case key.Matches(msg, m.KeyMap.Refresh):
-			return m, tea.Batch(cmd, tea.Exec(doProgram(termenv.ClearScreen), nil))
+			return m, tea.Batch(cmd, tea.ClearScreen)
 
 		case key.Matches(msg, m.KeyMap.MoreHelp):
 			m.help.ShowAll = !m.help.ShowAll
