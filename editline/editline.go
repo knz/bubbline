@@ -11,6 +11,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -20,7 +21,6 @@ import (
 	"github.com/knz/bubbline/editline/internal/textarea"
 	rw "github.com/mattn/go-runewidth"
 	"github.com/muesli/reflow/wordwrap"
-	"github.com/muesli/termenv"
 )
 
 // ErrInterrupted is returned when the input is terminated
@@ -206,7 +206,7 @@ type Model struct {
 			prevCursor int
 		}
 	}
-	hidePrompt bool
+	promptHidden bool
 
 	help help.Model
 
@@ -501,9 +501,18 @@ func (m *Model) updateTextSz() (cmd tea.Cmd) {
 	return cmd
 }
 
+func (m *Model) hidePrompt(b bool) {
+	m.promptHidden = b
+	if b {
+		m.text.Cursor.SetMode(cursor.CursorStatic)
+	} else {
+		m.text.Cursor.SetMode(cursor.CursorBlink)
+	}
+}
+
 func (m *Model) updatePrompt() {
 	prompt, nextPrompt := m.Prompt, m.NextPrompt
-	if m.hidePrompt {
+	if m.promptHidden {
 		prompt, nextPrompt = "", ""
 	}
 	promptWidth := max(rw.StringWidth(prompt), rw.StringWidth(nextPrompt))
@@ -610,7 +619,7 @@ func (m *Model) Debug() string {
 	fmt.Fprintf(&buf, "lastEvent: %+v\n", m.lastEvent)
 	fmt.Fprintf(&buf, "history: %q\n", m.history)
 	fmt.Fprintf(&buf, "maxHeight: %d, maxWidth: %d\n", m.maxHeight, m.maxWidth)
-	fmt.Fprintf(&buf, "hidePrompt: %v\n", m.hidePrompt)
+	fmt.Fprintf(&buf, "promptHidden: %v\n", m.promptHidden)
 	fmt.Fprintf(&buf, "hctrl.c: %+v\n", m.hctrl.c)
 	fmt.Fprintf(&buf, "showComp: %v\n", m.showCompletions)
 	fmt.Fprintf(&buf, "htctrl.pattern: %q\n", m.hctrl.pattern.Value())
@@ -694,7 +703,7 @@ func (m *Model) handleSearching(imsg tea.Msg) (stillSearching bool, restMsg tea.
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.KeyMap.EndOfInput):
-			if m.hctrl.pattern.Cursor() == 0 {
+			if m.hctrl.pattern.Position() == 0 {
 				return false, nil, m.cancelHistorySearch()
 			}
 			// Del-next-char or EOF. Let the editor see it.
@@ -823,26 +832,21 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			}), nil))
 
 		case key.Matches(msg, m.KeyMap.SignalTTYStop):
-			if sigTermStop != 0 {
+			if canSuspendProcess {
 				return m, tea.Batch(cmd, tea.Exec(doProgram(func() {
-					pr, err := os.FindProcess(os.Getpid())
-					if err != nil {
-						// No-op.
-						return
-					}
-					_ = pr.Signal(sigTermStop)
+					suspendProcess()
 				}), nil))
 			}
 
 		case key.Matches(msg, m.KeyMap.Refresh):
-			return m, tea.Batch(cmd, tea.Exec(doProgram(termenv.ClearScreen), nil))
+			return m, tea.Batch(cmd, tea.ClearScreen)
 
 		case key.Matches(msg, m.KeyMap.MoreHelp):
 			m.help.ShowAll = !m.help.ShowAll
 			imsg = nil // consume message
 
 		case key.Matches(msg, m.KeyMap.HideShowPrompt):
-			m.hidePrompt = !m.hidePrompt
+			m.hidePrompt(!m.promptHidden)
 			m.updatePrompt()
 			return m, tea.Batch(cmd, m.updateTextSz())
 
@@ -988,7 +992,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 // The history is preserved.
 func (m *Model) Reset() {
 	m.Err = nil
-	m.hidePrompt = false
+	m.hidePrompt(false)
 	m.debugMode = false
 	m.showCompletions = false
 	m.completions.Blur()
