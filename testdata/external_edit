@@ -1,0 +1,26 @@
+run
+reset
+resize 80 25
+----
+TEA WINDOW SIZE: {80 25}
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+# By default the external editor is not enabled.
+run
+key alt+f2
+----
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+# But it can be enabled explicitly.
+run
+enable_ext_edit
+key alt+f2
+----
+TEA EXEC
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇

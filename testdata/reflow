@@ -1,0 +1,81 @@
+run
+reset
+resize 20 25
+----
+TEA WINDOW SIZE: {20 25}
+-- view:
+> [7m [0m               ␤
+ …🛇
+
+
+run observe=(view,value)
+type lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+----
+-- view:
+> lorem ipsum     ␤
+  dolor sit amet, ␤
+  consectetur     ␤
+  adipiscing      ␤
+  elit, sed do    ␤
+  eiusmod tempor  ␤
+  incididunt ut   ␤
+  labore et       ␤
+  dolore magna    ␤
+  aliqua[7m [0m         ␤
+ …🛇
+-- value:
+"lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+
+run observe=(view,value)
+key alt+q
+----
+-- view:
+> lorem ipsum     ␤
+  dolor sit amet, ␤
+  consectetur     ␤
+  adipiscing      ␤
+  elit, sed do    ␤
+  eiusmod tempor  ␤
+  incididunt ut   ␤
+  labore et       ␤
+  dolore magna    ␤
+  aliqua[7m [0m         ␤
+ …🛇
+-- value:
+"lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing\nelit, sed do\neiusmod tempor\nincididunt ut\nlabore et\ndolore magna\naliqua"
+
+
+run observe=(view,value)
+reset
+type lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+----
+-- view:
+> lorem ipsum      ␤
+  dolor sit amet,  ␤
+  consectetur      ␤
+  adipiscing elit, ␤
+  sed do eiusmod   ␤
+  tempor           ␤
+  incididunt ut    ␤
+  labore et dolore ␤
+  magna aliqua[7m [0m    ␤
+ …🛇
+-- value:
+"lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+
+run observe=(view,value)
+key alt+Q
+----
+-- view:
+> lorem ipsum      ␤
+  dolor sit amet,  ␤
+  consectetur      ␤
+  adipiscing elit, ␤
+  sed do eiusmod   ␤
+  tempor           ␤
+  incididunt ut    ␤
+  labore et dolore ␤
+  magna aliqua[7m [0m    ␤
+ …🛇
+-- value:
+"lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing elit,\nsed do eiusmod\ntempor\nincididunt ut\nlabore et dolore\nmagna aliqua"
