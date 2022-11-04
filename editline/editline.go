@@ -525,7 +525,6 @@ func (m *Model) updatePrompt() {
 	})
 	// Recompute the width.
 	m.text.SetWidth(m.maxWidth - 1)
-	m.text.SetCursor(0)
 }
 
 func (m *Model) saveValue() {
