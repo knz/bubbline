@@ -525,7 +525,6 @@ func (m *Model) updatePrompt() {
 	})
 	// Recompute the width.
 	m.text.SetWidth(m.maxWidth - 1)
-	m.text.SetCursor(0)
 }
 
 func (m *Model) saveValue() {
@@ -618,6 +617,7 @@ func (m *Model) Debug() string {
 	var buf strings.Builder
 	fmt.Fprintf(&buf, "lastEvent: %+v\n", m.lastEvent)
 	fmt.Fprintf(&buf, "history: %q\n", m.history)
+	fmt.Fprintf(&buf, "hasNewSize: %v, w: %d, h: %d\n", m.hasNewSize, m.newWidth, m.newHeight)
 	fmt.Fprintf(&buf, "maxHeight: %d, maxWidth: %d\n", m.maxHeight, m.maxWidth)
 	fmt.Fprintf(&buf, "promptHidden: %v\n", m.promptHidden)
 	fmt.Fprintf(&buf, "hctrl.c: %+v\n", m.hctrl.c)
