@@ -1,0 +1,28 @@
+run
+reset
+resize 80 25
+type hello
+key ctrl+o
+type world
+----
+TEA WINDOW SIZE: {80 25}
+-- view:
+> hello                                                                       ␤
+  world[7m [0m                                                                      ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+run
+key alt+.
+----
+-- view:
+hello                                                                          ␤
+world[7m [0m                                                                         ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+run
+key alt+.
+----
+-- view:
+> hello                                                                        ␤
+  world[7m [0m                                                                       ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇

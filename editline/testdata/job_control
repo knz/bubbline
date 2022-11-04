@@ -1,0 +1,27 @@
+# Ideally, this logic would be inside bubbletea directly.
+# See: https://github.com/charmbracelet/bubbletea/pull/500
+
+run
+reset
+resize 80 25
+----
+TEA WINDOW SIZE: {80 25}
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+run
+key ctrl+z
+----
+TEA EXEC
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+run
+key ctrl+\
+----
+TEA EXEC
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
