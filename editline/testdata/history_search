@@ -1,0 +1,167 @@
+run observe=(view,history)
+reset
+resize 40 25
+set_history
+type baseline text
+----
+TEA WINDOW SIZE: {40 25}
+-- view:
+> baseline text[7m [0m                      ␤
+M-? toggle key help • C-d erase/stop🛇
+-- history:
+say hello to the world
+peter parker was not spiderman
+this is a big world indeed
+
+# The "search backward" shortcut starts history search.
+run
+key ctrl+r
+----
+-- view:
+> baseline text[7m [0m                      ␤
+bck:[7me[0mnter search term, or C-g to cancel search🛇
+
+# Once we start typing text, we get to the first entry that matches.
+run
+type w
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+bck:w[7m [0m                                     🛇
+
+run
+type a
+----
+-- view:
+> peter parker [7mw[0mas not spiderman      ␤
+bck:wa[7m [0m                                    🛇
+
+run
+key ctrl+h
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+bck:w[7m [0m                                     🛇
+
+run
+type orld
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+bck:world[7m [0m                                 🛇
+
+# Ctrl+r searches further.
+run
+key ctrl+r
+----
+-- view:
+> say hello to the [7mw[0morld              ␤
+bck:world[7m [0m                                 🛇
+
+# If there is no more match, the search prompt
+# switches to a question mark.
+run
+key ctrl+r
+----
+-- view:
+> say hello to the [7mw[0morld              ␤
+bck?world[7m [0m                                 🛇
+
+# Ctrl+G cancels the search and restores the original
+# value.
+run
+key ctrl+g
+----
+-- view:
+> baseline text[7m [0m                      ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# If we search for a non-existent pattern, the prompt also
+# turns into a question mark.
+run
+key ctrl+r
+type woooo
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+bck?woooo[7m [0m                                 🛇
+
+# Search can also use a pattern.
+run
+key ctrl+g
+key ctrl+r
+type w?rld
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+bck:w?rld[7m [0m                                 🛇
+
+# If the pattern is invalid, we get another search prompt.
+run
+key ctrl+g
+key ctrl+r
+type wo[
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+bck!wo[[7m [0m                                   🛇
+
+# The prompt switches back to normal once the pattern is valid.
+run
+type r]ld
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+bck:wo[r]ld[7m [0m                               🛇
+
+# Ctrl+D during search with a non-empty pattern will be a regular
+# keystroke and accepts the input.
+run
+key ctrl+d
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Ctrl+d at the start of the search simply cancels the search.
+run
+key ctrl+r
+key ctrl+d
+----
+-- view:
+> this is a big [7mw[0morld indeed          ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Enter after finding an entry accepts the entry, but does not
+# let the enter key go through (we do not add a newline)
+run
+key ctrl+r
+type parker
+key enter
+----
+-- view:
+> peter [7mp[0marker was not spiderman      ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# We can also force-accept the entry udring a search.
+run
+key ctrl+r
+type world
+key alt+enter
+----
+TEA QUIT
+-- view:
+> this is a big world indeed          ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# If we start navigating after starting a search,
+# the navigation goes through in the regular editor.
+# See: https://github.com/cockroachdb/cockroach/issues/21826
+run
+key ctrl+r
+type parker
+key left
+----
+-- view:
+> peter[7m [0mparker was not spiderman      ␤
+M-? toggle key help • C-d erase/stop🛇

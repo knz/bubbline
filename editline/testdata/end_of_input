@@ -1,0 +1,57 @@
+run
+reset
+resize 40 25
+----
+TEA WINDOW SIZE: {40 25}
+-- view:
+> [7m [0m                                   ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# If there's some characters already, ctrl+d does editing.
+# For example, at the end of the line, nothing happens.
+run
+type hello world
+key ctrl+d
+----
+-- view:
+> hello world[7m [0m                        ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# At some other point than the end of the line, it deletes the
+# character at point.
+run
+key left
+key left
+key ctrl+d
+----
+-- view:
+> hello wor[7md[0m                          ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# At the beginning of the line, it deletes the first character.
+run
+key ctrl+a
+key ctrl+d
+----
+-- view:
+> [7me[0mllo word                           ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Now clear the input.
+run
+key ctrl+k
+----
+-- view:
+> [7m [0m                                   ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# If the input is empty, ctrl+d is end-of-input.
+run observe=(view,err)
+key ctrl+d
+----
+TEA QUIT
+-- view:
+>                                     ␤
+M-? toggle key help • C-d erase/stop🛇
+-- err:
+EOF

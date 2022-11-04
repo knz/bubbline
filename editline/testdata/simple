@@ -39,3 +39,20 @@ type world
 > hello                                                                        ␤
   world[7m [0m                                                                       ␤
 M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+
+# If there's empty newlines at the end, they are included in
+# the final value.
+run observe=(view,value)
+reset
+type hello world
+key ctrl+o
+key ctrl+o
+----
+-- view:
+> hello world                                                                  ␤
+                                                                               ␤
+  [7m [0m                                                                            ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+-- value:
+"hello world\n\n"

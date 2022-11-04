@@ -1,0 +1,67 @@
+run
+reset
+resize 40 25
+set_autocomplete_1
+----
+TEA WINDOW SIZE: {40 25}
+-- view:
+> [7m [0m                                   ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Autocomplete at end of word.
+run
+type hello
+key tab
+----
+TEA PRINT: {We're matching "hello"!}
+-- view:
+> hello world [7m [0m                       ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Autocomplete middle of word.
+run
+reset
+type hello
+key left
+key left
+key tab
+----
+TEA PRINT: {We're matching "hello"!}
+-- view:
+> hello world [7m [0m                        ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Autocomplete start of word.
+run
+reset
+type hello
+key ctrl+a
+key tab
+----
+TEA PRINT: {We're matching "hello"!}
+-- view:
+> hello world [7m [0m                        ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Not on word - empty prefix.
+run
+reset
+type hello
+key space
+key tab
+----
+TEA PRINT: {We're matching ""!}
+-- view:
+> hello [7m [0m                              ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# The simple autocompleter is case-sensitive.
+run
+reset
+type HELLO
+key tab
+----
+TEA PRINT: {We're matching "HELLO"!}
+-- view:
+> HELLO[7m [0m                               ␤
+M-? toggle key help • C-d erase/stop🛇

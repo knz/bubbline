@@ -1,0 +1,92 @@
+run
+reset
+resize 40 25
+----
+TEA WINDOW SIZE: {40 25}
+-- view:
+> [7m [0m                                   ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# By default, the "enter" key terminates the input.
+run observe=(view,value)
+enter hello world
+----
+TEA QUIT
+-- view:
+> hello world                         ␤
+M-? toggle key help • C-d erase/stop🛇
+-- value:
+"hello world"
+
+# If we configure a function to check the end of the input and the end
+# of the input is not reached, then the enter key introduces a
+# newline.
+run
+reset
+configure_check_eof
+enter hello world
+enter more text
+----
+-- view:
+> hello world                          ␤
+  more text                            ␤
+  [7m [0m                                    ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# However, if the text finally contains the end-of-input condition,
+# the enter key will terminate input again.
+run observe=(view,value)
+enter this is the end.
+----
+TEA QUIT
+-- view:
+> hello world                          ␤
+  more text                            ␤
+  this is the end.                     ␤
+M-? toggle key help • C-d erase/stop🛇
+-- value:
+"hello world\nmore text\nthis is the end."
+
+# While the condition function is active, ctrl+o forces a newline even
+# when the condition is met.
+run
+reset
+type hello world.
+key ctrl+o
+type more text
+----
+-- view:
+> hello world.                         ␤
+  more text[7m [0m                           ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# However then a regular enter will still terminate the input.
+run observe=(view,value)
+enter
+----
+TEA QUIT
+-- view:
+> hello world.                         ␤
+  more text                            ␤
+M-? toggle key help • C-d erase/stop🛇
+-- value:
+"hello world.\nmore text"
+
+# If the end-of-input condition is not met, the enter key adds a
+# newline. In that situation, it's still possible to force
+# end-of-input with the "always complete" key, by default alt+enter.
+run observe=(view,value)
+reset
+enter hello world
+enter more text
+type blah
+key alt+enter
+----
+TEA QUIT
+-- view:
+> hello world                          ␤
+  more text                            ␤
+  blah                                 ␤
+M-? toggle key help • C-d erase/stop🛇
+-- value:
+"hello world\nmore text\nblah"
