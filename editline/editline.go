@@ -318,12 +318,7 @@ func (m *Model) checkHistoryEnabled() {
 
 // Value retrieves the value of the text input.
 func (m *Model) Value() string {
-	val := m.text.Value()
-	if len(val) > 0 && val[len(val)-1] == '\n' {
-		// Trim final newline.
-		val = val[:len(val)-1]
-	}
-	return val
+	return m.text.Value()
 }
 
 // Focus sets the focus state on the model. When the model is in focus
