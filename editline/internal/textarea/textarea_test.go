@@ -50,8 +50,8 @@ func TestTextArea(t *testing.T) {
 					t.Line(), t.CursorPos(), t.row, t.col, t.lastCharOffset,
 				)
 				fmt.Fprintf(out, "LineInfo: %+v\n", t.LineInfo())
-				fmt.Fprintf(out, "AtBeginningOfLine: %v, AtFirstLineOfInputAndView: %v, AtLastLineOfInputAndView: %v\n",
-					t.AtBeginningOfLine(), t.AtFirstLineOfInputAndView(), t.AtLastLineOfInputAndView(),
+				fmt.Fprintf(out, "AtBeginningOfEmptyLine: %v, AtFirstLineOfInputAndView: %v, AtLastLineOfInputAndView: %v\n",
+					t.AtBeginningOfEmptyLine(), t.AtFirstLineOfInputAndView(), t.AtLastLineOfInputAndView(),
 				)
 				return nil
 			}),

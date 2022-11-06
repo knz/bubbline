@@ -26,7 +26,7 @@ key up
 -- pos:
 Line: 1, Pos 33, (row 1, col 33, lastCharOffset 0)
 LineInfo: {Width:34 CharWidth:33 Height:2 StartColumn:33 ColumnOffset:0 RowOffset:1 CharOffset:0}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 run observe=(view,pos)
 key left
@@ -41,7 +41,7 @@ key left
 -- pos:
 Line: 1, Pos 32, (row 1, col 32, lastCharOffset 0)
 LineInfo: {Width:33 CharWidth:33 Height:2 StartColumn:0 ColumnOffset:32 RowOffset:0 CharOffset:32}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 run
 key left
@@ -119,7 +119,7 @@ key up
 -- pos:
 Line: 1, Pos 32, (row 1, col 32, lastCharOffset 33)
 LineInfo: {Width:33 CharWidth:33 Height:2 StartColumn:0 ColumnOffset:32 RowOffset:0 CharOffset:32}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 run observe=(view,pos)
 key up
@@ -134,7 +134,7 @@ key up
 -- pos:
 Line: 0, Pos 56, (row 0, col 56, lastCharOffset 33)
 LineInfo: {Width:29 CharWidth:29 Height:2 StartColumn:28 ColumnOffset:28 RowOffset:1 CharOffset:28}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 # So we get back to position on the way down.
 run observe=(view,pos)
@@ -150,7 +150,7 @@ key down
 -- pos:
 Line: 1, Pos 32, (row 1, col 32, lastCharOffset 33)
 LineInfo: {Width:33 CharWidth:33 Height:2 StartColumn:0 ColumnOffset:32 RowOffset:0 CharOffset:32}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 run observe=(view,pos)
 key down
@@ -165,7 +165,7 @@ key down
 -- pos:
 Line: 1, Pos 66, (row 1, col 66, lastCharOffset 33)
 LineInfo: {Width:34 CharWidth:34 Height:2 StartColumn:33 ColumnOffset:33 RowOffset:1 CharOffset:33}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 # When moving down from a long line into an empty line, cursor
 # moves to the beginning.
@@ -182,7 +182,7 @@ key down
 -- pos:
 Line: 2, Pos 0, (row 2, col 0, lastCharOffset 33)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
 
 # When moving up from a long line into an empty line, cursor
 # also moves to the beginning.
@@ -207,7 +207,7 @@ key up
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 33)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 
 # Special long line behavior with wide runes.
@@ -227,7 +227,7 @@ type ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩
 -- pos:
 Line: 0, Pos 37, (row 0, col 37, lastCharOffset 0)
 LineInfo: {Width:16 CharWidth:24 Height:2 StartColumn:22 ColumnOffset:15 RowOffset:1 CharOffset:23}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
 -- value:
 "⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩"
 
@@ -246,7 +246,7 @@ type a
 -- pos:
 Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
 LineInfo: {Width:23 CharWidth:34 Height:2 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 -- value:
 "a⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩"
 
@@ -264,7 +264,7 @@ type a
 -- pos:
 Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
 LineInfo: {Width:24 CharWidth:35 Height:2 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 -- value:
 "aa⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩"
 
@@ -282,6 +282,6 @@ type a
 -- pos:
 Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
 LineInfo: {Width:23 CharWidth:33 Height:2 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 -- value:
 "aaa⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩ ⏩"

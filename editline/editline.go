@@ -899,7 +899,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			imsg = 0 // consume message
 
 		case key.Matches(msg, m.KeyMap.EndOfInput):
-			if m.text.AtBeginningOfLine() {
+			if m.text.AtBeginningOfEmptyLine() {
 				m.Err = io.EOF
 				stop = true
 				imsg = nil // consume message

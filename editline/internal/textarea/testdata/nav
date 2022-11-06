@@ -51,7 +51,7 @@ key up
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 # Move the cursor to the 2nd line (the longest).
 # Then move the cursor at the end of the line.
@@ -69,7 +69,7 @@ key ctrl+e
 -- pos:
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 
 # Move the cursor up. Notice how the cursor moves
@@ -88,7 +88,7 @@ key up
 -- pos:
 Line: 0, Pos 13, (row 0, col 13, lastCharOffset 20)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:13 RowOffset:0 CharOffset:13}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 
 # Move down. Notice how the cursor gets back to the end of the longest
@@ -106,7 +106,7 @@ key down
 -- pos:
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 20)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 # Cursor to beginning of line using method call.
 run observe=(view, pos)
@@ -122,7 +122,7 @@ cursorstart
 -- pos:
 Line: 1, Pos 0, (row 1, col 0, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 # Cursor to end of line, then back to beginning, using keystrokes.
 run observe=(view, pos)
@@ -140,7 +140,7 @@ key ctrl+a
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 # Word forward.
 run observe=(view,pos)
@@ -156,7 +156,7 @@ key alt+f
 -- pos:
 Line: 0, Pos 6, (row 0, col 6, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:6 RowOffset:0 CharOffset:6}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 
 # Word forward, end of line.
@@ -173,7 +173,7 @@ key alt+f
 -- pos:
 Line: 0, Pos 13, (row 0, col 13, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:13 RowOffset:0 CharOffset:13}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 # Word forward, first word on next line.
 run observe=(view,pos)
@@ -189,7 +189,7 @@ key alt+f
 -- pos:
 Line: 1, Pos 5, (row 1, col 5, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 # Word forward, end of text.
 run observe=(view,pos)
@@ -208,7 +208,7 @@ key alt+f
 -- pos:
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 # Word backward.
 run observe=(view,pos)
@@ -224,7 +224,7 @@ key alt+b
 -- pos:
 Line: 1, Pos 16, (row 1, col 16, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:16 RowOffset:0 CharOffset:16}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 # Word backward, previous line
 run observe=(view,pos)
@@ -244,7 +244,7 @@ key alt+b
 -- pos:
 Line: 0, Pos 7, (row 0, col 7, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:7 RowOffset:0 CharOffset:7}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 # Word backward, beginning of text.
 run observe=(view,pos)
@@ -262,7 +262,7 @@ key alt+b
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 # Character next, prev.
 run observe=(view,pos)
@@ -278,7 +278,7 @@ key right
 -- pos:
 Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 run observe=(view,pos)
 key left
@@ -293,7 +293,7 @@ key left
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 
 # Character next, to past end of text.
 run observe=(view,pos)
@@ -311,7 +311,7 @@ key right
 -- pos:
 Line: 2, Pos 0, (row 2, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
 
 # Character left at beginning of line: cursor moves to end of previous line.
 run observe=(view,pos)
@@ -327,7 +327,7 @@ key left
 -- pos:
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
 
 # Character right from end of line: moves to next line.
 run observe=(view,pos)
@@ -343,4 +343,4 @@ key left
 -- pos:
 Line: 1, Pos 19, (row 1, col 19, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:19 RowOffset:0 CharOffset:19}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: false
