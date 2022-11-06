@@ -271,7 +271,7 @@ func (m *Model) SetExternalEditorEnabled(enable bool, extension string) {
 // SetHistory sets the history navigation list all at once.
 func (m *Model) SetHistory(h []string) {
 	if m.MaxHistorySize != 0 && len(h) > m.MaxHistorySize {
-		h = h[:m.MaxHistorySize]
+		h = h[len(h)-m.MaxHistorySize:]
 	}
 	m.history = make([]string, 0, len(h))
 	m.history = append(m.history, h...)
