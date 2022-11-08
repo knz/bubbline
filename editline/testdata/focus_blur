@@ -1,0 +1,33 @@
+run
+reset
+resize 40 25
+type hello world
+----
+TEA WINDOW SIZE: {40 25}
+-- view:
+> hello world[7m [0m                        ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# While blurred, there is no cursor and
+# text input is disabled.
+run
+blur
+----
+-- view:
+> hello world                         ␤
+M-? toggle key help • C-d erase/stop🛇
+
+run
+type more text
+----
+-- view:
+> hello world                         ␤
+M-? toggle key help • C-d erase/stop🛇
+
+run
+focus
+type more text
+----
+-- view:
+> hello worldmore text[7m [0m                ␤
+M-? toggle key help • C-d erase/stop🛇

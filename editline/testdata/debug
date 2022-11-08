@@ -1,0 +1,34 @@
+run
+reset
+resize 80 25
+enable_debug
+----
+TEA WINDOW SIZE: {80 25}
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+run
+key ctrl+_
+----
+-- view:
+editline:                                       textarea:            comp:                             ␤
+lastEvent: ctrl+_                               focus: true          width: 78, height: 1, maxHeight: 0␤
+history: []                                     promptWidth: 2       num lists: 0                      ␤
+hasNewSize: false, w: 80, h: 25                 width: 76, height: 1 selectedList: 0                   ␤
+maxHeight: 25, maxWidth: 80                     col: 0, row: 0       accepted: <nil> / err <nil>       ␤
+promptHidden: false                             lastCharOffset: 0                                      ␤
+hctrl.c: {searching:false prevPattern: cursor:0 line 0: [] ("")                                        ␤
+valueSaved:false prevValue: prevCursor:0}                                                              ␤
+showComp: false                                                                                        ␤
+htctrl.pattern: ""                                                                                     ␤
+                                                                                                       ␤
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+run
+disable_debug
+----
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇

@@ -1,0 +1,33 @@
+run
+reset
+resize 80 25
+----
+TEA WINDOW SIZE: {80 25}
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+# Check that ctrl+l induces a clear screen message in bubbletea.
+run trace=on
+key ctrl+l
+----
+-- trace: before "key ctrl+l"
+-- trace: after "key"
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+-- trace: before finish
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+-- trace: processing 1 messages
+-- trace: msg tea.KeyMsg{Type:12, Runes:[]int32(nil), Alt:false}
+-- trace: processing 1 cmds
+-- trace: expanded 1 commands
+-- trace: translated cmd: tea.clearScreenMsg
+-- trace: processing 1 messages
+-- trace: msg tea.clearScreenMsg{}
+-- trace: at end
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇

@@ -24,7 +24,7 @@ key ctrl+h
 -- pos:
 Line: 0, Pos 12, (row 0, col 12, lastCharOffset 0)
 LineInfo: {Width:13 CharWidth:13 Height:1 StartColumn:0 ColumnOffset:12 RowOffset:0 CharOffset:12}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "hello, world"
 
@@ -42,7 +42,7 @@ key delete
 -- pos:
 Line: 0, Pos 12, (row 0, col 12, lastCharOffset 0)
 LineInfo: {Width:13 CharWidth:13 Height:1 StartColumn:0 ColumnOffset:12 RowOffset:0 CharOffset:12}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "hello, world"
 
@@ -61,7 +61,7 @@ key delete
 -- pos:
 Line: 0, Pos 11, (row 0, col 11, lastCharOffset 0)
 LineInfo: {Width:12 CharWidth:12 Height:1 StartColumn:0 ColumnOffset:11 RowOffset:0 CharOffset:11}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "hello, worl"
 
@@ -79,7 +79,7 @@ key ctrl+w
 -- pos:
 Line: 0, Pos 7, (row 0, col 7, lastCharOffset 0)
 LineInfo: {Width:8 CharWidth:8 Height:1 StartColumn:0 ColumnOffset:7 RowOffset:0 CharOffset:7}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "hello, "
 
@@ -99,7 +99,7 @@ key alt+d
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 " more text"
 
@@ -117,7 +117,7 @@ type Some
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "Some more text"
 
@@ -135,7 +135,7 @@ key alt+u
 -- pos:
 Line: 0, Pos 9, (row 0, col 9, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:9 RowOffset:0 CharOffset:9}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "Some MORE text"
 
@@ -153,7 +153,7 @@ key alt+c
 -- pos:
 Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "Some MORE Text"
 
@@ -174,7 +174,7 @@ key alt+l
 -- pos:
 Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "some more text"
 
@@ -194,7 +194,7 @@ key alt+l
 -- pos:
 Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "some more text"
 
@@ -214,7 +214,7 @@ key ctrl+t
 -- pos:
 Line: 0, Pos 2, (row 0, col 2, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:2 RowOffset:0 CharOffset:2}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "osme more text"
 
@@ -233,7 +233,7 @@ key ctrl+t
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "omes more text"
 
@@ -251,7 +251,7 @@ key enter
 -- pos:
 Line: 1, Pos 0, (row 1, col 0, lastCharOffset 0)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: false, AtLastLineOfInputAndView: true
 -- value:
 "omes\n more text"
 
@@ -269,7 +269,7 @@ key ctrl+h
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "omes more text"
 
@@ -287,7 +287,7 @@ key ctrl+k
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "omes"
 
@@ -306,7 +306,7 @@ key ctrl+u
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 ""
 
@@ -326,7 +326,7 @@ key ctrl+k
 -- pos:
 Line: 0, Pos 5, (row 0, col 5, lastCharOffset 5)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "helloworld"
 
@@ -345,7 +345,7 @@ key ctrl+u
 -- pos:
 Line: 0, Pos 5, (row 0, col 5, lastCharOffset 5)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "helloworld"
 
@@ -365,7 +365,7 @@ key ctrl+w
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 ""
 
@@ -382,7 +382,7 @@ key alt+d
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 ""
 
@@ -404,7 +404,7 @@ key alt+d
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 -- value:
 "\nsecondline"
 
@@ -421,7 +421,7 @@ key alt+d
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "secondline"
 
@@ -440,7 +440,7 @@ key ctrl+w
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "secondline"
 
@@ -462,7 +462,7 @@ key alt+d
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 " yay"
 
@@ -483,7 +483,7 @@ key ctrl+w
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "yay "
 
@@ -503,7 +503,7 @@ key alt+d
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 -- value:
 "\nworld"
 
@@ -524,7 +524,7 @@ key ctrl+w
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 -- value:
 "\nworld"
 
@@ -546,7 +546,7 @@ key ctrl+t
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:6 CharWidth:6 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "hello"
 
@@ -565,7 +565,7 @@ key ctrl+t
 -- pos:
 Line: 0, Pos 5, (row 0, col 5, lastCharOffset 0)
 LineInfo: {Width:6 CharWidth:6 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: true
 -- value:
 "helol"
 
@@ -586,7 +586,7 @@ key ctrl+k
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:4 CharWidth:4 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
-AtBeginningOfLine: true, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 -- value:
 "two\nthree\nfour\nfive"
 
@@ -606,6 +606,6 @@ key ctrl+h
 -- pos:
 Line: 0, Pos 3, (row 0, col 3, lastCharOffset 0)
 LineInfo: {Width:9 CharWidth:9 Height:1 StartColumn:0 ColumnOffset:3 RowOffset:0 CharOffset:3}
-AtBeginningOfLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
+AtBeginningOfEmptyLine: false, AtFirstLineOfInputAndView: true, AtLastLineOfInputAndView: false
 -- value:
 "twothree\nfour\nfive"

@@ -51,9 +51,9 @@ func (m *Model) ValueRunes() [][]rune {
 }
 
 // AtBeginningOfLine returns true if the cursor is at the beginning of
-// a line.
-func (m *Model) AtBeginningOfLine() bool {
-	return m.col == 0
+// an empty line line.
+func (m *Model) AtBeginningOfEmptyLine() bool {
+	return m.col == 0 && len(m.value[m.row]) == 0
 }
 
 // AtFirstLineOfInputAndView returns true if the cursor is on the first line

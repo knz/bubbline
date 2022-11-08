@@ -1,0 +1,33 @@
+run
+reset
+resize 80 25
+type hello
+key ctrl+o
+type world
+----
+TEA WINDOW SIZE: {80 25}
+-- view:
+> hello                                                                       ␤
+  world[7m [0m                                                                      ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+# Ctrl+C on non-empty clears the input
+run observe=(view,err)
+key ctrl+c
+----
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+-- err:
+<no error>
+
+# Ctrl+C on empty also terminates and sets error.
+run observe=(view,err)
+key ctrl+c
+----
+TEA QUIT
+-- view:
+>                                                                             ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+-- err:
+interrupted

@@ -271,7 +271,7 @@ func (m *Model) SetExternalEditorEnabled(enable bool, extension string) {
 // SetHistory sets the history navigation list all at once.
 func (m *Model) SetHistory(h []string) {
 	if m.MaxHistorySize != 0 && len(h) > m.MaxHistorySize {
-		h = h[:m.MaxHistorySize]
+		h = h[len(h)-m.MaxHistorySize:]
 	}
 	m.history = make([]string, 0, len(h))
 	m.history = append(m.history, h...)
@@ -318,12 +318,7 @@ func (m *Model) checkHistoryEnabled() {
 
 // Value retrieves the value of the text input.
 func (m *Model) Value() string {
-	val := m.text.Value()
-	if len(val) > 0 && val[len(val)-1] == '\n' {
-		// Trim final newline.
-		val = val[:len(val)-1]
-	}
-	return val
+	return m.text.Value()
 }
 
 // Focus sets the focus state on the model. When the model is in focus
@@ -439,7 +434,7 @@ func (m *Model) incrementalSearch(nextMatch bool) (cmd tea.Cmd) {
 		if !m.CaseSensitiveSearch {
 			lentry = strings.ToLower(lentry)
 		}
-		for j := len(lentry) - len(pat); j >= 0; j-- {
+		for j := len(lentry) - len(pat) + 1; /* +1 to account for '*' */ j >= 0; j-- {
 			match, err := filepath.Match(pat, lentry[j:])
 			if err != nil {
 				m.hctrl.pattern.Prompt = m.SearchPromptInvalid
@@ -899,7 +894,7 @@ func (m *Model) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 			imsg = 0 // consume message
 
 		case key.Matches(msg, m.KeyMap.EndOfInput):
-			if m.text.AtBeginningOfLine() {
+			if m.text.AtBeginningOfEmptyLine() {
 				m.Err = io.EOF
 				stop = true
 				imsg = nil // consume message

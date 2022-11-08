@@ -1,0 +1,37 @@
+run
+reset
+resize 80 25
+set_editor_env
+----
+TEA WINDOW SIZE: {80 25}
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+# By default the external editor is not enabled.
+run
+key alt+f2
+----
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+# But it can be enabled explicitly.
+run
+enable_ext_edit
+key alt+f2
+----
+TEA EXEC
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+
+# However this doesn't work if the env var is unset.
+run
+unset_editor_env
+key alt+f2
+----
+TEA PRINT: {env var EDITOR empty or not set}
+-- view:
+> [7m [0m                                                                           ␤
+M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇

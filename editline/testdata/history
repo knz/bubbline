@@ -1,0 +1,160 @@
+run
+reset
+resize 40 25
+type baseline text
+----
+TEA WINDOW SIZE: {40 25}
+-- view:
+> baseline text[7m [0m                      ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# By default, there is no history so nothing to go up from.
+run
+key up
+----
+-- view:
+> baseline text[7m [0m                      ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# If we load some history, we can then navigate through it.
+run
+set_history
+key up
+----
+-- view:
+> this is a big world indeed[7m [0m         ␤
+M-? toggle key help • C-d erase/stop🛇
+
+run
+key up
+----
+-- view:
+> peter parker was not spiderman[7m [0m     ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Once on a history entry, we can edit it as usual.
+run
+key left
+key left
+type woo
+----
+-- view:
+> peter parker was not spidermwoo[7ma[0mn   ␤
+M-? toggle key help • C-d erase/stop🛇
+
+run
+key down
+----
+-- view:
+> this is a big world indeed[7m [0m         ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# The changes to the history entry above are not preserved, because we
+# didn't accept the input.
+run
+key alt+p
+----
+-- view:
+> peter parker was not spiderman[7m [0m     ␤
+M-? toggle key help • C-d erase/stop🛇
+
+run
+key alt+n
+----
+-- view:
+> this is a big world indeed[7m [0m         ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# If we navigate down to the end of the history,
+# we get back to the original text.
+run
+key down
+----
+-- view:
+> baseline text[7m [0m                      ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Pressing enter on a history entry will lock in this value.
+run observe=(view,value)
+key up
+key enter
+----
+TEA QUIT
+-- view:
+> this is a big world indeed          ␤
+M-? toggle key help • C-d erase/stop🛇
+-- value:
+"this is a big world indeed"
+
+# We can also retrieve the current history.
+run observe=history
+----
+-- history:
+say hello to the world
+peter parker was not spiderman
+this is a big world indeed
+
+# If we try to add the last entry back as a new entry,
+# it gets de-duplicated by default.
+run observe=history
+add_history
+----
+-- history:
+say hello to the world
+peter parker was not spiderman
+this is a big world indeed
+
+# This de-duplication can be disabled.
+run observe=history
+toggle_dedup_history
+add_history
+toggle_dedup_history
+----
+-- history:
+say hello to the world
+peter parker was not spiderman
+this is a big world indeed
+this is a big world indeed
+
+# If we add a new entry, it will show up in the stored history.
+run observe=history
+reset
+enter "hello world"
+add_history
+----
+TEA QUIT
+-- history:
+say hello to the world
+peter parker was not spiderman
+this is a big world indeed
+this is a big world indeed
+"hello world"
+
+# It can also be navigated back to.
+run
+reset
+key up
+----
+-- view:
+> "hello world"[7m [0m                       ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# If there's a limit, the history gets truncated.
+run observe=history
+limit_history_size
+set_history
+----
+-- history:
+peter parker was not spiderman
+this is a big world indeed
+
+# New entries also cause old entries to disappear.
+run observe=history
+reset
+enter hello world
+add_history
+----
+TEA QUIT
+-- history:
+this is a big world indeed
+hello world
