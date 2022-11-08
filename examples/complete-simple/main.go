@@ -80,6 +80,9 @@ func autocomplete(v [][]rune, line, col int) (msg string, completions editline.C
 			complete = loremIpsum[:n]
 		}
 	}
+	if complete == "" {
+		return msg, nil
+	}
 
 	return msg, editline.SingleWordCompletion(complete, col, wstart, wend)
 }
