@@ -434,7 +434,7 @@ func (m *Model) incrementalSearch(nextMatch bool) (cmd tea.Cmd) {
 		if !m.CaseSensitiveSearch {
 			lentry = strings.ToLower(lentry)
 		}
-		for j := len(lentry) - len(pat); j >= 0; j-- {
+		for j := len(lentry) - len(pat) + 1; /* +1 to account for '*' */ j >= 0; j-- {
 			match, err := filepath.Match(pat, lentry[j:])
 			if err != nil {
 				m.hctrl.pattern.Prompt = m.SearchPromptInvalid
