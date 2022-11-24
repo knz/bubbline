@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/charmbracelet/bubbles/cursor"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/cockroachdb/datadriven"
 	"github.com/knz/bubbline"
@@ -114,6 +115,10 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 		t.AutoComplete = autocomplete1
 	case "set_autocomplete_2":
 		t.AutoComplete = autocomplete2
+	case "show_cursor":
+		t.CursorMode = cursor.CursorBlink
+	case "hide_cursor":
+		t.CursorMode = cursor.CursorHide
 	default:
 		return false, t, nil, nil
 	}

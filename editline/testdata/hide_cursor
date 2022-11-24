@@ -1,0 +1,26 @@
+run
+reset
+resize 20 10
+----
+TEA WINDOW SIZE: {20 10}
+-- view:
+> [7m [0m               ␤
+ …🛇
+
+
+run
+hide_cursor
+reset
+----
+-- view:
+>                  ␤
+ …🛇
+
+
+run
+show_cursor
+reset
+----
+-- view:
+> [7m [0m                ␤
+ …🛇
