@@ -136,6 +136,9 @@ type Model struct {
 	// Set to zero or less for no limit.
 	CharLimit int
 
+	// CursorMode determines how the cursor is displayed.
+	CursorMode cursor.Mode
+
 	// MaxHistorySize is the maximum number of entries in the history.
 	// Set to zero for no limit.
 	MaxHistorySize int
@@ -324,6 +327,7 @@ func (m *Model) Value() string {
 // Focus sets the focus state on the model. When the model is in focus
 // it can receive keyboard input and the cursor is displayed.
 func (m *Model) Focus() tea.Cmd {
+	_ = m.text.Cursor.SetMode(m.CursorMode)
 	m.text.KeyMap = m.KeyMap.KeyMap
 	m.text.Placeholder = m.Placeholder
 	m.text.ShowLineNumbers = m.ShowLineNumbers
