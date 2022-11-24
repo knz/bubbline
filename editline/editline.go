@@ -328,6 +328,7 @@ func (m *Model) Value() string {
 // it can receive keyboard input and the cursor is displayed.
 func (m *Model) Focus() tea.Cmd {
 	_ = m.text.Cursor.SetMode(m.CursorMode)
+	_ = m.hctrl.pattern.Cursor.SetMode(m.CursorMode)
 	m.text.KeyMap = m.KeyMap.KeyMap
 	m.text.Placeholder = m.Placeholder
 	m.text.ShowLineNumbers = m.ShowLineNumbers
@@ -504,8 +505,10 @@ func (m *Model) hidePrompt(b bool) {
 	m.promptHidden = b
 	if b {
 		m.text.Cursor.SetMode(cursor.CursorStatic)
+		m.hctrl.pattern.Cursor.SetMode(cursor.CursorStatic)
 	} else {
-		m.text.Cursor.SetMode(cursor.CursorBlink)
+		m.text.Cursor.SetMode(m.CursorMode)
+		m.hctrl.pattern.Cursor.SetMode(m.CursorMode)
 	}
 }
 
