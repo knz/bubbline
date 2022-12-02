@@ -70,6 +70,9 @@ func SingleWordCompletion(word string, cursor, start, end int) Completions {
 // The start/end positions refer to the word start and end positions
 // on the current line.
 func SimpleWordsCompletion(words []string, category string, cursor, start, end int) Completions {
+	if len(words) == 0 {
+		return nil
+	}
 	return &wordsCompletion{words, category, cursor, start, end}
 }
 
