@@ -566,7 +566,8 @@ func (m *Model) autoComplete() (cmd tea.Cmd) {
 		cmd = tea.Batch(cmd, tea.Println(msgs))
 	}
 
-	if noCompletions := comps == nil || comps.NumCategories() == 0; noCompletions {
+	if noCompletions := comps == nil || comps.NumCategories() == 0 ||
+		(comps.NumCategories() == 1 && comps.NumEntries(0) == 0); noCompletions {
 		// No completions. Do nothing.
 		return cmd
 	}
@@ -579,7 +580,7 @@ func (m *Model) autoComplete() (cmd tea.Cmd) {
 		m.text.DeleteCharactersBackward(deleteLeft)
 		m.text.InsertString(prefill)
 
-		if justOne {
+		if justOne || newCompletions == nil {
 			// Just one completion: the prefix was the candidate already.
 			// Insert a space.
 			m.text.InsertRune(' ')
@@ -588,7 +589,7 @@ func (m *Model) autoComplete() (cmd tea.Cmd) {
 	if hasPrefill {
 		cmd = tea.Batch(cmd, m.updateTextSz())
 	}
-	if !justOne {
+	if !justOne && newCompletions != nil {
 		m.showCompletions = true
 		m.compCandidates = newCompletions
 		m.completions.SetValues(newCompletions)
