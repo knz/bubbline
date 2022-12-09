@@ -11,4 +11,5 @@ require (
 	github.com/knz/catwalk v0.1.2
 	github.com/mattn/go-runewidth v0.0.14
 	github.com/muesli/reflow v0.3.0
+	golang.org/x/sys v0.3.0
 )
