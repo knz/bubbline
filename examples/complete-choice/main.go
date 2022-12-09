@@ -29,7 +29,7 @@ of a name. Or just maybe one letter of the alphabet.`)
 
 	for {
 		m.Reset()
-		if err := tea.NewProgram(m).Start(); err != nil {
+		if _, err := tea.NewProgram(m).Run(); err != nil {
 			log.Fatal(err)
 		}
 
