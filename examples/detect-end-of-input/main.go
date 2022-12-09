@@ -30,7 +30,7 @@ after a semicolon (;).`)
 
 	for {
 		m.Reset()
-		if err := tea.NewProgram(m).Start(); err != nil {
+		if _, err := tea.NewProgram(m).Run(); err != nil {
 			log.Fatal(err)
 		}
 

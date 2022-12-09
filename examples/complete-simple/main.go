@@ -31,7 +31,7 @@ You can also press tab with the cursor in the middle of a word!`)
 
 	for {
 		m.Reset()
-		if err := tea.NewProgram(m).Start(); err != nil {
+		if _, err := tea.NewProgram(m).Run(); err != nil {
 			log.Fatal(err)
 		}
 

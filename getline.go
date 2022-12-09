@@ -1,7 +1,10 @@
 package bubbline
 
 import (
+	"context"
 	"errors"
+	"os"
+	"os/signal"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knz/bubbline/complete"
@@ -40,14 +43,42 @@ func (m *Editor) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *Editor) Close() {}
 
 // ErrInterrupted is returned when the input was interrupted with
-// e.g. Ctrl+C.
+// e.g. Ctrl+C, or when SIGINT was received.
 var ErrInterrupted = editline.ErrInterrupted
+
+// ErrTerminated is returned when the input was interrupted
+// by receiving SIGTERM.
+var ErrTerminated = errors.New("terminated")
 
 // Getline runs the editor and returns the line that was read.
 func (m *Editor) GetLine() (string, error) {
-	p := tea.NewProgram(m)
+	// We don't like the default handling of SIGINT/SIGTERM. Provide our own.
+	ctx, cancel := context.WithCancel(context.Background())
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, stopSignals...)
+	defer signal.Stop(ch)
+	var sig os.Signal
+	go func() {
+		select {
+		case sig = <-ch:
+			cancel()
+		case <-ctx.Done():
+		}
+	}()
+	// Create a Bubbletea program to handle our input.
+	p := tea.NewProgram(m, tea.WithoutSignalHandler(), tea.WithContext(ctx))
 	m.Reset()
-	if err := p.Start(); err != nil {
+	if _, err := p.Run(); err != nil {
+		// Was a signal received?
+		if ctx.Err() != nil {
+			// Yes: choose the resulting error depending on which signal was
+			// received.
+			if sig == os.Interrupt {
+				err = ErrInterrupted
+			} else {
+				err = ErrTerminated
+			}
+		}
 		return "", err
 	}
 	return m.Value(), m.Err

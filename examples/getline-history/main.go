@@ -29,6 +29,9 @@ func main() {
 			if errors.Is(err, bubbline.ErrInterrupted) {
 				// Entered Ctrl+C to cancel input.
 				fmt.Println("^C")
+			} else if errors.Is(err, bubbline.ErrTerminated) {
+				fmt.Println("terminated")
+				break
 			} else {
 				fmt.Println("error:", err)
 			}
