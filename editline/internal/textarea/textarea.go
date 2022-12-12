@@ -67,8 +67,8 @@ type KeyMap struct {
 var DefaultKeyMap = KeyMap{
 	CharacterForward:        key.NewBinding(key.WithKeys("right", "ctrl+f"), key.WithHelp("C-f/→", "next char")),
 	CharacterBackward:       key.NewBinding(key.WithKeys("left", "ctrl+b"), key.WithHelp("C-b/←", "prev char")),
-	WordForward:             key.NewBinding(key.WithKeys("alt+right", "alt+f"), key.WithHelp("M-f/M-→", "next word")),
-	WordBackward:            key.NewBinding(key.WithKeys("alt+left", "alt+b"), key.WithHelp("M-b/M-←", "prev word")),
+	WordForward:             key.NewBinding(key.WithKeys("alt+right", "ctrl+right", "alt+f"), key.WithHelp("M-f/C-→", "next word")),
+	WordBackward:            key.NewBinding(key.WithKeys("alt+left", "ctrl+left", "alt+b"), key.WithHelp("M-b/C-←", "prev word")),
 	LineNext:                key.NewBinding(key.WithKeys("down", "ctrl+n"), key.WithHelp("C-n/↓", "move down")),
 	LinePrevious:            key.NewBinding(key.WithKeys("up", "ctrl+p"), key.WithHelp("C-p/↑", "move up")),
 	DeleteWordBackward:      key.NewBinding(key.WithKeys("alt+backspace", "ctrl+w"), key.WithHelp("C-w/M-bksp", "del prev word")),
