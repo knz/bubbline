@@ -1,5 +1,5 @@
---- textarea.go.orig	2022-10-07 17:47:42.637811000 +0200
-+++ textarea.go	2022-10-07 17:47:42.638659000 +0200
+--- textarea.go.orig	2022-11-04 16:31:47.927253000 +0100
++++ textarea.go	2022-12-12 17:04:51.868370000 +0100
 @@ -1,3 +1,9 @@
 +// The code below is imported from
 +// https://github.com/charmbracelet/bubbles/tree/master/textarea
@@ -49,8 +49,8 @@
 -	InputEnd:                key.NewBinding(key.WithKeys("alt+>", "ctrl+end")),
 +	CharacterForward:        key.NewBinding(key.WithKeys("right", "ctrl+f"), key.WithHelp("C-f/→", "next char")),
 +	CharacterBackward:       key.NewBinding(key.WithKeys("left", "ctrl+b"), key.WithHelp("C-b/←", "prev char")),
-+	WordForward:             key.NewBinding(key.WithKeys("alt+right", "alt+f"), key.WithHelp("M-f/M-→", "next word")),
-+	WordBackward:            key.NewBinding(key.WithKeys("alt+left", "alt+b"), key.WithHelp("M-b/M-←", "prev word")),
++	WordForward:             key.NewBinding(key.WithKeys("alt+right", "ctrl+right", "alt+f"), key.WithHelp("M-f/C-→", "next word")),
++	WordBackward:            key.NewBinding(key.WithKeys("alt+left", "ctrl+left", "alt+b"), key.WithHelp("M-b/C-←", "prev word")),
 +	LineNext:                key.NewBinding(key.WithKeys("down", "ctrl+n"), key.WithHelp("C-n/↓", "move down")),
 +	LinePrevious:            key.NewBinding(key.WithKeys("up", "ctrl+p"), key.WithHelp("C-p/↑", "move up")),
 +	DeleteWordBackward:      key.NewBinding(key.WithKeys("alt+backspace", "ctrl+w"), key.WithHelp("C-w/M-bksp", "del prev word")),
