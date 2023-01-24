@@ -1,5 +1,5 @@
---- textarea.go.orig	2022-11-04 16:31:47.927253000 +0100
-+++ textarea.go	2022-12-12 17:04:51.868370000 +0100
+--- textarea.go.orig	2023-01-24 19:21:36.201018000 +0100
++++ textarea.go	2023-01-24 19:34:37.352781000 +0100
 @@ -1,3 +1,9 @@
 +// The code below is imported from
 +// https://github.com/charmbracelet/bubbles/tree/master/textarea
@@ -10,7 +10,7 @@
  package textarea
  
  import (
-@@ -48,41 +54,43 @@
+@@ -49,41 +55,43 @@
  	WordForward             key.Binding
  	InputBegin              key.Binding
  	InputEnd                key.Binding
@@ -80,7 +80,7 @@
  }
  
  // LineInfo is a helper for keeping track of line information regarding
-@@ -196,6 +204,9 @@
+@@ -197,6 +205,9 @@
  	// component. When false, ignore keyboard input and hide the cursor.
  	focus bool
  
@@ -90,17 +90,17 @@
  	// Cursor column.
  	col int
  
-@@ -296,7 +307,7 @@
- 
- // InsertRune inserts a rune at the cursor position.
- func (m *Model) InsertRune(r rune) {
--	if r == '\n' {
-+	if r == '\n' || r == '\r' {
- 		m.splitLine(m.row, m.col)
- 		return
+@@ -325,7 +336,7 @@
+ 			lstart = i + 1
+ 		}
  	}
-@@ -305,6 +316,18 @@
- 	m.col++
+-	if lstart < len(runes) {
++	if lstart <= len(runes) {
+ 		// The last line did not end with a newline character.
+ 		// Take it now.
+ 		lines = append(lines, runes[lstart:])
+@@ -381,6 +392,18 @@
+ 	m.SetCursor(m.col)
  }
  
 +// overwriteRune overwrites the rune at the cursor position.
@@ -118,7 +118,7 @@
  // Value returns the value of the text input.
  func (m Model) Value() string {
  	if m.value == nil {
-@@ -713,14 +736,20 @@
+@@ -750,14 +773,20 @@
  // LineInfo returns the number of characters from the start of the
  // (soft-wrapped) line and the (soft-wrapped) line width.
  func (m Model) LineInfo() LineInfo {
@@ -141,7 +141,7 @@
  			// We wrap around to the next line if we are at the end of the
  			// previous line so that we can be at the very beginning of the row
  			return LineInfo{
-@@ -728,16 +757,16 @@
+@@ -765,16 +794,16 @@
  				ColumnOffset: 0,
  				Height:       len(grid),
  				RowOffset:    i + 1,
@@ -162,7 +162,7 @@
  				Height:       len(grid),
  				RowOffset:    i,
  				StartColumn:  counter,
-@@ -832,6 +861,48 @@
+@@ -869,6 +898,48 @@
  	m.viewport.Height = clamp(h, minHeight, maxHeight)
  }
  
@@ -211,7 +211,7 @@
  // Update is the Bubble Tea update loop.
  func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
  	if !m.focus {
-@@ -866,25 +937,9 @@
+@@ -903,25 +974,9 @@
  			}
  			m.deleteBeforeCursor()
  		case key.Matches(msg, m.KeyMap.DeleteCharacterBackward):
@@ -239,7 +239,7 @@
  		case key.Matches(msg, m.KeyMap.DeleteWordBackward):
  			if m.col <= 0 {
  				m.mergeLineAbove(m.row)
-@@ -899,11 +954,7 @@
+@@ -936,11 +991,7 @@
  			}
  			m.deleteWordRight()
  		case key.Matches(msg, m.KeyMap.InsertNewline):
@@ -252,32 +252,23 @@
  		case key.Matches(msg, m.KeyMap.LineEnd):
  			m.CursorEnd()
  		case key.Matches(msg, m.KeyMap.LineStart):
-@@ -934,15 +985,21 @@
+@@ -971,9 +1022,18 @@
  			m.capitalizeRight()
  		case key.Matches(msg, m.KeyMap.TransposeCharacterBackward):
  			m.transposeLeft()
--
 +		case key.Matches(msg, m.KeyMap.ToggleOverwriteMode):
 +			m.overwrite = !m.overwrite
+ 
  		default:
--			if m.CharLimit > 0 && rw.StringWidth(m.Value()) >= m.CharLimit {
--				break
+-			m.insertRunesFromUserInput(msg.Runes)
 +			if !m.overwrite {
-+				if m.CharLimit > 0 && rw.StringWidth(m.Value())+len(msg.Runes) >= m.CharLimit {
-+					break
-+				}
-+				for _, r := range msg.Runes {
-+					m.InsertRune(r)
-+				}
++				m.insertRunesFromUserInput(msg.Runes)
 +			} else {
-+				for _, r := range msg.Runes {
++				runes := m.san().Sanitize(msg.Runes)
++				for _, r := range runes {
 +					m.overwriteRune(r)
 +				}
- 			}
--
--			m.col = min(m.col, len(m.value[m.row]))
--			m.value[m.row] = append(m.value[m.row][:m.col], append(msg.Runes, m.value[m.row][m.col:]...)...)
--			m.SetCursor(m.col + len(msg.Runes))
++			}
  		}
  
  	case pasteMsg:
