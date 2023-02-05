@@ -17,10 +17,8 @@ TEA PRINT: {We're matching ""!}
 [;mnames[0m        ␤
  Alice       ␤
  Amanda      ␤
- Amy         ␤
- Andrew      ␤
              ␤
-  1/25       ␤
+  1/50       ␤
 (entry "Alice" has no description)␤
 > [7m [0m                                   ␤
 M-? toggle key help • C-c close/cancel🛇
@@ -33,10 +31,8 @@ key /
 Filter: [7m [0m    ␤
  Alice       ␤
  Amanda      ␤
- Amy         ␤
- Andrew      ␤
              ␤
-  1/25       ␤
+  1/50       ␤
 (entry "Alice" has no description)␤
 > [7m [0m                                   ␤
 M-? toggle key help • C-c close/cancel🛇
@@ -48,8 +44,6 @@ type thur
 -- view:
 Filter: hur[7m [0m ␤
  Arthur      ␤
-             ␤
-             ␤
              ␤
              ␤
              ␤
@@ -65,8 +59,6 @@ enter
 -- view:
 [;mnames[0m        ␤
  Arthur      ␤
-             ␤
-             ␤
              ␤
              ␤
              ␤
@@ -93,8 +85,6 @@ type invalid
 TEA PRINT: {We're matching ""!}
 -- view:
 Filter: lid[7m [0m␤
-            ␤
-            ␤
             ␤
             ␤
             ␤
