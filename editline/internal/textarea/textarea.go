@@ -332,7 +332,7 @@ func (m *Model) insertRunesFromUserInput(runes []rune) {
 	lstart := 0
 	for i := 0; i < len(runes); i++ {
 		if runes[i] == '\n' {
-			lines = append(lines, runes[lstart:i])
+			lines = append(lines, runes[lstart:i:i])
 			lstart = i + 1
 		}
 	}

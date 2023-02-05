@@ -536,11 +536,11 @@ func (m *Model) saveValue() {
 }
 
 func (m *Model) historyUp() (cmd tea.Cmd) {
-	if !m.hctrl.c.valueSaved {
-		m.saveValue()
-	}
 	if m.hctrl.c.cursor == 0 {
 		return cmd
+	}
+	if !m.hctrl.c.valueSaved {
+		m.saveValue()
 	}
 	m.hctrl.c.cursor--
 	entry := m.history[m.hctrl.c.cursor]
@@ -548,6 +548,9 @@ func (m *Model) historyUp() (cmd tea.Cmd) {
 }
 
 func (m *Model) historyDown() (cmd tea.Cmd) {
+	if m.hctrl.c.cursor >= len(m.history) {
+		return cmd
+	}
 	if !m.hctrl.c.valueSaved {
 		m.saveValue()
 	}

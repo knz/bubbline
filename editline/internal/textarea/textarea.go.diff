@@ -1,5 +1,5 @@
 --- textarea.go.orig	2023-01-24 19:21:36.201018000 +0100
-+++ textarea.go	2023-01-24 19:34:37.352781000 +0100
++++ textarea.go	2023-02-05 12:13:30.385554000 +0100
 @@ -1,3 +1,9 @@
 +// The code below is imported from
 +// https://github.com/charmbracelet/bubbles/tree/master/textarea
@@ -90,7 +90,12 @@
  	// Cursor column.
  	col int
  
-@@ -325,7 +336,7 @@
+@@ -321,11 +332,11 @@
+ 	lstart := 0
+ 	for i := 0; i < len(runes); i++ {
+ 		if runes[i] == '\n' {
+-			lines = append(lines, runes[lstart:i])
++			lines = append(lines, runes[lstart:i:i])
  			lstart = i + 1
  		}
  	}

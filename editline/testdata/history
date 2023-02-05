@@ -158,3 +158,18 @@ TEA QUIT
 -- history:
 this is a big world indeed
 hello world
+
+# Regression test: pressing down on a multi-line input
+# doesn't wrap back to the first line.
+run
+reset
+configure_check_eof
+enter "hello"
+enter "world"
+key down
+----
+-- view:
+> "hello"                              ␤
+  "world"                              ␤
+  [7m [0m                                    ␤
+M-? toggle key help • C-d erase/stop🛇
