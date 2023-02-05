@@ -478,11 +478,16 @@ func (m *Model) updateTextSz() (cmd tea.Cmd) {
 
 	remaining := m.maxHeight - 1
 	if m.showCompletions {
-		// Don't let the completions exceed half of the screen size.
+		// Don't let the completions exceed 2/3rds of the screen size.
 		ch := m.completions.GetMaxHeight()
 		if ch+textHeight > remaining {
 			const minCompletionHeight = 4 // 1 row title, 1 row entry, 2 rows pagination
-			newCompletionHeight := clamp(ch, minCompletionHeight, remaining-textHeight)
+			var newCompletionHeight int
+			if maxHeight := remaining * 2 / 3; maxHeight > minCompletionHeight {
+				newCompletionHeight = clamp(ch, minCompletionHeight, maxHeight)
+			} else {
+				newCompletionHeight = clamp(ch, minCompletionHeight, minCompletionHeight)
+			}
 			m.completions.SetHeight(newCompletionHeight)
 		}
 		remaining -= m.completions.GetHeight()

@@ -17,11 +17,52 @@ TEA PRINT: {We're matching ""!}
 [;mnames[0m        ␤
  Alice       ␤
  Amanda      ␤
- Amy         ␤
- Andrew      ␤
              ␤
-  1/25       ␤
+  1/50       ␤
 (entry "Alice" has no description)␤
+> [7m [0m                                   ␤
+M-? toggle key help • C-c close/cancel🛇
+
+# If we press "/" during the menu, a filter comes up.
+run
+key /
+----
+-- view:
+Filter: [7m [0m    ␤
+ Alice       ␤
+ Amanda      ␤
+             ␤
+  1/50       ␤
+(entry "Alice" has no description)␤
+> [7m [0m                                   ␤
+M-? toggle key help • C-c close/cancel🛇
+
+# Entering text at the filter filters down the list.
+run
+type thur
+----
+-- view:
+Filter: hur[7m [0m ␤
+ Arthur      ␤
+             ␤
+             ␤
+             ␤
+(entry "Arthur" has no description)␤
+> [7m [0m                                   ␤
+M-? toggle key help • C-c close/cancel🛇
+
+# Pressing enter makes the filter disappear and
+# keeps the selection.
+run
+enter
+----
+-- view:
+[;mnames[0m        ␤
+ Arthur      ␤
+             ␤
+             ␤
+             ␤
+(entry "Arthur" has no description)␤
 > [7m [0m                                   ␤
 M-? toggle key help • C-c close/cancel🛇
 
@@ -31,8 +72,26 @@ run
 key enter
 ----
 -- view:
-> Alice [7m [0m                             ␤
+> Arthur [7m [0m                            ␤
 M-? toggle key help • C-d erase/stop🛇
+
+# Verify that if no entry is selected, nothing bad happens
+# (regression test for an earlier display bug)
+run
+key tab
+key /
+type invalid
+----
+TEA PRINT: {We're matching ""!}
+-- view:
+Filter: lid[7m [0m␤
+            ␤
+            ␤
+            ␤
+            ␤
+(no entry seleted)␤
+> Arthur [7m [0m                            ␤
+M-? toggle key help • C-c close/cancel🛇
 
 # With a prefix, the completion list is pre-filtered.
 run
@@ -44,11 +103,8 @@ TEA PRINT: {We're matching "B"!}
 -- view:
 [;mnames[0m …  ␤
  Barbara ␤
- Betty   ␤
- Brenda  ␤
- Brian   ␤
          ␤
-         ␤
+  ••••   ␤
 (entry "Barbara" has no description)␤
 > B[7m [0m                                   ␤
 M-? toggle key help • C-c close/cancel🛇
@@ -60,11 +116,8 @@ key alt+?
 -- view:
 [;mnames[0m …  ␤
  Barbara ␤
- Betty   ␤
- Brenda  ␤
- Brian   ␤
          ␤
-         ␤
+  ••••   ␤
 (entry "Barbara" has no description)␤
 > B[7m [0m                                   ␤
 →/M-n         next column     ␤
@@ -79,11 +132,8 @@ key alt+?
 -- view:
 [;mnames[0m …  ␤
  Barbara ␤
- Betty   ␤
- Brenda  ␤
- Brian   ␤
          ␤
-         ␤
+  ••••   ␤
 (entry "Barbara" has no description)␤
 > B[7m [0m                                   ␤
 M-? toggle key help • C-c close/cancel🛇
@@ -108,9 +158,8 @@ TEA PRINT: {We're matching "Chr"!}
 -- view:
 [;mnames[0m        ␤
  Christine   ␤
- Christopher ␤
              ␤
-             ␤
+  ••         ␤
 (entry "Christine" has no description)␤
 > Christ[7m [0m                              ␤
 M-? toggle key help • C-c close/cancel🛇
