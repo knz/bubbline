@@ -593,8 +593,9 @@ func (m *Model) autoComplete() (cmd tea.Cmd) {
 			// Insert a space.
 			m.text.InsertRune(' ')
 		}
-	}
-	if hasPrefill {
+		// Display the prefill and position the cursor. We need to do this
+		// even though we do it again below, as we need the result to set
+		// the completion widget size.
 		cmd = tea.Batch(cmd, m.updateTextSz())
 	}
 	if !justOne && newCompletions != nil {
@@ -602,6 +603,8 @@ func (m *Model) autoComplete() (cmd tea.Cmd) {
 		m.compCandidates = newCompletions
 		m.completions.SetValues(newCompletions)
 		m.completions.Focus()
+		// Clamp the completion widget to an approproiate height.
+		cmd = tea.Batch(cmd, m.updateTextSz())
 	}
 	return cmd
 }
