@@ -103,8 +103,11 @@ TEA PRINT: {We're matching "B"!}
 -- view:
 [;mnames[0m …  ␤
  Barbara ␤
+ Betty   ␤
+ Brenda  ␤
+ Brian   ␤
          ␤
-  ••••   ␤
+         ␤
 (entry "Barbara" has no description)␤
 > B[7m [0m                                   ␤
 M-? toggle key help • C-c close/cancel🛇
@@ -116,8 +119,11 @@ key alt+?
 -- view:
 [;mnames[0m …  ␤
  Barbara ␤
+ Betty   ␤
+ Brenda  ␤
+ Brian   ␤
          ␤
-  ••••   ␤
+         ␤
 (entry "Barbara" has no description)␤
 > B[7m [0m                                   ␤
 →/M-n         next column     ␤
@@ -132,8 +138,11 @@ key alt+?
 -- view:
 [;mnames[0m …  ␤
  Barbara ␤
+ Betty   ␤
+ Brenda  ␤
+ Brian   ␤
          ␤
-  ••••   ␤
+         ␤
 (entry "Barbara" has no description)␤
 > B[7m [0m                                   ␤
 M-? toggle key help • C-c close/cancel🛇
@@ -158,8 +167,9 @@ TEA PRINT: {We're matching "Chr"!}
 -- view:
 [;mnames[0m        ␤
  Christine   ␤
+ Christopher ␤
              ␤
-  ••         ␤
+             ␤
 (entry "Christine" has no description)␤
 > Christ[7m [0m                              ␤
 M-? toggle key help • C-c close/cancel🛇

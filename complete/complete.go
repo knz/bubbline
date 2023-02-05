@@ -302,7 +302,7 @@ func (m *Model) SetValues(values Values) {
 	m.maxHeight++
 
 	// Propagate the logical heights to all lists.
-	m.SetHeight(m.height)
+	m.SetHeight(m.maxHeight)
 
 	wasFocused := m.focused
 	m.Blur()
