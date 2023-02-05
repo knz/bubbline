@@ -449,12 +449,18 @@ func (m *Model) View() string {
 		contents[i] = l.View()
 	}
 	result := lipgloss.JoinHorizontal(lipgloss.Top, contents...)
-	item := m.valueLists[m.selectedList].SelectedItem().(candidateItem)
-	desc := item.Description()
-	if desc != "" {
-		desc = m.Styles.Description.Render(truncate.String(item.Title()+": "+desc, uint(m.width)))
+	curSelected := m.valueLists[m.selectedList].SelectedItem()
+	var desc string
+	if curSelected == nil {
+		desc = m.Styles.PlaceholderDescription.Render("(no entry seleted)")
 	} else {
-		desc = m.Styles.PlaceholderDescription.Render(fmt.Sprintf("(entry %q has no description)", item.Title()))
+		item := curSelected.(candidateItem)
+		desc = item.Description()
+		if desc != "" {
+			desc = m.Styles.Description.Render(truncate.String(item.Title()+": "+desc, uint(m.width)))
+		} else {
+			desc = m.Styles.PlaceholderDescription.Render(fmt.Sprintf("(entry %q has no description)", item.Title()))
+		}
 	}
 	return result + "\n" + desc
 }

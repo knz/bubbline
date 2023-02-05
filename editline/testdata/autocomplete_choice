@@ -83,6 +83,26 @@ key enter
 > Arthur [7m [0m                            ␤
 M-? toggle key help • C-d erase/stop🛇
 
+# Verify that if no entry is selected, nothing bad happens
+# (regression test for an earlier display bug)
+run
+key tab
+key /
+type invalid
+----
+TEA PRINT: {We're matching ""!}
+-- view:
+Filter: lid[7m [0m␤
+            ␤
+            ␤
+            ␤
+            ␤
+            ␤
+            ␤
+(no entry seleted)␤
+> Arthur [7m [0m                            ␤
+M-? toggle key help • C-c close/cancel🛇
+
 # With a prefix, the completion list is pre-filtered.
 run
 reset
