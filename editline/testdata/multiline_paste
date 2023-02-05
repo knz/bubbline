@@ -1,0 +1,25 @@
+run
+reset
+resize 40 25
+paste "some text\nmore lines\nagain lines\nfinal line"
+----
+TEA WINDOW SIZE: {40 25}
+-- view:
+> some text                           ␤
+  more lines                          ␤
+  again lines                         ␤
+  final line[7m [0m                         ␤
+M-? toggle key help • C-d erase/stop🛇
+
+# Regression test for insert after multi-line paste.
+run
+key up
+key up
+type some more text
+----
+-- view:
+> some text                           ␤
+  more linessome more text[7m [0m           ␤
+  again lines                         ␤
+  final line                          ␤
+M-? toggle key help • C-d erase/stop🛇
