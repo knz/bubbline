@@ -25,13 +25,62 @@ TEA PRINT: {We're matching ""!}
 > [7m [0m                                   ␤
 M-? toggle key help • C-c close/cancel🛇
 
+# If we press "/" during the menu, a filter comes up.
+run
+key /
+----
+-- view:
+Filter: [7m [0m    ␤
+ Alice       ␤
+ Amanda      ␤
+ Amy         ␤
+ Andrew      ␤
+             ␤
+  1/25       ␤
+(entry "Alice" has no description)␤
+> [7m [0m                                   ␤
+M-? toggle key help • C-c close/cancel🛇
+
+# Entering text at the filter filters down the list.
+run
+type thur
+----
+-- view:
+Filter: hur[7m [0m ␤
+ Arthur      ␤
+             ␤
+             ␤
+             ␤
+             ␤
+             ␤
+(entry "Arthur" has no description)␤
+> [7m [0m                                   ␤
+M-? toggle key help • C-c close/cancel🛇
+
+# Pressing enter makes the filter disappear and
+# keeps the selection.
+run
+enter
+----
+-- view:
+[;mnames[0m        ␤
+ Arthur      ␤
+             ␤
+             ␤
+             ␤
+             ␤
+             ␤
+(entry "Arthur" has no description)␤
+> [7m [0m                                   ␤
+M-? toggle key help • C-c close/cancel🛇
+
 # If we press enter during the menu, this selects
 # the current entry.
 run
 key enter
 ----
 -- view:
-> Alice [7m [0m                             ␤
+> Arthur [7m [0m                            ␤
 M-? toggle key help • C-d erase/stop🛇
 
 # With a prefix, the completion list is pre-filtered.
