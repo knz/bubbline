@@ -239,7 +239,7 @@ func (m *Model) SetHeight(height int) {
 	m.height = clamp(height, 2, m.maxHeight)
 	for _, l := range m.valueLists {
 		l.SetHeight(m.height - 1)
-		// Force recomputing the keybindigns, which
+		// Force recomputing the keybindings, which
 		// is dependent on the page size.
 		l.SetFilteringEnabled(true)
 	}
@@ -301,8 +301,8 @@ func (m *Model) SetValues(values Values) {
 	// Make space for the description.
 	m.maxHeight++
 
-	// Propagate the logical weights to all lists.
-	m.SetHeight(m.maxHeight)
+	// Propagate the logical heights to all lists.
+	m.SetHeight(m.height)
 
 	wasFocused := m.focused
 	m.Blur()
