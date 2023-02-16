@@ -148,6 +148,7 @@ run
 key ctrl+r
 type world
 key alt+enter
+noop
 ----
 TEA QUIT
 -- view:

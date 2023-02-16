@@ -20,6 +20,7 @@ M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show pr
 # By default, the enter key completes the input.
 run observe=(view,value)
 enter
+noop
 ----
 TEA QUIT
 -- view:

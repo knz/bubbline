@@ -10,6 +10,7 @@ M-? toggle key help • C-d erase/stop🛇
 # By default, the "enter" key terminates the input.
 run observe=(view,value)
 enter hello world
+noop
 ----
 TEA QUIT
 -- view:
@@ -37,6 +38,7 @@ M-? toggle key help • C-d erase/stop🛇
 # the enter key will terminate input again.
 run observe=(view,value)
 enter this is the end.
+noop
 ----
 TEA QUIT
 -- view:
@@ -63,6 +65,7 @@ M-? toggle key help • C-d erase/stop🛇
 # However then a regular enter will still terminate the input.
 run observe=(view,value)
 enter
+noop
 ----
 TEA QUIT
 -- view:
@@ -81,6 +84,7 @@ enter hello world
 enter more text
 type blah
 key alt+enter
+noop
 ----
 TEA QUIT
 -- view:

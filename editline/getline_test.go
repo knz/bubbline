@@ -86,6 +86,7 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 		os.Unsetenv("EDITOR")
 	case "set_editor_env":
 		os.Setenv("EDITOR", "invalid")
+	case "noop":
 	case "reset":
 		t.Reset()
 	case "focus":
