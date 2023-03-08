@@ -24,6 +24,7 @@ M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show pr
 # Ctrl+C on empty also terminates and sets error.
 run observe=(view,err)
 key ctrl+c
+noop
 ----
 TEA QUIT
 -- view:

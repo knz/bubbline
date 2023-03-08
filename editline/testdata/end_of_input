@@ -48,6 +48,7 @@ M-? toggle key help • C-d erase/stop🛇
 # If the input is empty, ctrl+d is end-of-input.
 run observe=(view,err)
 key ctrl+d
+noop
 ----
 TEA QUIT
 -- view:
