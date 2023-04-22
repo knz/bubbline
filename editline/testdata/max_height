@@ -1,0 +1,31 @@
+run
+limit_max_height
+reset
+resize 40 25
+----
+TEA WINDOW SIZE: {40 25}
+-- view:
+> [7m [0m                                   ␤
+M-? toggle key help • C-d erase/stop🛇
+
+run observe=(view,value)
+paste "some text\nmore lines\nagain lines\nfinal line"
+----
+-- view:
+> some text                           ␤
+  more lines                          ␤
+  again lines[7m [0m                        ␤
+M-? toggle key help • C-d erase/stop🛇
+-- value:
+"some text\nmore lines\nagain lines"
+
+run observe=(view,value)
+enter some more text
+----
+-- view:
+> some text                           ␤
+  more lines                          ␤
+  again linessome more text           ␤
+M-? toggle key help • C-d erase/stop🛇
+-- value:
+"some text\nmore lines\nagain linessome more text"
