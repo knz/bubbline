@@ -136,6 +136,14 @@ type Model struct {
 	// Set to zero or less for no limit.
 	CharLimit int
 
+	// MaxHeight is the maximum height of the input in lines.
+	// Set to zero or less for no limit.
+	MaxHeight int
+
+	// MaxWidth is the maximum width of the input in characters.
+	// Set to zero or less for no limit.
+	MaxWidth int
+
 	// CursorMode determines how the cursor is displayed.
 	CursorMode cursor.Mode
 
@@ -1023,6 +1031,8 @@ func (m *Model) Reset() {
 	m.hctrl.c.prevValue = ""
 	m.hctrl.c.prevCursor = 0
 	m.text.CharLimit = m.CharLimit
+	m.text.MaxHeight = m.MaxHeight
+	m.text.MaxWidth = m.MaxWidth
 	// Width will be set by Update below on init.
 	m.text.SetHeight(1)
 	m.completions.SetHeight(1)
