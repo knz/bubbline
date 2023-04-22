@@ -120,6 +120,10 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 		t.CursorMode = cursor.CursorBlink
 	case "hide_cursor":
 		t.CursorMode = cursor.CursorHide
+	case "limit_max_width":
+		t.MaxWidth = 10
+	case "limit_max_height":
+		t.MaxHeight = 3
 	default:
 		return false, t, nil, nil
 	}
