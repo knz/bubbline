@@ -1,0 +1,10 @@
+run
+reset
+resize 40 25
+resize 0 0
+----
+TEA WINDOW SIZE: {40 25}
+TEA WINDOW SIZE: {0 0}
+-- view:
+> [7m [0m                                   ␤
+M-? toggle key help • C-d erase/stop🛇
