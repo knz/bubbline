@@ -34,7 +34,6 @@ type Style struct {
 	SearchInput struct {
 		PromptStyle      lipgloss.Style
 		TextStyle        lipgloss.Style
-		BackgroundStyle  lipgloss.Style
 		PlaceholderStyle lipgloss.Style
 		CursorStyle      lipgloss.Style
 	}
@@ -345,9 +344,8 @@ func (m *Model) Focus() tea.Cmd {
 	m.updatePrompt()
 	m.hctrl.pattern.PromptStyle = m.FocusedStyle.SearchInput.PromptStyle
 	m.hctrl.pattern.TextStyle = m.FocusedStyle.SearchInput.TextStyle
-	m.hctrl.pattern.BackgroundStyle = m.FocusedStyle.SearchInput.BackgroundStyle
 	m.hctrl.pattern.PlaceholderStyle = m.FocusedStyle.SearchInput.PlaceholderStyle
-	m.hctrl.pattern.CursorStyle = m.FocusedStyle.SearchInput.CursorStyle
+	m.hctrl.pattern.Cursor.Style = m.FocusedStyle.SearchInput.CursorStyle
 	m.completions.Focus()
 
 	var cmd tea.Cmd
@@ -366,9 +364,8 @@ func (m *Model) Blur() {
 	m.completions.Blur()
 	m.hctrl.pattern.PromptStyle = m.BlurredStyle.SearchInput.PromptStyle
 	m.hctrl.pattern.TextStyle = m.BlurredStyle.SearchInput.TextStyle
-	m.hctrl.pattern.BackgroundStyle = m.BlurredStyle.SearchInput.BackgroundStyle
 	m.hctrl.pattern.PlaceholderStyle = m.BlurredStyle.SearchInput.PlaceholderStyle
-	m.hctrl.pattern.CursorStyle = m.BlurredStyle.SearchInput.CursorStyle
+	m.hctrl.pattern.Cursor.Style = m.BlurredStyle.SearchInput.CursorStyle
 }
 
 // Init is part of the tea.Model interface.
