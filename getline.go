@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/knz/bubbline/complete"
 	"github.com/knz/bubbline/editline"
+	"github.com/knz/bubbline/highlight"
 	"github.com/knz/bubbline/history"
 )
 
@@ -28,6 +29,11 @@ func New() *Editor {
 }
 
 var _ tea.Model = (*Editor)(nil)
+
+// SetHighlighter sets the syntax highlighting implementation for the editor.
+func (m *Editor) SetHighlighter(h highlight.Highlighter) {
+	m.Model.Highlighter = h
+}
 
 // Update is part of the tea.Model interface.
 func (m *Editor) Update(imsg tea.Msg) (tea.Model, tea.Cmd) {
