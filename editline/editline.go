@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -795,7 +794,7 @@ func (m *Model) externalEdit() tea.Cmd {
 	if ed == "" {
 		return tea.Println("env var EDITOR empty or not set")
 	}
-	tempFile, err := ioutil.TempFile("", "bubbline*."+m.externalEditorExt)
+	tempFile, err := os.CreateTemp("", "bubbline*."+m.externalEditorExt)
 	if err != nil {
 		return tea.Printf("temp file creation error: %v", err)
 	}
