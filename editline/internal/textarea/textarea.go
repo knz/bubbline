@@ -18,7 +18,9 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/knz/bubbline/highlight"
 	rw "github.com/mattn/go-runewidth"
+	"github.com/muesli/reflow/ansi"
 )
 
 const (
@@ -189,6 +191,10 @@ type Model struct {
 	// MaxWidth is the maximum width of the text area in columns. If 0 or less,
 	// there's no limit.
 	MaxWidth int
+
+	// Highlighter is an interface that takes a line of text and returns
+	// a slice of styled tokens.
+	Highlighter highlight.Highlighter
 
 	// If promptFunc is set, it replaces Prompt as a generator for
 	// prompt strings at the beginning of each line.
@@ -1102,8 +1108,6 @@ func (m Model) View() string {
 	var style lipgloss.Style
 	lineInfo := m.LineInfo()
 
-	var newLines int
-
 	displayLine := 0
 	for l, line := range m.value {
 		wrappedLines := wrap(line, m.width)
@@ -1115,6 +1119,7 @@ func (m Model) View() string {
 		}
 
 		for wl, wrappedLine := range wrappedLines {
+			// Standard prompt and line number rendering
 			prompt := m.getPromptString(displayLine)
 			prompt = m.style.Prompt.Render(prompt)
 			s.WriteString(style.Render(prompt))
@@ -1132,35 +1137,69 @@ func (m Model) View() string {
 				}
 			}
 
-			strwidth := rw.StringWidth(string(wrappedLine))
-			padding := m.width - strwidth
-			// If the trailing space causes the line to be wider than the
-			// width, we should not draw it to the screen since it will result
-			// in an extra space at the end of the line which can look off when
-			// the cursor line is showing.
-			if strwidth > m.width {
-				// The character causing the line to be wider than the width is
-				// guaranteed to be a space since any other character would
-				// have been wrapped.
-				wrappedLine = []rune(strings.TrimSuffix(string(wrappedLine), " "))
-				padding -= m.width - strwidth
-			}
-			if m.row == l && lineInfo.RowOffset == wl {
-				s.WriteString(style.Render(string(wrappedLine[:lineInfo.ColumnOffset])))
-				if m.col >= len(line) && lineInfo.CharOffset >= m.width {
+			// Token-Based Rendering
+			isCursorLine := (m.row == l && lineInfo.RowOffset == wl)
+			plainLine := string(wrappedLine)
+
+			// We build the line's visible content in a temporary builder to measure it later.
+			var lineContentBuilder strings.Builder
+
+			if isCursorLine && m.Highlighter != nil {
+				tokens := m.Highlighter.Highlight(plainLine)
+				charCount := 0
+				cursorPlaced := false
+
+				for _, token := range tokens {
+					if !cursorPlaced && charCount+len(token.Value) > lineInfo.ColumnOffset {
+						// The cursor is in this token. Split it.
+						splitIndex := lineInfo.ColumnOffset - charCount
+						if splitIndex < 0 {
+							splitIndex = 0
+						}
+
+						beforeCursor := token.Value[:splitIndex]
+						atCursor := ""
+						afterCursor := ""
+						if len(token.Value) > splitIndex {
+							atCursor = string(token.Value[splitIndex])
+							afterCursor = token.Value[splitIndex+1:]
+						}
+
+						lineContentBuilder.WriteString(token.Style.Render(beforeCursor))
+						m.Cursor.SetChar(atCursor)
+						lineContentBuilder.WriteString(m.Cursor.View())
+						lineContentBuilder.WriteString(token.Style.Render(afterCursor))
+
+						cursorPlaced = true
+					} else {
+						lineContentBuilder.WriteString(token.Style.Render(token.Value))
+					}
+					charCount += rw.StringWidth(token.Value)
+				}
+				if !cursorPlaced && charCount == lineInfo.ColumnOffset {
 					m.Cursor.SetChar(" ")
-					s.WriteString(m.Cursor.View())
-				} else {
-					m.Cursor.SetChar(string(wrappedLine[lineInfo.ColumnOffset]))
-					s.WriteString(style.Render(m.Cursor.View()))
-					s.WriteString(style.Render(string(wrappedLine[lineInfo.ColumnOffset+1:])))
+					lineContentBuilder.WriteString(m.Cursor.View())
+				}
+
+			} else if m.Highlighter != nil {
+				tokens := m.Highlighter.Highlight(plainLine)
+				for _, token := range tokens {
+					lineContentBuilder.WriteString(token.Style.Render(token.Value))
 				}
 			} else {
-				s.WriteString(style.Render(string(wrappedLine)))
+				lineContentBuilder.WriteString(plainLine)
 			}
-			s.WriteString(style.Render(strings.Repeat(" ", max(0, padding))))
+
+			// Now that the line's content is built, measure its visible width using the ansi package.
+			lineContentString := lineContentBuilder.String()
+			visibleWidth := ansi.PrintableRuneWidth(lineContentString)
+
+			s.WriteString(lineContentString)
+
+			// Calculate and write padding based on the correct visible width.
+			padding := m.width - visibleWidth
+			s.WriteString(strings.Repeat(" ", max(0, padding)))
 			s.WriteRune('\n')
-			newLines++
 		}
 	}
 
