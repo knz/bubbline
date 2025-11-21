@@ -33,6 +33,11 @@ type Style struct {
 	SearchInput struct {
 		PromptStyle      lipgloss.Style
 		TextStyle        lipgloss.Style
+		// BackgroundStyle is unused.
+		//
+		// Deprecated: kept for backward compatibility; the underlying
+		// bubbles/textinput widget removed background styling and this field has no effect.
+		BackgroundStyle  lipgloss.Style
 		PlaceholderStyle lipgloss.Style
 		CursorStyle      lipgloss.Style
 	}
