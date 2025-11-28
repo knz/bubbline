@@ -8,8 +8,10 @@ import (
 	"testing"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/cockroachdb/datadriven"
 	"github.com/knz/catwalk"
+	"github.com/muesli/termenv"
 )
 
 func TestTextArea(t *testing.T) {
@@ -17,6 +19,11 @@ func TestTextArea(t *testing.T) {
 		m := testModel{
 			text: New(),
 		}
+
+		// Ensure the cursor is visible in the test outputs. We want this
+		// because we want to check that event processing positions the
+		// cursor correctly.
+		lipgloss.SetColorProfile(termenv.ANSI)
 
 		catwalk.RunModel(t, path, &m,
 			catwalk.WithUpdater(testCmd),

@@ -4,33 +4,33 @@ focus
 enter hello, world!
 ----
 -- view:
-@@> 1 hello, world!                     ␤
-  > 2 [7m [0m                                 ␤
-  > ~                                   ␤
-! > ~                                   ␤
-  > ~                                   ␤
-  > ~                                   🛇
+[37m@@>[0m[37m 1 [0mhello, world!                     ␤
+[40m[37m  >[0m[0m[40m 2 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                 [0m␤
+[37m  >[0m[30m ~ [0m                                  ␤
+[37m! >[0m[30m ~ [0m                                  ␤
+[37m  >[0m[30m ~ [0m                                  ␤
+[37m  >[0m[30m ~ [0m                                  🛇
 
 run
 insert "one\ntwo\nthree\nfour\nfive\nsix\n"
 resetviewcursordown
 ----
 -- view:
-  > 3 two                               ␤
-! > 4 three                             ␤
-  > 5 four                              ␤
-  > 6 five                              ␤
-  > 7 six                               ␤
-  > 8 [7m [0m                                 🛇
+[37m  >[0m[37m 3 [0mtwo                               ␤
+[37m! >[0m[37m 4 [0mthree                             ␤
+[37m  >[0m[37m 5 [0mfour                              ␤
+[37m  >[0m[37m 6 [0mfive                              ␤
+[37m  >[0m[37m 7 [0msix                               ␤
+[40m[37m  >[0m[0m[40m 8 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                 [0m🛇
 
 run
 key alt+<
 resetviewcursordown
 ----
 -- view:
-@@> 1 [7mh[0mello, world!                     ␤
-  > 2 one                               ␤
-  > 3 two                               ␤
-! > 4 three                             ␤
-  > 5 four                              ␤
-  > 6 five                              🛇
+[40m[37m@@>[0m[0m[40m 1 [0m[40m[0m[40m[7mh[0m[0m[40mello, world! [0m[40m                    [0m␤
+[37m  >[0m[37m 2 [0mone                               ␤
+[37m  >[0m[37m 3 [0mtwo                               ␤
+[37m! >[0m[37m 4 [0mthree                             ␤
+[37m  >[0m[37m 5 [0mfour                              ␤
+[37m  >[0m[37m 6 [0mfive                              🛇

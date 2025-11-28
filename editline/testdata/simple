@@ -4,16 +4,16 @@ resize 80 25
 ----
 TEA WINDOW SIZE: {80 25}
 -- view:
-> [7m [0m                                                                           ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                                                           [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 
 run observe=(view,value)
 type hello world!
 ----
 -- view:
-> hello world![7m [0m                                                               ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[40m[37m> [0m[0m[40mhello world![0m[40m[7m [0m[0m[40m[0m[40m                                                               [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- value:
 "hello world!"
 
@@ -24,8 +24,8 @@ noop
 ----
 TEA QUIT
 -- view:
-> hello world!                                                                ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[37m[37m> [0m[0m[37mhello world![0m[37m[37m [0m[0m[37m[0m[37m                                                               [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- value:
 "hello world!"
 
@@ -37,9 +37,9 @@ key ctrl+o
 type world
 ----
 -- view:
-> hello                                                                        ␤
-  world[7m [0m                                                                       ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[37m> [0mhello                                                                        ␤
+[40m[37m  [0m[0m[40mworld[0m[40m[7m [0m[0m[40m[0m[40m                                                                       [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 
 # If there's empty newlines at the end, they are included in
@@ -51,9 +51,9 @@ key ctrl+o
 key ctrl+o
 ----
 -- view:
-> hello world                                                                  ␤
-                                                                               ␤
-  [7m [0m                                                                            ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[37m> [0mhello world                                                                  ␤
+[37m  [0m                                                                             ␤
+[40m[37m  [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                                                            [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- value:
 "hello world\n\n"

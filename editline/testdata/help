@@ -4,23 +4,23 @@ resize 90 25
 ----
 TEA WINDOW SIZE: {90 25}
 -- view:
-> [7m [0m                                                                                     ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                                                                     [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 
 run
 key alt+?
 ----
 -- view:
-> [7m [0m                                                                                     ␤
-M-?       toggle key help     C-c        clear/cancel      C-m/⤶     new line/enter   ␤
-C-f/→     next char           C-b/←      prev char         C-o       force newline    ␤
-M-f/C-→   next word           M-b/C-←    prev word         M-⤶/M-C-m force complete   ␤
-M->/C-end go to end           M-</C-home go to begin       C-l       refresh display  ␤
-del       del next char       C-h/bksp   del prev char     C-d       del next char/EOF␤
-M-d/M-del del next word       C-w/M-bksp del prev word     M-o/ins   toggle overwrite ␤
-C-e/end   end of line         C-a/home   start of line     C-t       transpose char   ␤
-C-k       del line end        C-u        del line start    M-l       lowercase word   ␤
-C-n/↓     move down           C-p/↑      move up           M-u       uppercase word   ␤
-M-q       reflow line         M-S-q/M-`  reflow all        tab       try autocomplete ␤
-M-.       hide/show prompt                                                            🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                                                                     [0m␤
+[90mM-?[0m       [90mtoggle key help[0m [90m    [0m[90mC-c[0m        [90mclear/cancel[0m  [90m    [0m[90mC-m/⤶[0m     [90mnew line/enter[0m   ␤
+[90mC-f/→[0m     [90mnext char[0m           [90mC-b/←[0m      [90mprev char[0m         [90mC-o[0m       [90mforce newline[0m    ␤
+[90mM-f/C-→[0m   [90mnext word[0m           [90mM-b/C-←[0m    [90mprev word[0m         [90mM-⤶/M-C-m[0m [90mforce complete[0m   ␤
+[90mM->/C-end[0m [90mgo to end[0m           [90mM-</C-home[0m [90mgo to begin[0m       [90mC-l[0m       [90mrefresh display[0m  ␤
+[90mdel[0m       [90mdel next char[0m       [90mC-h/bksp[0m   [90mdel prev char[0m     [90mC-d[0m       [90mdel next char/EOF[0m␤
+[90mM-d/M-del[0m [90mdel next word[0m       [90mC-w/M-bksp[0m [90mdel prev word[0m     [90mM-o/ins[0m   [90mtoggle overwrite[0m ␤
+[90mC-e/end[0m   [90mend of line[0m         [90mC-a/home[0m   [90mstart of line[0m     [90mC-t[0m       [90mtranspose char[0m   ␤
+[90mC-k[0m       [90mdel line end[0m        [90mC-u[0m        [90mdel line start[0m    [90mM-l[0m       [90mlowercase word[0m   ␤
+[90mC-n/↓[0m     [90mmove down[0m           [90mC-p/↑[0m      [90mmove up[0m           [90mM-u[0m       [90muppercase word[0m   ␤
+[90mM-q[0m       [90mreflow line[0m         [90mM-S-q/M-`[0m  [90mreflow all[0m        [90mtab[0m       [90mtry autocomplete[0m ␤
+[90mM-.[0m       [90mhide/show prompt[0m                                                            🛇

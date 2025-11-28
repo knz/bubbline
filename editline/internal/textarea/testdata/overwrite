@@ -5,12 +5,12 @@ key up
 key ctrl+a
 ----
 -- view:
-┃  1 [7mh[0mello                              ␤
-┃  2 world                              ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mh[0m[0m[40mello [0m[40m                             [0m␤
+[37m┃ [0m[37m 2 [0mworld                              ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 
 # Enter overwrite mode then type over.
 run observe=(view,value)
@@ -18,12 +18,12 @@ key alt+o
 type un
 ----
 -- view:
-┃  1 un[7ml[0mlo                              ␤
-┃  2 world                              ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mun[0m[40m[7ml[0m[0m[40mlo [0m[40m                             [0m␤
+[37m┃ [0m[37m 2 [0mworld                              ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- value:
 "unllo\nworld"
 
@@ -32,11 +32,11 @@ run observe=(view,value)
 type iverse
 ----
 -- view:
-┃  1 universe[7m [0m                          ␤
-┃  2 world                              ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40muniverse[0m[40m[7m [0m[0m[40m[0m[40m                          [0m␤
+[37m┃ [0m[37m 2 [0mworld                              ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- value:
 "universe\nworld"

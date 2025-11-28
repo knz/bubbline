@@ -5,8 +5,8 @@ set_autocomplete_2
 ----
 TEA WINDOW SIZE: {40 10}
 -- view:
-> [7m [0m                                   ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # No context brings up full completion menu.
 run
@@ -14,42 +14,42 @@ key tab
 ----
 TEA PRINT: {We're matching ""!}
 -- view:
-[;mnames[0m        ␤
- Alice       ␤
+[93;104mnames[0m        ␤
+ [95mAlice       [0m␤
  Amanda      ␤
              ␤
-  1/50       ␤
-(entry "Alice" has no description)␤
-> [7m [0m                                   ␤
-M-? toggle key help • C-c close/cancel🛇
+  [90m1/50[0m       ␤
+[90m(entry "Alice" has no description)[0m␤
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-c[0m [90mclose/cancel[0m[90m • [0m[90m→/M-n[0m [90mnext column[0m[90m • [0m[90mC-j/enter/tab[0m [90maccept[0m[90m • [0m[90mC-p/↑[0m [90mprev entry[0m[90m • [0m[90mC-n/↓[0m [90mnext entry[0m[90m • [0m[90m/[0m [90mfilter[0m[90m • [0m[90mM-?[0m [90mtoggle key help[0m🛇
 
 # If we press "/" during the menu, a filter comes up.
 run
 key /
 ----
 -- view:
-Filter: [7m [0m    ␤
- Alice       ␤
+[93mFilter: [0m[7;95m [0m    ␤
+ [95mAlice       [0m␤
  Amanda      ␤
              ␤
-  1/50       ␤
-(entry "Alice" has no description)␤
-> [7m [0m                                   ␤
-M-? toggle key help • C-c close/cancel🛇
+  [90m1/50[0m       ␤
+[90m(entry "Alice" has no description)[0m␤
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-c[0m [90mclose/cancel[0m[90m • [0m[90mC-j/enter[0m [90maccept filter[0m[90m • [0m[90mC-g[0m [90mclear/cancel[0m🛇
 
 # Entering text at the filter filters down the list.
 run
 type thur
 ----
 -- view:
-Filter: hur[7m [0m ␤
- Arthur      ␤
+[93mFilter: [0mhur[7;95m [0m ␤
+ [95mArthur      [0m␤
              ␤
              ␤
-             ␤
-(entry "Arthur" has no description)␤
-> [7m [0m                                   ␤
-M-? toggle key help • C-c close/cancel🛇
+  [90m•[0m[90m•[0m[90m•[0m[90m•[0m[90m•[0m[90m•[0m[90m•[0m[90m•[0m   ␤
+[90m(entry "Arthur" has no description)[0m␤
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-c[0m [90mclose/cancel[0m[90m • [0m[90mC-j/enter[0m [90maccept filter[0m[90m • [0m[90mC-g[0m [90mclear/cancel[0m🛇
 
 # Pressing enter makes the filter disappear and
 # keeps the selection.
@@ -57,14 +57,14 @@ run
 enter
 ----
 -- view:
-[;mnames[0m        ␤
- Arthur      ␤
+[93;104mnames[0m        ␤
+ [95mArthur      [0m␤
              ␤
              ␤
              ␤
-(entry "Arthur" has no description)␤
-> [7m [0m                                   ␤
-M-? toggle key help • C-c close/cancel🛇
+[90m(entry "Arthur" has no description)[0m␤
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-c[0m [90mclose/cancel[0m[90m • [0m[90m→/M-n[0m [90mnext column[0m[90m • [0m[90mC-j/enter/tab[0m [90maccept[0m[90m • [0m[90mC-p/↑[0m [90mprev entry[0m[90m • [0m[90mC-n/↓[0m [90mnext entry[0m[90m • [0m[90m/[0m [90mfilter[0m[90m • [0m[90mC-g[0m [90mclear/cancel[0m[90m • [0m[90mC-j/enter[0m [90maccept filter[0m[90m • [0m[90mM-?[0m [90mtoggle key help[0m🛇
 
 # If we press enter during the menu, this selects
 # the current entry.
@@ -72,8 +72,8 @@ run
 key enter
 ----
 -- view:
-> Arthur [7m [0m                            ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mArthur [0m[40m[7m [0m[0m[40m[0m[40m                            [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Verify that if no entry is selected, nothing bad happens
 # (regression test for an earlier display bug)
@@ -84,14 +84,14 @@ type invalid
 ----
 TEA PRINT: {We're matching ""!}
 -- view:
-Filter: lid[7m [0m␤
+[93mFilter: [0mlid[7;95m [0m␤
             ␤
             ␤
             ␤
             ␤
-(no entry seleted)␤
-> Arthur [7m [0m                            ␤
-M-? toggle key help • C-c close/cancel🛇
+[90m(no entry seleted)[0m␤
+[40m[37m> [0m[0m[40mArthur [0m[40m[7m [0m[0m[40m[0m[40m                            [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-c[0m [90mclose/cancel[0m[90m • [0m[90mC-j/enter[0m [90maccept filter[0m[90m • [0m[90mC-g[0m [90mclear/cancel[0m🛇
 
 # With a prefix, the completion list is pre-filtered.
 run
@@ -101,59 +101,59 @@ key tab
 ----
 TEA PRINT: {We're matching "B"!}
 -- view:
-[;mnames[0m …  ␤
- Barbara ␤
+[93;104mnames[0m    ␤
+ [95mBarbara [0m␤
  Betty   ␤
  Brenda  ␤
  Brian   ␤
          ␤
          ␤
-(entry "Barbara" has no description)␤
-> B[7m [0m                                   ␤
-M-? toggle key help • C-c close/cancel🛇
+[90m(entry "Barbara" has no description)[0m␤
+[40m[37m> [0m[0m[40mB[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-c[0m [90mclose/cancel[0m[90m • [0m[90m→/M-n[0m [90mnext column[0m[90m • [0m[90mC-j/enter/tab[0m [90maccept[0m[90m • [0m[90mC-p/↑[0m [90mprev entry[0m[90m • [0m[90mC-n/↓[0m [90mnext entry[0m[90m • [0m[90m/[0m [90mfilter[0m[90m • [0m[90mM-?[0m [90mtoggle key help[0m🛇
 
 # We can hide/show more key help.
 run
 key alt+?
 ----
 -- view:
-[;mnames[0m …  ␤
- Barbara ␤
+[93;104mnames[0m    ␤
+ [95mBarbara [0m␤
  Betty   ␤
  Brenda  ␤
  Brian   ␤
          ␤
          ␤
-(entry "Barbara" has no description)␤
-> B[7m [0m                                   ␤
-→/M-n         next column     ␤
-←/M-p         prev column     ␤
-C-j/enter/tab accept          ␤
-C-c           close/cancel    🛇
+[90m(entry "Barbara" has no description)[0m␤
+[40m[37m> [0m[0m[40mB[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90m→/M-n[0m         [90mnext column[0m  [90m…[0m␤
+[90m←/M-p[0m         [90mprev column[0m   ␤
+[90mC-j/enter/tab[0m [90maccept[0m        ␤
+[90mC-c[0m           [90mclose/cancel[0m  🛇
 
 
 run
 key alt+?
 ----
 -- view:
-[;mnames[0m …  ␤
- Barbara ␤
+[93;104mnames[0m    ␤
+ [95mBarbara [0m␤
  Betty   ␤
  Brenda  ␤
  Brian   ␤
          ␤
          ␤
-(entry "Barbara" has no description)␤
-> B[7m [0m                                   ␤
-M-? toggle key help • C-c close/cancel🛇
+[90m(entry "Barbara" has no description)[0m␤
+[40m[37m> [0m[0m[40mB[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-c[0m [90mclose/cancel[0m[90m • [0m[90m→/M-n[0m [90mnext column[0m[90m • [0m[90mC-j/enter/tab[0m [90maccept[0m[90m • [0m[90mC-p/↑[0m [90mprev entry[0m[90m • [0m[90mC-n/↓[0m [90mnext entry[0m[90m • [0m[90m/[0m [90mfilter[0m[90m • [0m[90mM-?[0m [90mtoggle key help[0m🛇
 
 # Completion is canceled without input upon ctrl+c.
 run
 key ctrl+c
 ----
 -- view:
-> B[7m [0m                                   ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mB[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # If the pre-filtered list of completions contains a prefix longer
 # than the current input, that prefix is pre-entered even as the
@@ -165,14 +165,14 @@ key tab
 ----
 TEA PRINT: {We're matching "Chr"!}
 -- view:
-[;mnames[0m        ␤
- Christine   ␤
+[93;104mnames[0m        ␤
+ [95mChristine   [0m␤
  Christopher ␤
              ␤
              ␤
-(entry "Christine" has no description)␤
-> Christ[7m [0m                              ␤
-M-? toggle key help • C-c close/cancel🛇
+[90m(entry "Christine" has no description)[0m␤
+[40m[37m> [0m[0m[40mChrist[0m[40m[7m [0m[0m[40m[0m[40m                              [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-c[0m [90mclose/cancel[0m[90m • [0m[90m→/M-n[0m [90mnext column[0m[90m • [0m[90mC-j/enter/tab[0m [90maccept[0m[90m • [0m[90mC-p/↑[0m [90mprev entry[0m[90m • [0m[90mC-n/↓[0m [90mnext entry[0m[90m • [0m[90m/[0m [90mfilter[0m[90m • [0m[90mC-j/enter[0m [90maccept filter[0m[90m • [0m[90mM-?[0m [90mtoggle key help[0m🛇
 
 # After a completion is selected, it appends to the pre-filled prefix.
 run
@@ -180,8 +180,8 @@ key down
 key enter
 ----
 -- view:
-> Christopher [7m [0m                        ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mChristopher [0m[40m[7m [0m[0m[40m[0m[40m                        [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # That prefilled common prefix is also preserved when ctrl+c is
 # pressed.
@@ -193,5 +193,5 @@ key ctrl+c
 ----
 TEA PRINT: {We're matching "Chr"!}
 -- view:
-> Christ[7m [0m                              ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mChrist[0m[40m[7m [0m[0m[40m[0m[40m                              [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇

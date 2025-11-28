@@ -6,8 +6,8 @@ type baseline text
 ----
 TEA WINDOW SIZE: {40 25}
 -- view:
-> baseline text[7m [0m                      ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mbaseline text[0m[40m[7m [0m[0m[40m[0m[40m                      [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- history:
 say hello to the world
 peter parker was not spiderman
@@ -18,36 +18,36 @@ run
 key ctrl+r
 ----
 -- view:
-> baseline text[7m [0m                      ␤
-bck:[7me[0mnter search term, or C-g to cancel search🛇
+[40m[37m> [0m[0m[40mbaseline text[0m[40m[7m [0m[0m[40m[0m[40m                      [0m␤
+bck:[7me[0m[90mnter search term, or C-g to cancel sea[0m[90m[0m🛇
 
 # Once we start typing text, we get to the first entry that matches.
 run
 type w
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
 bck:w[7m [0m                                     🛇
 
 run
 type a
 ----
 -- view:
-> peter parker [7mw[0mas not spiderman      ␤
+[40m[37m> [0m[0m[40mpeter parker [0m[40m[7mw[0m[0m[40mas not spiderman [0m[40m     [0m␤
 bck:wa[7m [0m                                    🛇
 
 run
 key ctrl+h
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
 bck:w[7m [0m                                     🛇
 
 run
 type orld
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
 bck:world[7m [0m                                 🛇
 
 # Ctrl+r searches further.
@@ -55,7 +55,7 @@ run
 key ctrl+r
 ----
 -- view:
-> say hello to the [7mw[0morld              ␤
+[40m[37m> [0m[0m[40msay hello to the [0m[40m[7mw[0m[0m[40morld [0m[40m             [0m␤
 bck:world[7m [0m                                 🛇
 
 # If there is no more match, the search prompt
@@ -64,7 +64,7 @@ run
 key ctrl+r
 ----
 -- view:
-> say hello to the [7mw[0morld              ␤
+[40m[37m> [0m[0m[40msay hello to the [0m[40m[7mw[0m[0m[40morld [0m[40m             [0m␤
 bck?world[7m [0m                                 🛇
 
 # Ctrl+G cancels the search and restores the original
@@ -73,8 +73,8 @@ run
 key ctrl+g
 ----
 -- view:
-> baseline text[7m [0m                      ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mbaseline text[0m[40m[7m [0m[0m[40m[0m[40m                      [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # If we search for a non-existent pattern, the prompt also
 # turns into a question mark.
@@ -83,7 +83,7 @@ key ctrl+r
 type woooo
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
 bck?woooo[7m [0m                                 🛇
 
 # Search can also use a pattern.
@@ -93,7 +93,7 @@ key ctrl+r
 type w?rld
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
 bck:w?rld[7m [0m                                 🛇
 
 # If the pattern is invalid, we get another search prompt.
@@ -103,7 +103,7 @@ key ctrl+r
 type wo[
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
 bck!wo[[7m [0m                                   🛇
 
 # The prompt switches back to normal once the pattern is valid.
@@ -111,7 +111,7 @@ run
 type r]ld
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
 bck:wo[r]ld[7m [0m                               🛇
 
 # Ctrl+D during search with a non-empty pattern will be a regular
@@ -120,8 +120,8 @@ run
 key ctrl+d
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Ctrl+d at the start of the search simply cancels the search.
 run
@@ -129,8 +129,8 @@ key ctrl+r
 key ctrl+d
 ----
 -- view:
-> this is a big [7mw[0morld indeed          ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mthis is a big [0m[40m[7mw[0m[0m[40morld indeed [0m[40m         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Enter after finding an entry accepts the entry, but does not
 # let the enter key go through (we do not add a newline)
@@ -140,8 +140,8 @@ type parker
 key enter
 ----
 -- view:
-> peter [7mp[0marker was not spiderman      ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mpeter [0m[40m[7mp[0m[0m[40marker was not spiderman [0m[40m     [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # We can also force-accept the entry udring a search.
 run
@@ -152,8 +152,8 @@ noop
 ----
 TEA QUIT
 -- view:
-> this is a big world indeed          ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37mthis is a big [0m[37m[37mw[0m[0m[37morld indeed [0m[37m         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # If we start navigating after starting a search,
 # the navigation goes through in the regular editor.
@@ -164,5 +164,5 @@ type parker
 key left
 ----
 -- view:
-> peter[7m [0mparker was not spiderman      ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mpeter[0m[40m[7m [0m[0m[40mparker was not spiderman [0m[40m     [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇

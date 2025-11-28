@@ -4,12 +4,12 @@ setvalue "one\ntwo\nthree\nfour\nfive\nsix\nseven"
 key alt+<
 ----
 -- view:
-┃  1 [7mo[0mne                                ␤
-┃  2 two                                ␤
-┃  3 three                              ␤
-┃  4 four                               ␤
-┃  5 five                               ␤
-┃  6 six                                🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mo[0m[0m[40mne [0m[40m                               [0m␤
+[37m┃ [0m[37m 2 [0mtwo                                ␤
+[37m┃ [0m[37m 3 [0mthree                              ␤
+[37m┃ [0m[37m 4 [0mfour                               ␤
+[37m┃ [0m[37m 5 [0mfive                               ␤
+[37m┃ [0m[37m 6 [0msix                                🛇
 
 # Show scroll down.
 run
@@ -21,12 +21,12 @@ key down
 key down
 ----
 -- view:
-┃  2 two                                ␤
-┃  3 three                              ␤
-┃  4 four                               ␤
-┃  5 five                               ␤
-┃  6 six                                ␤
-┃  7 [7ms[0meven                              🛇
+[37m┃ [0m[37m 2 [0mtwo                                ␤
+[37m┃ [0m[37m 3 [0mthree                              ␤
+[37m┃ [0m[37m 4 [0mfour                               ␤
+[37m┃ [0m[37m 5 [0mfive                               ␤
+[37m┃ [0m[37m 6 [0msix                                ␤
+[40m[37m┃ [0m[0m[40m 7 [0m[40m[0m[40m[7ms[0m[0m[40meven [0m[40m                             [0m🛇
 
 # Show scroll up.
 run
@@ -38,9 +38,9 @@ key up
 key up
 ----
 -- view:
-┃  1 [7mo[0mne                                ␤
-┃  2 two                                ␤
-┃  3 three                              ␤
-┃  4 four                               ␤
-┃  5 five                               ␤
-┃  6 six                                🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mo[0m[0m[40mne [0m[40m                               [0m␤
+[37m┃ [0m[37m 2 [0mtwo                                ␤
+[37m┃ [0m[37m 3 [0mthree                              ␤
+[37m┃ [0m[37m 4 [0mfour                               ␤
+[37m┃ [0m[37m 5 [0mfive                               ␤
+[37m┃ [0m[37m 6 [0msix                                🛇

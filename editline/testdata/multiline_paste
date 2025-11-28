@@ -5,11 +5,11 @@ paste "some text\nmore lines\nagain lines\nfinal line"
 ----
 TEA WINDOW SIZE: {40 25}
 -- view:
-> some text                           ␤
-  more lines                          ␤
-  again lines                         ␤
-  final line[7m [0m                         ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m> [0msome text                           ␤
+[37m  [0mmore lines                          ␤
+[37m  [0magain lines                         ␤
+[40m[37m  [0m[0m[40mfinal line[0m[40m[7m [0m[0m[40m[0m[40m                         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Regression test for insert after multi-line paste.
 run
@@ -18,8 +18,8 @@ key up
 type some more text
 ----
 -- view:
-> some text                           ␤
-  more linessome more text[7m [0m           ␤
-  again lines                         ␤
-  final line                          ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m> [0msome text                           ␤
+[40m[37m  [0m[0m[40mmore linessome more text[0m[40m[7m [0m[0m[40m[0m[40m           [0m␤
+[37m  [0magain lines                         ␤
+[37m  [0mfinal line                          ␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇

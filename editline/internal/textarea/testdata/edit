@@ -3,24 +3,24 @@ focus
 insert "hello, world!"
 ----
 -- view:
-┃  1 hello, world![7m [0m                     ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello, world![0m[40m[7m [0m[0m[40m[0m[40m                     [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 
 # Erase previous char
 run observe=(view,pos,value)
 key ctrl+h
 ----
 -- view:
-┃  1 hello, world[7m [0m                      ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello, world[0m[40m[7m [0m[0m[40m[0m[40m                      [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 12, (row 0, col 12, lastCharOffset 0)
 LineInfo: {Width:13 CharWidth:13 Height:1 StartColumn:0 ColumnOffset:12 RowOffset:0 CharOffset:12}
@@ -33,12 +33,12 @@ run observe=(view,pos,value)
 key delete
 ----
 -- view:
-┃  1 hello, world[7m [0m                      ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello, world[0m[40m[7m [0m[0m[40m[0m[40m                      [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 12, (row 0, col 12, lastCharOffset 0)
 LineInfo: {Width:13 CharWidth:13 Height:1 StartColumn:0 ColumnOffset:12 RowOffset:0 CharOffset:12}
@@ -52,12 +52,12 @@ key left
 key delete
 ----
 -- view:
-┃  1 hello, worl[7m [0m                       ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello, worl[0m[40m[7m [0m[0m[40m[0m[40m                       [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 11, (row 0, col 11, lastCharOffset 0)
 LineInfo: {Width:12 CharWidth:12 Height:1 StartColumn:0 ColumnOffset:11 RowOffset:0 CharOffset:11}
@@ -70,12 +70,12 @@ run observe=(view,pos,value)
 key ctrl+w
 ----
 -- view:
-┃  1 hello, [7m [0m                           ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello, [0m[40m[7m [0m[0m[40m[0m[40m                           [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 7, (row 0, col 7, lastCharOffset 0)
 LineInfo: {Width:8 CharWidth:8 Height:1 StartColumn:0 ColumnOffset:7 RowOffset:0 CharOffset:7}
@@ -90,12 +90,12 @@ key ctrl+a
 key alt+d
 ----
 -- view:
-┃  1 [7m [0mmore text                         ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7m [0m[0m[40mmore text [0m[40m                        [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -108,12 +108,12 @@ run observe=(view,pos,value)
 type Some
 ----
 -- view:
-┃  1 Some[7m [0mmore text                     ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mSome[0m[40m[7m [0m[0m[40mmore text [0m[40m                    [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
@@ -126,12 +126,12 @@ run observe=(view,pos,value)
 key alt+u
 ----
 -- view:
-┃  1 Some MORE[7m [0mtext                     ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mSome MORE[0m[40m[7m [0m[0m[40mtext [0m[40m                    [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 9, (row 0, col 9, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:9 RowOffset:0 CharOffset:9}
@@ -144,12 +144,12 @@ run observe=(view,pos,value)
 key alt+c
 ----
 -- view:
-┃  1 Some MORE Text[7m [0m                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mSome MORE Text[0m[40m[7m [0m[0m[40m[0m[40m                    [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
@@ -165,12 +165,12 @@ key alt+l
 key alt+l
 ----
 -- view:
-┃  1 some more text[7m [0m                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40msome more text[0m[40m[7m [0m[0m[40m[0m[40m                    [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
@@ -185,12 +185,12 @@ key alt+u
 key alt+l
 ----
 -- view:
-┃  1 some more text[7m [0m                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40msome more text[0m[40m[7m [0m[0m[40m[0m[40m                    [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 14, (row 0, col 14, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:14 RowOffset:0 CharOffset:14}
@@ -205,12 +205,12 @@ key right
 key ctrl+t
 ----
 -- view:
-┃  1 os[7mm[0me more text                     ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mos[0m[40m[7mm[0m[0m[40me more text [0m[40m                    [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 2, (row 0, col 2, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:2 RowOffset:0 CharOffset:2}
@@ -224,12 +224,12 @@ key ctrl+t
 key ctrl+t
 ----
 -- view:
-┃  1 omes[7m [0mmore text                     ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40momes[0m[40m[7m [0m[0m[40mmore text [0m[40m                    [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
@@ -242,12 +242,12 @@ run observe=(view,pos,value)
 key enter
 ----
 -- view:
-┃  1 omes                               ␤
-┃  2 [7m [0mmore text                         ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0momes                               ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40m[0m[40m[7m [0m[0m[40mmore text [0m[40m                        [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 0, (row 1, col 0, lastCharOffset 0)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -260,12 +260,12 @@ run observe=(view,pos,value)
 key ctrl+h
 ----
 -- view:
-┃  1 omes[7m [0mmore text                     ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40momes[0m[40m[7m [0m[0m[40mmore text [0m[40m                    [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:15 CharWidth:15 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
@@ -278,12 +278,12 @@ run observe=(view,pos,value)
 key ctrl+k
 ----
 -- view:
-┃  1 omes[7m [0m                              ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40momes[0m[40m[7m [0m[0m[40m[0m[40m                              [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
@@ -297,12 +297,12 @@ run observe=(view,pos,value)
 key ctrl+u
 ----
 -- view:
-┃  1 [7m [0m                                  ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -317,12 +317,12 @@ key up
 key ctrl+k
 ----
 -- view:
-┃  1 hello[7mw[0morld                         ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello[0m[40m[7mw[0m[0m[40morld [0m[40m                        [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 5, (row 0, col 5, lastCharOffset 5)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
@@ -336,12 +336,12 @@ key enter
 key ctrl+u
 ----
 -- view:
-┃  1 hello[7mw[0morld                         ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello[0m[40m[7mw[0m[0m[40morld [0m[40m                        [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 5, (row 0, col 5, lastCharOffset 5)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
@@ -356,12 +356,12 @@ setvalue ""
 key ctrl+w
 ----
 -- view:
-┃  1 [7m [0m                                  ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -373,12 +373,12 @@ run observe=(view,pos,value)
 key alt+d
 ----
 -- view:
-┃  1 [7m [0m                                  ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -395,12 +395,12 @@ key alt+d
 key alt+d
 ----
 -- view:
-┃  1 [7m [0m                                  ␤
-┃  2 secondline                         ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[37m 2 [0msecondline                         ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -412,12 +412,12 @@ run observe=(view,pos,value)
 key alt+d
 ----
 -- view:
-┃  1 [7ms[0mecondline                         ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7ms[0m[0m[40mecondline [0m[40m                        [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -431,12 +431,12 @@ key enter
 key ctrl+w
 ----
 -- view:
-┃  1 [7ms[0mecondline                         ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7ms[0m[0m[40mecondline [0m[40m                        [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:11 CharWidth:11 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -453,12 +453,12 @@ key alt+d
 key alt+d
 ----
 -- view:
-┃  1 [7m [0myay                               ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7m [0m[0m[40myay [0m[40m                              [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -474,12 +474,12 @@ key ctrl+w
 key ctrl+w
 ----
 -- view:
-┃  1 yay [7m [0m                              ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40myay [0m[40m[7m [0m[0m[40m[0m[40m                              [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 4, (row 0, col 4, lastCharOffset 0)
 LineInfo: {Width:5 CharWidth:5 Height:1 StartColumn:0 ColumnOffset:4 RowOffset:0 CharOffset:4}
@@ -494,12 +494,12 @@ key alt+<
 key alt+d
 ----
 -- view:
-┃  1 [7m [0m                                  ␤
-┃  2 world                              ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[37m 2 [0mworld                              ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -515,12 +515,12 @@ key ctrl+e
 key ctrl+w
 ----
 -- view:
-┃  1 [7m [0m                                  ␤
-┃  2 world                              ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[37m 2 [0mworld                              ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -537,12 +537,12 @@ key ctrl+a
 key ctrl+t
 ----
 -- view:
-┃  1 [7mh[0mello                              ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mh[0m[0m[40mello [0m[40m                             [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:6 CharWidth:6 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -556,12 +556,12 @@ key ctrl+e
 key ctrl+t
 ----
 -- view:
-┃  1 helol[7m [0m                             ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhelol[0m[40m[7m [0m[0m[40m[0m[40m                             [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 5, (row 0, col 5, lastCharOffset 0)
 LineInfo: {Width:6 CharWidth:6 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
@@ -577,12 +577,12 @@ key ctrl+k
 key ctrl+k
 ----
 -- view:
-┃  1 [7mt[0mwo                                ␤
-┃  2 three                              ␤
-┃  3 four                               ␤
-┃  4 five                               ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mt[0m[0m[40mwo [0m[40m                               [0m␤
+[37m┃ [0m[37m 2 [0mthree                              ␤
+[37m┃ [0m[37m 3 [0mfour                               ␤
+[37m┃ [0m[37m 4 [0mfive                               ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:4 CharWidth:4 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -597,12 +597,12 @@ key ctrl+a
 key ctrl+h
 ----
 -- view:
-┃  1 two[7mt[0mhree                           ␤
-┃  2 four                               ␤
-┃  3 five                               ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mtwo[0m[40m[7mt[0m[0m[40mhree [0m[40m                          [0m␤
+[37m┃ [0m[37m 2 [0mfour                               ␤
+[37m┃ [0m[37m 3 [0mfive                               ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 3, (row 0, col 3, lastCharOffset 0)
 LineInfo: {Width:9 CharWidth:9 Height:1 StartColumn:0 ColumnOffset:3 RowOffset:0 CharOffset:3}

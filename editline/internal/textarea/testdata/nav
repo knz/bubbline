@@ -3,12 +3,12 @@ focus
 insert "hello, world!\nisn't it a nice day?\n"
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3 [7m [0m                                  ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[40m[37m┃ [0m[0m[40m 3 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- value:
 "hello, world!\nisn't it a nice day?\n"
 -- props:
@@ -21,12 +21,12 @@ run observe=(view, props)
 key up
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 [7mi[0msn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40m[0m[40m[7mi[0m[0m[40msn't it a nice day? [0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- props:
 Focused: true
 Width: 35, Height: 6, LogicalHeight: 3
@@ -42,12 +42,12 @@ run observe=(view, pos)
 key up
 ----
 -- view:
-┃  1 [7mh[0mello, world!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mh[0m[0m[40mello, world! [0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -60,12 +60,12 @@ key down
 key ctrl+e
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't it a nice day?[7m [0m              ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40misn't it a nice day?[0m[40m[7m [0m[0m[40m[0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
@@ -79,12 +79,12 @@ run observe=(view, pos)
 key up
 ----
 -- view:
-┃  1 hello, world![7m [0m                     ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello, world![0m[40m[7m [0m[0m[40m[0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 13, (row 0, col 13, lastCharOffset 20)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:13 RowOffset:0 CharOffset:13}
@@ -97,12 +97,12 @@ run observe=(view, pos)
 key down
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't it a nice day?[7m [0m              ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40misn't it a nice day?[0m[40m[7m [0m[0m[40m[0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 20)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
@@ -113,12 +113,12 @@ run observe=(view, pos)
 cursorstart
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 [7mi[0msn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40m[0m[40m[7mi[0m[0m[40msn't it a nice day? [0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 0, (row 1, col 0, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -131,12 +131,12 @@ key ctrl+e
 key ctrl+a
 ----
 -- view:
-┃  1 [7mh[0mello, world!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mh[0m[0m[40mello, world! [0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -147,12 +147,12 @@ run observe=(view,pos)
 key alt+f
 ----
 -- view:
-┃  1 hello,[7m [0mworld!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello,[0m[40m[7m [0m[0m[40mworld! [0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 6, (row 0, col 6, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:6 RowOffset:0 CharOffset:6}
@@ -164,12 +164,12 @@ run observe=(view,pos)
 key alt+f
 ----
 -- view:
-┃  1 hello, world![7m [0m                     ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello, world![0m[40m[7m [0m[0m[40m[0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 13, (row 0, col 13, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:13 RowOffset:0 CharOffset:13}
@@ -180,12 +180,12 @@ run observe=(view,pos)
 key alt+f
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't[7m [0mit a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40misn't[0m[40m[7m [0m[0m[40mit a nice day? [0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 5, (row 1, col 5, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:5 RowOffset:0 CharOffset:5}
@@ -199,12 +199,12 @@ key alt+f
 key alt+f
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't it a nice day?[7m [0m              ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40misn't it a nice day?[0m[40m[7m [0m[0m[40m[0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
@@ -215,12 +215,12 @@ run observe=(view,pos)
 key alt+b
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't it a nice [7md[0may?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40misn't it a nice [0m[40m[7md[0m[0m[40may? [0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 16, (row 1, col 16, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:16 RowOffset:0 CharOffset:16}
@@ -235,12 +235,12 @@ key alt+b
 key alt+b
 ----
 -- view:
-┃  1 hello, [7mw[0morld!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mhello, [0m[40m[7mw[0m[0m[40morld! [0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 7, (row 0, col 7, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:7 RowOffset:0 CharOffset:7}
@@ -253,12 +253,12 @@ key alt+b
 key alt+b
 ----
 -- view:
-┃  1 [7mh[0mello, world!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mh[0m[0m[40mello, world! [0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -269,12 +269,12 @@ run observe=(view,pos)
 key right
 ----
 -- view:
-┃  1 h[7me[0mllo, world!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mh[0m[40m[7me[0m[0m[40mllo, world! [0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 1, (row 0, col 1, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:1 RowOffset:0 CharOffset:1}
@@ -284,12 +284,12 @@ run observe=(view,pos)
 key left
 ----
 -- view:
-┃  1 [7mh[0mello, world!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[0m[40m[7mh[0m[0m[40mello, world! [0m[40m                     [0m␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 0, Pos 0, (row 0, col 0, lastCharOffset 0)
 LineInfo: {Width:14 CharWidth:14 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -302,12 +302,12 @@ key down
 key right
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't it a nice day?               ␤
-┃  3 [7m [0m                                  ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[37m┃ [0m[37m 2 [0misn't it a nice day?               ␤
+[40m[37m┃ [0m[0m[40m 3 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 2, Pos 0, (row 2, col 0, lastCharOffset 0)
 LineInfo: {Width:1 CharWidth:1 Height:1 StartColumn:0 ColumnOffset:0 RowOffset:0 CharOffset:0}
@@ -318,12 +318,12 @@ run observe=(view,pos)
 key left
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't it a nice day?[7m [0m              ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40misn't it a nice day?[0m[40m[7m [0m[0m[40m[0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 20, (row 1, col 20, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:20 RowOffset:0 CharOffset:20}
@@ -334,12 +334,12 @@ run observe=(view,pos)
 key left
 ----
 -- view:
-┃  1 hello, world!                      ␤
-┃  2 isn't it a nice day[7m?[0m               ␤
-┃  3                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello, world!                      ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40misn't it a nice day[0m[40m[7m?[0m[0m[40m [0m[40m              [0m␤
+[37m┃ [0m[37m 3 [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 -- pos:
 Line: 1, Pos 19, (row 1, col 19, lastCharOffset 0)
 LineInfo: {Width:21 CharWidth:21 Height:1 StartColumn:0 ColumnOffset:19 RowOffset:0 CharOffset:19}

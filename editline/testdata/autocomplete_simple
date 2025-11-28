@@ -5,8 +5,8 @@ set_autocomplete_1
 ----
 TEA WINDOW SIZE: {40 25}
 -- view:
-> [7m [0m                                   ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Autocomplete at end of word.
 run
@@ -15,8 +15,8 @@ key tab
 ----
 TEA PRINT: {We're matching "hello"!}
 -- view:
-> hello world [7m [0m                       ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mhello world [0m[40m[7m [0m[0m[40m[0m[40m                       [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Autocomplete middle of word.
 run
@@ -28,8 +28,8 @@ key tab
 ----
 TEA PRINT: {We're matching "hello"!}
 -- view:
-> hello world [7m [0m                        ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mhello world [0m[40m[7m [0m[0m[40m[0m[40m                        [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Autocomplete start of word.
 run
@@ -40,8 +40,8 @@ key tab
 ----
 TEA PRINT: {We're matching "hello"!}
 -- view:
-> hello world [7m [0m                        ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mhello world [0m[40m[7m [0m[0m[40m[0m[40m                        [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Not on word - empty prefix.
 run
@@ -52,8 +52,8 @@ key tab
 ----
 TEA PRINT: {We're matching ""!}
 -- view:
-> hello [7m [0m                              ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mhello [0m[40m[7m [0m[0m[40m[0m[40m                              [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # The simple autocompleter is case-sensitive.
 run
@@ -63,5 +63,5 @@ key tab
 ----
 TEA PRINT: {We're matching "HELLO"!}
 -- view:
-> HELLO[7m [0m                               ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mHELLO[0m[40m[7m [0m[0m[40m[0m[40m                               [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇

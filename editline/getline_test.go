@@ -11,11 +11,13 @@ import (
 
 	"github.com/charmbracelet/bubbles/cursor"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/cockroachdb/datadriven"
 	"github.com/knz/bubbline"
 	"github.com/knz/bubbline/computil"
 	"github.com/knz/bubbline/editline"
 	"github.com/knz/catwalk"
+	"github.com/muesli/termenv"
 )
 
 // TestBubbline tests the bubbline widget and the Editor API.
@@ -29,6 +31,12 @@ func TestBubbline(t *testing.T) {
 		}
 
 		m := bubbline.New()
+
+		// Ensure the cursor is visible in the test outputs. We want this
+		// because we want to check that event processing positions the
+		// cursor correctly.
+		lipgloss.SetColorProfile(termenv.ANSI)
+
 		catwalk.RunModel(t, path, m,
 			catwalk.WithUpdater(testCmd),
 			catwalk.WithObserver("value", func(out io.Writer, m tea.Model) error {
@@ -117,7 +125,7 @@ func testCmd(m tea.Model, cmd string, args ...string) (bool, tea.Model, tea.Cmd,
 	case "set_autocomplete_2":
 		t.AutoComplete = autocomplete2
 	case "show_cursor":
-		t.CursorMode = cursor.CursorBlink
+		t.CursorMode = cursor.CursorStatic
 	case "hide_cursor":
 		t.CursorMode = cursor.CursorHide
 	case "limit_max_width":

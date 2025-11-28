@@ -7,22 +7,22 @@ type world
 ----
 TEA WINDOW SIZE: {80 25}
 -- view:
-> hello                                                                       ␤
-  world[7m [0m                                                                      ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[37m> [0mhello                                                                       ␤
+[40m[37m  [0m[0m[40mworld[0m[40m[7m [0m[0m[40m[0m[40m                                                                      [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 run
 key alt+.
 ----
 -- view:
-hello                                                                          ␤
-world[7m [0m                                                                         ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[37m[0mhello                                                                          ␤
+[40m[37m[0m[0m[40mworld[0m[40m[7m [0m[0m[40m[0m[40m                                                                         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 run
 key alt+.
 ----
 -- view:
-> hello                                                                        ␤
-  world[7m [0m                                                                       ␤
-M-? toggle key help • C-d erase/stop • C-c clear/cancel • M-. hide/show prompt🛇
+[37m> [0mhello                                                                        ␤
+[40m[37m  [0m[0m[40mworld[0m[40m[7m [0m[0m[40m[0m[40m                                                                       [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇

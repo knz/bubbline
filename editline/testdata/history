@@ -5,16 +5,16 @@ type baseline text
 ----
 TEA WINDOW SIZE: {40 25}
 -- view:
-> baseline text[7m [0m                      ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mbaseline text[0m[40m[7m [0m[0m[40m[0m[40m                      [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # By default, there is no history so nothing to go up from.
 run
 key up
 ----
 -- view:
-> baseline text[7m [0m                      ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mbaseline text[0m[40m[7m [0m[0m[40m[0m[40m                      [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # If we load some history, we can then navigate through it.
 run
@@ -22,15 +22,15 @@ set_history
 key up
 ----
 -- view:
-> this is a big world indeed[7m [0m         ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mthis is a big world indeed[0m[40m[7m [0m[0m[40m[0m[40m         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 run
 key up
 ----
 -- view:
-> peter parker was not spiderman[7m [0m     ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mpeter parker was not spiderman[0m[40m[7m [0m[0m[40m[0m[40m     [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Once on a history entry, we can edit it as usual.
 run
@@ -39,15 +39,15 @@ key left
 type woo
 ----
 -- view:
-> peter parker was not spidermwoo[7ma[0mn   ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mpeter parker was not spidermwoo[0m[40m[7ma[0m[0m[40mn [0m[40m  [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 run
 key down
 ----
 -- view:
-> this is a big world indeed[7m [0m         ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mthis is a big world indeed[0m[40m[7m [0m[0m[40m[0m[40m         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # The changes to the history entry above are not preserved, because we
 # didn't accept the input.
@@ -55,15 +55,15 @@ run
 key alt+p
 ----
 -- view:
-> peter parker was not spiderman[7m [0m     ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mpeter parker was not spiderman[0m[40m[7m [0m[0m[40m[0m[40m     [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 run
 key alt+n
 ----
 -- view:
-> this is a big world indeed[7m [0m         ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mthis is a big world indeed[0m[40m[7m [0m[0m[40m[0m[40m         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # If we navigate down to the end of the history,
 # we get back to the original text.
@@ -71,8 +71,8 @@ run
 key down
 ----
 -- view:
-> baseline text[7m [0m                      ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mbaseline text[0m[40m[7m [0m[0m[40m[0m[40m                      [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Pressing enter on a history entry will lock in this value.
 run observe=(view,value)
@@ -82,8 +82,8 @@ noop
 ----
 TEA QUIT
 -- view:
-> this is a big world indeed          ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37mthis is a big world indeed[0m[37m[37m [0m[0m[37m[0m[37m         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- value:
 "this is a big world indeed"
 
@@ -137,8 +137,8 @@ reset
 key up
 ----
 -- view:
-> "hello world"[7m [0m                       ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40m"hello world"[0m[40m[7m [0m[0m[40m[0m[40m                       [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # If there's a limit, the history gets truncated.
 run observe=history
@@ -170,7 +170,7 @@ enter "world"
 key down
 ----
 -- view:
-> "hello"                              ␤
-  "world"                              ␤
-  [7m [0m                                    ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m> [0m"hello"                              ␤
+[37m  [0m"world"                              ␤
+[40m[37m  [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                    [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mC-r[0m [90msearch hist[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇

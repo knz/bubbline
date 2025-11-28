@@ -7,35 +7,35 @@ placeholder "this is\na nice placeholder text!"
 focus
 ----
 -- view:
-┃  1 [7mt[0mhis isa nice placeholder text!    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[7mt[0m[0m[40m[90mhis isa nice placeholder text!    [0m[0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 
 # As soon as we enter something, the placeholder disappears.
 run
 type h
 ----
 -- view:
-┃  1 h[7m [0m                                 ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40mh[0m[40m[7m [0m[0m[40m[0m[40m                                 [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 
 run
 enter ello
 ----
 -- view:
-┃  1 hello                              ␤
-┃  2 [7m [0m                                  ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[37m┃ [0m[37m 1 [0mhello                              ␤
+[40m[37m┃ [0m[0m[40m 2 [0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                  [0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 
 
 # But it reappears once we delete everything.
@@ -44,33 +44,33 @@ key ctrl+h
 clearline
 ----
 -- view:
-┃  1 [7mt[0mhis isa nice placeholder text!    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[7mt[0m[0m[40m[90mhis isa nice placeholder text!    [0m[0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 
 # If the placeholder is very wide, it gets truncated.
 run
 placeholder "A very very very, so very long, very long placeholder!"
 ----
 -- view:
-┃  1 [7mA[0m very very very, so very long, ...␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[7mA[0m[0m[40m[90m very very very, so very long, ...[0m[0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇
 
 # If it's both long and multiline...
 run
 placeholder "A very very very, so\nvery long, very long placeholder!"
 ----
 -- view:
-┃  1 [7mA[0m very very very, sovery long, v...␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    ␤
-┃  ~                                    🛇
+[40m[37m┃ [0m[0m[40m 1 [0m[40m[7mA[0m[0m[40m[90m very very very, sovery long, v...[0m[0m␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   ␤
+[37m┃ [0m[30m ~ [0m                                   🛇

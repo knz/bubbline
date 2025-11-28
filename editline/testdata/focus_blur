@@ -5,8 +5,8 @@ type hello world
 ----
 TEA WINDOW SIZE: {40 25}
 -- view:
-> hello world[7m [0m                        ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mhello world[0m[40m[7m [0m[0m[40m[0m[40m                        [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # While blurred, there is no cursor and
 # text input is disabled.
@@ -14,20 +14,20 @@ run
 blur
 ----
 -- view:
-> hello world                         ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37mhello world[0m[37m[37m [0m[0m[37m[0m[37m                        [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 run
 type more text
 ----
 -- view:
-> hello world                         ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37mhello world[0m[37m[37m [0m[0m[37m[0m[37m                        [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 run
 focus
 type more text
 ----
 -- view:
-> hello worldmore text[7m [0m                ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mhello worldmore text[0m[40m[7m [0m[0m[40m[0m[40m                [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇

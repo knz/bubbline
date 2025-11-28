@@ -4,8 +4,8 @@ resize 40 25
 ----
 TEA WINDOW SIZE: {40 25}
 -- view:
-> [7m [0m                                   ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # By default, the "enter" key terminates the input.
 run observe=(view,value)
@@ -14,8 +14,8 @@ noop
 ----
 TEA QUIT
 -- view:
-> hello world                         ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37mhello world[0m[37m[37m [0m[0m[37m[0m[37m                        [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- value:
 "hello world"
 
@@ -29,10 +29,10 @@ enter hello world
 enter more text
 ----
 -- view:
-> hello world                          ␤
-  more text                            ␤
-  [7m [0m                                    ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m> [0mhello world                          ␤
+[37m  [0mmore text                            ␤
+[40m[37m  [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                    [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # However, if the text finally contains the end-of-input condition,
 # the enter key will terminate input again.
@@ -42,10 +42,10 @@ noop
 ----
 TEA QUIT
 -- view:
-> hello world                          ␤
-  more text                            ␤
-  this is the end.                     ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37mhello world [0m[37m                         [0m␤
+[37m[37m  [0m[0m[37mmore text [0m[37m                           [0m␤
+[37m[37m  [0m[0m[37mthis is the end.[0m[37m[37m [0m[0m[37m[0m[37m                    [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- value:
 "hello world\nmore text\nthis is the end."
 
@@ -58,9 +58,9 @@ key ctrl+o
 type more text
 ----
 -- view:
-> hello world.                         ␤
-  more text[7m [0m                           ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m> [0mhello world.                         ␤
+[40m[37m  [0m[0m[40mmore text[0m[40m[7m [0m[0m[40m[0m[40m                           [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # However then a regular enter will still terminate the input.
 run observe=(view,value)
@@ -69,9 +69,9 @@ noop
 ----
 TEA QUIT
 -- view:
-> hello world.                         ␤
-  more text                            ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37mhello world. [0m[37m                        [0m␤
+[37m[37m  [0m[0m[37mmore text[0m[37m[37m [0m[0m[37m[0m[37m                           [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- value:
 "hello world.\nmore text"
 
@@ -88,9 +88,9 @@ noop
 ----
 TEA QUIT
 -- view:
-> hello world                          ␤
-  more text                            ␤
-  blah                                 ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37mhello world [0m[37m                         [0m␤
+[37m[37m  [0m[0m[37mmore text [0m[37m                           [0m␤
+[37m[37m  [0m[0m[37mblah[0m[37m[37m [0m[0m[37m[0m[37m                                [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- value:
 "hello world\nmore text\nblah"

@@ -4,8 +4,8 @@ resize 40 25
 ----
 TEA WINDOW SIZE: {40 25}
 -- view:
-> [7m [0m                                   ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # If there's some characters already, ctrl+d does editing.
 # For example, at the end of the line, nothing happens.
@@ -14,8 +14,8 @@ type hello world
 key ctrl+d
 ----
 -- view:
-> hello world[7m [0m                        ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mhello world[0m[40m[7m [0m[0m[40m[0m[40m                        [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # At some other point than the end of the line, it deletes the
 # character at point.
@@ -25,8 +25,8 @@ key left
 key ctrl+d
 ----
 -- view:
-> hello wor[7md[0m                          ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40mhello wor[0m[40m[7md[0m[0m[40m [0m[40m                         [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # At the beginning of the line, it deletes the first character.
 run
@@ -34,16 +34,16 @@ key ctrl+a
 key ctrl+d
 ----
 -- view:
-> [7me[0mllo word                           ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40m[0m[40m[7me[0m[0m[40mllo word [0m[40m                          [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # Now clear the input.
 run
 key ctrl+k
 ----
 -- view:
-> [7m [0m                                   ␤
-M-? toggle key help • C-d erase/stop🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 
 # If the input is empty, ctrl+d is end-of-input.
 run observe=(view,err)
@@ -52,7 +52,7 @@ noop
 ----
 TEA QUIT
 -- view:
->                                     ␤
-M-? toggle key help • C-d erase/stop🛇
+[37m[37m> [0m[0m[37m[0m[37m[37m [0m[0m[37m[0m[37m                                   [0m␤
+[90mM-?[0m [90mtoggle key help[0m[90m • [0m[90mC-d[0m [90merase/stop[0m[90m • [0m[90mC-c[0m [90mclear/cancel[0m[90m • [0m[90mM-.[0m [90mhide/show prompt[0m🛇
 -- err:
 EOF

@@ -4,25 +4,25 @@ resize 20 25
 ----
 TEA WINDOW SIZE: {20 25}
 -- view:
-> [7m [0m               ␤
- …🛇
+[40m[37m> [0m[0m[40m[0m[40m[7m [0m[0m[40m[0m[40m               [0m␤
+ [90m…[0m🛇
 
 
 run observe=(view,value)
 type lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
 ----
 -- view:
-> lorem ipsum     ␤
-  dolor sit amet, ␤
-  consectetur     ␤
-  adipiscing      ␤
-  elit, sed do    ␤
-  eiusmod tempor  ␤
-  incididunt ut   ␤
-  labore et       ␤
-  dolore magna    ␤
-  aliqua[7m [0m         ␤
- …🛇
+[40m[37m> [0m[0m[40mlorem ipsum [0m[40m    [0m␤
+[40m[37m  [0m[0m[40mdolor sit amet, [0m[40m[0m␤
+[40m[37m  [0m[0m[40mconsectetur [0m[40m    [0m␤
+[40m[37m  [0m[0m[40madipiscing [0m[40m     [0m␤
+[40m[37m  [0m[0m[40melit, sed do [0m[40m   [0m␤
+[40m[37m  [0m[0m[40meiusmod tempor [0m[40m [0m␤
+[40m[37m  [0m[0m[40mincididunt ut [0m[40m  [0m␤
+[40m[37m  [0m[0m[40mlabore et [0m[40m      [0m␤
+[40m[37m  [0m[0m[40mdolore magna [0m[40m   [0m␤
+[40m[37m  [0m[0m[40maliqua[0m[40m[7m [0m[0m[40m[0m[40m         [0m␤
+ [90m…[0m🛇
 -- value:
 "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
 
@@ -30,17 +30,17 @@ run observe=(view,value)
 key alt+q
 ----
 -- view:
-> lorem ipsum     ␤
-  dolor sit amet, ␤
-  consectetur     ␤
-  adipiscing      ␤
-  elit, sed do    ␤
-  eiusmod tempor  ␤
-  incididunt ut   ␤
-  labore et       ␤
-  dolore magna    ␤
-  aliqua[7m [0m         ␤
- …🛇
+[37m> [0mlorem ipsum     ␤
+[37m  [0mdolor sit amet, ␤
+[37m  [0mconsectetur     ␤
+[37m  [0madipiscing      ␤
+[37m  [0melit, sed do    ␤
+[37m  [0meiusmod tempor  ␤
+[37m  [0mincididunt ut   ␤
+[37m  [0mlabore et       ␤
+[37m  [0mdolore magna    ␤
+[40m[37m  [0m[0m[40maliqua[0m[40m[7m [0m[0m[40m[0m[40m         [0m␤
+ [90m…[0m🛇
 -- value:
 "lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing\nelit, sed do\neiusmod tempor\nincididunt ut\nlabore et\ndolore magna\naliqua"
 
@@ -49,17 +49,17 @@ run observe=(view,value)
 key alt+q
 ----
 -- view:
-> lorem ipsum     ␤
-  dolor sit amet, ␤
-  consectetur     ␤
-  adipiscing      ␤
-  elit, sed do    ␤
-  eiusmod tempor  ␤
-  incididunt ut   ␤
-  labore et       ␤
-  dolore magna    ␤
-  aliqua[7m [0m         ␤
- …🛇
+[37m> [0mlorem ipsum     ␤
+[37m  [0mdolor sit amet, ␤
+[37m  [0mconsectetur     ␤
+[37m  [0madipiscing      ␤
+[37m  [0melit, sed do    ␤
+[37m  [0meiusmod tempor  ␤
+[37m  [0mincididunt ut   ␤
+[37m  [0mlabore et       ␤
+[37m  [0mdolore magna    ␤
+[40m[37m  [0m[0m[40maliqua[0m[40m[7m [0m[0m[40m[0m[40m         [0m␤
+ [90m…[0m🛇
 -- value:
 "lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing\nelit, sed do\neiusmod tempor\nincididunt ut\nlabore et\ndolore magna\naliqua"
 
@@ -69,16 +69,16 @@ reset
 type lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
 ----
 -- view:
-> lorem ipsum      ␤
-  dolor sit amet,  ␤
-  consectetur      ␤
-  adipiscing elit, ␤
-  sed do eiusmod   ␤
-  tempor           ␤
-  incididunt ut    ␤
-  labore et dolore ␤
-  magna aliqua[7m [0m    ␤
- …🛇
+[40m[37m> [0m[0m[40mlorem ipsum [0m[40m     [0m␤
+[40m[37m  [0m[0m[40mdolor sit amet, [0m[40m [0m␤
+[40m[37m  [0m[0m[40mconsectetur [0m[40m     [0m␤
+[40m[37m  [0m[0m[40madipiscing elit, [0m[40m[0m␤
+[40m[37m  [0m[0m[40msed do eiusmod [0m[40m  [0m␤
+[40m[37m  [0m[0m[40mtempor [0m[40m          [0m␤
+[40m[37m  [0m[0m[40mincididunt ut [0m[40m   [0m␤
+[40m[37m  [0m[0m[40mlabore et dolore [0m[40m[0m␤
+[40m[37m  [0m[0m[40mmagna aliqua[0m[40m[7m [0m[0m[40m[0m[40m    [0m␤
+ [90m…[0m🛇
 -- value:
 "lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
 
@@ -86,16 +86,16 @@ run observe=(view,value)
 key alt+Q
 ----
 -- view:
-> lorem ipsum      ␤
-  dolor sit amet,  ␤
-  consectetur      ␤
-  adipiscing elit, ␤
-  sed do eiusmod   ␤
-  tempor           ␤
-  incididunt ut    ␤
-  labore et dolore ␤
-  magna aliqua[7m [0m    ␤
- …🛇
+[37m> [0mlorem ipsum      ␤
+[37m  [0mdolor sit amet,  ␤
+[37m  [0mconsectetur      ␤
+[37m  [0madipiscing elit, ␤
+[37m  [0msed do eiusmod   ␤
+[37m  [0mtempor           ␤
+[37m  [0mincididunt ut    ␤
+[37m  [0mlabore et dolore ␤
+[40m[37m  [0m[0m[40mmagna aliqua[0m[40m[7m [0m[0m[40m[0m[40m    [0m␤
+ [90m…[0m🛇
 -- value:
 "lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing elit,\nsed do eiusmod\ntempor\nincididunt ut\nlabore et dolore\nmagna aliqua"
 
@@ -104,16 +104,16 @@ run observe=(view,value)
 key alt+Q
 ----
 -- view:
-> lorem ipsum      ␤
-  dolor sit amet,  ␤
-  consectetur      ␤
-  adipiscing elit, ␤
-  sed do eiusmod   ␤
-  tempor           ␤
-  incididunt ut    ␤
-  labore et dolore ␤
-  magna aliqua[7m [0m    ␤
- …🛇
+[37m> [0mlorem ipsum      ␤
+[37m  [0mdolor sit amet,  ␤
+[37m  [0mconsectetur      ␤
+[37m  [0madipiscing elit, ␤
+[37m  [0msed do eiusmod   ␤
+[37m  [0mtempor           ␤
+[37m  [0mincididunt ut    ␤
+[37m  [0mlabore et dolore ␤
+[40m[37m  [0m[0m[40mmagna aliqua[0m[40m[7m [0m[0m[40m[0m[40m    [0m␤
+ [90m…[0m🛇
 -- value:
 "lorem ipsum\ndolor sit amet,\nconsectetur\nadipiscing elit,\nsed do eiusmod\ntempor\nincididunt ut\nlabore et dolore\nmagna aliqua"
 
