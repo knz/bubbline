@@ -11,18 +11,21 @@ jobs:
     env:
       GO111MODULE: "on"
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
       - name: Install Go
         uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
 
-      - name: Checkout code
-        uses: actions/checkout@v5
+      - name: Run tests with coverage
+        run: go test -race -covermode atomic -coverprofile=profile.cov ./...
 
-      - name: Coverage
+      - name: Install goveralls
+        run: go install github.com/mattn/goveralls@latest
+
+      - name: Send coverage
         env:
           COVERALLS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          go test -race -covermode atomic -coverprofile=profile.cov ./...
-          GO111MODULE=off go get github.com/mattn/goveralls
-          $(go env GOPATH)/bin/goveralls -coverprofile=profile.cov -service=github
+        run: goveralls -coverprofile=profile.cov -service=github
