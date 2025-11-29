@@ -1,6 +1,6 @@
 module github.com/knz/bubbline
 
-go 1.25.4
+go 1.24.2
 
 require (
 	github.com/atotto/clipboard v0.1.4
@@ -11,6 +11,7 @@ require (
 	github.com/knz/catwalk v0.1.4
 	github.com/mattn/go-runewidth v0.0.19
 	github.com/muesli/reflow v0.3.0
+	github.com/muesli/termenv v0.16.0
 	golang.org/x/sys v0.38.0
 )
 
@@ -32,7 +33,6 @@ require (
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
-	github.com/muesli/termenv v0.16.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
