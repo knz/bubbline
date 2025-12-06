@@ -18,6 +18,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/knz/bubbline/complete"
 	"github.com/knz/bubbline/editline/internal/textarea"
+	"github.com/knz/bubbline/highlight"
 	rw "github.com/mattn/go-runewidth"
 	"github.com/muesli/reflow/wordwrap"
 )
@@ -198,6 +199,9 @@ type Model struct {
 	// Only takes effect at Reset() or Focus().
 	ShowLineNumbers bool
 
+	// Highlighter is the syntax highlighting function to use.
+	Highlighter highlight.Highlighter
+
 	// externalEditorExt is the extension to use when creating a temporary file for
 	// an external editor.
 	externalEditorExt string
@@ -345,6 +349,7 @@ func (m *Model) Focus() tea.Cmd {
 	m.text.ShowLineNumbers = m.ShowLineNumbers
 	m.text.FocusedStyle = m.FocusedStyle.Editor
 	m.text.BlurredStyle = m.BlurredStyle.Editor
+	m.text.Highlighter = m.Highlighter
 	m.updatePrompt()
 	m.hctrl.pattern.PromptStyle = m.FocusedStyle.SearchInput.PromptStyle
 	m.hctrl.pattern.TextStyle = m.FocusedStyle.SearchInput.TextStyle
